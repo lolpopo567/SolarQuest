@@ -10,10 +10,14 @@ C="${OCI_TENANCY:?run this in Oracle Cloud Shell}"      # root compartment = ten
 q() { "$@" 2>/dev/null; }
 say() { printf '%s  %s\n' "$(date +%H:%M:%S)" "$*"; }
 
-if q oci compute instance list --compartment-id "$C" --display-name solarquest --lifecycle-state RUNNING \
-     --query 'data[0].id' --raw-output | grep -q ocid; then
-  say "A running 'solarquest' VM already exists."; ID=$(oci compute instance list --compartment-id "$C" \
-     --display-name solarquest --lifecycle-state RUNNING --query 'data[0].id' --raw-output)
+existing() {   # a 'solarquest' VM that is running or still starting (never launch a second one)
+  oci compute instance list --compartment-id "$C" --display-name solarquest --all \
+    --query "data[?\"lifecycle-state\"!='TERMINATED' && \"lifecycle-state\"!='TERMINATING'].id | [0]" --raw-output 2>/dev/null
+}
+ID=$(existing)
+if [[ "$ID" == ocid* ]]; then
+  say "A 'solarquest' VM already exists; waiting for it to run."
+  oci compute instance get --instance-id "$ID" --wait-for-state RUNNING >/dev/null
 else
   AD=$(oci iam availability-domain list --compartment-id "$C" --query 'data[0].name' --raw-output)
   say "Availability domain: $AD"
@@ -50,29 +54,38 @@ else
 
   image() {
     oci compute image list --compartment-id "$C" --operating-system "Canonical Ubuntu" --operating-system-version 24.04 \
-      --shape "$1" --sort-by TIMECREATED --sort-order DESC --query 'data[0].id' --raw-output
+      --shape "$1" --sort-by TIMECREATED --sort-order DESC --query 'data[0].id' --raw-output 2>>/tmp/sq-launch.log
   }
+  : > /tmp/sq-launch.log
   IMG_A1=$(image VM.Standard.A1.Flex); IMG_E2=$(image VM.Standard.E2.1.Micro)
+  say "Ubuntu images: A1 ${IMG_A1:0:30}...  E2 ${IMG_E2:0:30}..."
+  if [[ "$IMG_A1" != ocid* && "$IMG_E2" != ocid* ]]; then say "No Ubuntu 24.04 image found:"; cat /tmp/sq-launch.log; exit 1; fi
 
-  try() {  # shape image fault-domain [shape-config]
+  LAST=/tmp/sq-last.out
+  try() {  # shape image fault-domain [shape-config]; prints the new instance id, Oracle's full reply goes to $LAST
+    [[ "$2" == ocid* ]] || return 1
     local extra=(); [ -n "${4:-}" ] && extra=(--shape-config "$4")
     oci compute instance launch --compartment-id "$C" --availability-domain "$AD" --fault-domain "$3" \
       --shape "$1" "${extra[@]}" --image-id "$2" --subnet-id "$S" --assign-public-ip true \
-      --display-name solarquest --ssh-authorized-keys-file ~/.ssh/id_rsa.pub \
-      --query data.id --raw-output 2>/tmp/sq-launch.err
+      --display-name solarquest --ssh-authorized-keys-file ~/.ssh/id_rsa.pub > "$LAST" 2>&1
+    local rc=$?
+    { echo "== $(date +%T) $1 $3 exit $rc"; cat "$LAST"; } >> /tmp/sq-launch.log
+    [ $rc -eq 0 ] && grep -o '"id": "ocid1.instance[^"]*"' "$LAST" | head -1 | cut -d'"' -f4
   }
   n=0
   while :; do
     n=$((n + 1))
     for fd in FAULT-DOMAIN-1 FAULT-DOMAIN-2 FAULT-DOMAIN-3; do
-      ID=$(try VM.Standard.A1.Flex "$IMG_A1" "$fd" '{"ocpus":1,"memoryInGBs":6}') && [[ "$ID" == ocid* ]] && break 2
-      ID=$(try VM.Standard.E2.1.Micro "$IMG_E2" "$fd") && [[ "$ID" == ocid* ]] && break 2
+      ID=$(try VM.Standard.A1.Flex "$IMG_A1" "$fd" '{"ocpus":1,"memoryInGBs":6}'); [[ "$ID" == ocid* ]] && break 2
+      ID=$(existing); [[ "$ID" == ocid* ]] && break 2          # launched despite an odd reply
+      ID=$(try VM.Standard.E2.1.Micro "$IMG_E2" "$fd"); [[ "$ID" == ocid* ]] && break 2
+      ID=$(existing); [[ "$ID" == ocid* ]] && break 2
     done
-    err=$(grep -o '"message": "[^"]*"' /tmp/sq-launch.err | head -1)
-    if ! grep -qi "capacity" /tmp/sq-launch.err; then
-      say "Oracle refused for another reason: ${err:-}"; echo "--- details:"; cat /tmp/sq-launch.err; exit 1
+    if ! grep -qi "capacity" "$LAST"; then
+      say "Oracle refused for a reason other than capacity. Its full reply:"; echo "-----"; cat "$LAST"; echo "-----"
+      echo "(every attempt is logged in /tmp/sq-launch.log)"; exit 1
     fi
-    say "Attempt $n: no free capacity yet ($err). Retrying in 60 s... (Ctrl+C to stop)"
+    say "Attempt $n: no free capacity yet. Retrying in 60 s... (Ctrl+C to stop)"
     sleep 60
   done
   say "Created! Waiting for it to start"
