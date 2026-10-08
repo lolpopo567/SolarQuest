@@ -44,8 +44,9 @@ else
   fi
   say "Network ready, ports 22/80/443 open"
 
-  # ---- SSH key for logging in from this Cloud Shell
-  [ -f ~/.ssh/id_ed25519 ] || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519 -q
+  # ---- SSH key for logging in from this Cloud Shell (RSA: Cloud Shell runs in FIPS mode, which refuses ed25519)
+  [ -f ~/.ssh/id_rsa.pub ] || ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa -q
+  [ -f ~/.ssh/id_rsa.pub ] || { say "Could not create an SSH key in ~/.ssh"; exit 1; }
 
   image() {
     oci compute image list --compartment-id "$C" --operating-system "Canonical Ubuntu" --operating-system-version 24.04 \
@@ -57,7 +58,7 @@ else
     local extra=(); [ -n "${4:-}" ] && extra=(--shape-config "$4")
     oci compute instance launch --compartment-id "$C" --availability-domain "$AD" --fault-domain "$3" \
       --shape "$1" "${extra[@]}" --image-id "$2" --subnet-id "$S" --assign-public-ip true \
-      --display-name solarquest --ssh-authorized-keys-file ~/.ssh/id_ed25519.pub \
+      --display-name solarquest --ssh-authorized-keys-file ~/.ssh/id_rsa.pub \
       --query data.id --raw-output 2>/tmp/sq-launch.err
   }
   n=0
@@ -69,7 +70,7 @@ else
     done
     err=$(grep -o '"message": "[^"]*"' /tmp/sq-launch.err | head -1)
     if ! grep -qi "capacity" /tmp/sq-launch.err; then
-      say "Oracle refused for another reason: ${err:-see /tmp/sq-launch.err}"; cat /tmp/sq-launch.err; exit 1
+      say "Oracle refused for another reason: ${err:-}"; echo "--- details:"; cat /tmp/sq-launch.err; exit 1
     fi
     say "Attempt $n: no free capacity yet ($err). Retrying in 60 s... (Ctrl+C to stop)"
     sleep 60
