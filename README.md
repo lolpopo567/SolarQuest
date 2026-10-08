@@ -8,3 +8,5 @@ and land. Thai and English.
 - **Privacy policy:** https://lolpopo567.github.io/SolarQuest/privacy.html
 
 This repository holds the built game only; it is updated automatically.
+
+Last published: 8 Oct 2026.
