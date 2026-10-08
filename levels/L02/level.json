@@ -1,0 +1,1207 @@
+{
+ "schema_version": "1.0",
+ "level_id": "L02",
+ "level_number": 2,
+ "title": "The Sunny Trap",
+ "area_id": "BANGBAN",
+ "season_be": 2565,
+ "season_complete": true,
+ "mission_type": "ground",
+ "bbox": [
+  100.40836,
+  14.30593,
+  100.52342,
+  14.46029
+ ],
+ "zoom_min": 11,
+ "zoom_max": 17,
+ "budget_m2": 300000,
+ "par_score": 70,
+ "optimal_selection": {
+  "geometry": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      100.483402,
+      14.439952
+     ],
+     [
+      100.483438,
+      14.445376
+     ],
+     [
+      100.4788,
+      14.445405
+     ],
+     [
+      100.478764,
+      14.439982
+     ],
+     [
+      100.483402,
+      14.439952
+     ]
+    ]
+   ]
+  },
+  "geometry_grid": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      659900.0,
+      1596900.0
+     ],
+     [
+      659900.0,
+      1597500.0
+     ],
+     [
+      659400.0,
+      1597500.0
+     ],
+     [
+      659400.0,
+      1596900.0
+     ],
+     [
+      659900.0,
+      1596900.0
+     ]
+    ]
+   ]
+  },
+  "area_m2": 300000.0,
+  "mean_weight": 84.8936,
+  "family": "rect 6x5"
+ },
+ "denominator_table": [
+  {
+   "n_pixels": 1,
+   "mean_weight": 86.1639,
+   "family": "rect 1x1",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       652900.0,
+       1597300.0
+      ],
+      [
+       652900.0,
+       1597400.0
+      ],
+      [
+       652800.0,
+       1597400.0
+      ],
+      [
+       652800.0,
+       1597300.0
+      ],
+      [
+       652900.0,
+       1597300.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 2,
+   "mean_weight": 86.1545,
+   "family": "rect 2x1",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       653200.0,
+       1597500.0
+      ],
+      [
+       653200.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597500.0
+      ],
+      [
+       653200.0,
+       1597500.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 3,
+   "mean_weight": 86.153,
+   "family": "rect 3x1",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       653200.0,
+       1597400.0
+      ],
+      [
+       653200.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597400.0
+      ],
+      [
+       653200.0,
+       1597400.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 4,
+   "mean_weight": 86.1516,
+   "family": "rect 4x1",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       653200.0,
+       1597300.0
+      ],
+      [
+       653200.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597300.0
+      ],
+      [
+       653200.0,
+       1597300.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 5,
+   "mean_weight": 86.1501,
+   "family": "rect 5x1",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       653200.0,
+       1597200.0
+      ],
+      [
+       653200.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597700.0
+      ],
+      [
+       653100.0,
+       1597200.0
+      ],
+      [
+       653200.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 6,
+   "mean_weight": 86.1443,
+   "family": "rect 3x2",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       653300.0,
+       1597200.0
+      ],
+      [
+       653300.0,
+       1597500.0
+      ],
+      [
+       653100.0,
+       1597500.0
+      ],
+      [
+       653100.0,
+       1597200.0
+      ],
+      [
+       653300.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 7,
+   "mean_weight": 86.0391,
+   "family": "rect 2x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       654900.0,
+       1597300.0
+      ],
+      [
+       654900.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597300.0
+      ],
+      [
+       654900.0,
+       1597300.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 8,
+   "mean_weight": 86.0391,
+   "family": "rect 2x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       654900.0,
+       1597300.0
+      ],
+      [
+       654900.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597300.0
+      ],
+      [
+       654900.0,
+       1597300.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 9,
+   "mean_weight": 86.0401,
+   "family": "rect 3x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       654800.0,
+       1597200.0
+      ],
+      [
+       654800.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       654800.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 10,
+   "mean_weight": 86.0363,
+   "family": "rect 2x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655000.0,
+       1597300.0
+      ],
+      [
+       655000.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597300.0
+      ],
+      [
+       655000.0,
+       1597300.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 11,
+   "mean_weight": 86.0372,
+   "family": "rect 3x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       654900.0,
+       1597200.0
+      ],
+      [
+       654900.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       654900.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 12,
+   "mean_weight": 86.0372,
+   "family": "rect 3x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       654900.0,
+       1597200.0
+      ],
+      [
+       654900.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       654900.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 13,
+   "mean_weight": 86.0305,
+   "family": "rect 2x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655200.0,
+       1597300.0
+      ],
+      [
+       655200.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597300.0
+      ],
+      [
+       655200.0,
+       1597300.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 14,
+   "mean_weight": 86.0305,
+   "family": "rect 2x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655200.0,
+       1597300.0
+      ],
+      [
+       655200.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597300.0
+      ],
+      [
+       655200.0,
+       1597300.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 15,
+   "mean_weight": 85.9374,
+   "family": "rect 5x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1597000.0
+      ],
+      [
+       659900.0,
+       1597500.0
+      ],
+      [
+       659600.0,
+       1597500.0
+      ],
+      [
+       659600.0,
+       1597000.0
+      ],
+      [
+       659900.0,
+       1597000.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 16,
+   "mean_weight": 85.9349,
+   "family": "rect 4x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1597000.0
+      ],
+      [
+       659900.0,
+       1597400.0
+      ],
+      [
+       659500.0,
+       1597400.0
+      ],
+      [
+       659500.0,
+       1597000.0
+      ],
+      [
+       659900.0,
+       1597000.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 17,
+   "mean_weight": 85.8799,
+   "family": "rect 3x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655100.0,
+       1597200.0
+      ],
+      [
+       655100.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       655100.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 18,
+   "mean_weight": 85.8799,
+   "family": "rect 3x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655100.0,
+       1597200.0
+      ],
+      [
+       655100.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       655100.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 19,
+   "mean_weight": 85.7681,
+   "family": "rect 5x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597400.0
+      ],
+      [
+       659500.0,
+       1597400.0
+      ],
+      [
+       659500.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 20,
+   "mean_weight": 85.7681,
+   "family": "rect 5x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597400.0
+      ],
+      [
+       659500.0,
+       1597400.0
+      ],
+      [
+       659500.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 21,
+   "mean_weight": 85.8986,
+   "family": "rect 3x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655200.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597500.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 22,
+   "mean_weight": 85.5068,
+   "family": "rect 6x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597500.0
+      ],
+      [
+       659500.0,
+       1597500.0
+      ],
+      [
+       659500.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 23,
+   "mean_weight": 85.5068,
+   "family": "rect 6x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597500.0
+      ],
+      [
+       659500.0,
+       1597500.0
+      ],
+      [
+       659500.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 24,
+   "mean_weight": 85.5068,
+   "family": "rect 6x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597500.0
+      ],
+      [
+       659500.0,
+       1597500.0
+      ],
+      [
+       659500.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 25,
+   "mean_weight": 85.2419,
+   "family": "rect 5x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597400.0
+      ],
+      [
+       659400.0,
+       1597400.0
+      ],
+      [
+       659400.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 26,
+   "mean_weight": 85.0786,
+   "family": "rect 4x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655200.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597600.0
+      ],
+      [
+       654500.0,
+       1597600.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 27,
+   "mean_weight": 85.0786,
+   "family": "rect 4x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655200.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597600.0
+      ],
+      [
+       654500.0,
+       1597600.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 28,
+   "mean_weight": 85.0786,
+   "family": "rect 4x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       655200.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597600.0
+      ],
+      [
+       654500.0,
+       1597600.0
+      ],
+      [
+       654500.0,
+       1597200.0
+      ],
+      [
+       655200.0,
+       1597200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 29,
+   "mean_weight": 84.8936,
+   "family": "rect 6x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597500.0
+      ],
+      [
+       659400.0,
+       1597500.0
+      ],
+      [
+       659400.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 30,
+   "mean_weight": 84.8936,
+   "family": "rect 6x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       659900.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1597500.0
+      ],
+      [
+       659400.0,
+       1597500.0
+      ],
+      [
+       659400.0,
+       1596900.0
+      ],
+      [
+       659900.0,
+       1596900.0
+      ]
+     ]
+    ]
+   }
+  }
+ ],
+ "size_reward": {
+  "breakeven_weight": 74.334,
+  "breakeven_pct": 50.0,
+  "gamma": 0.5,
+  "optimal_area_m2": 300000.0,
+  "optimal_net_value": 316.797
+ },
+ "scoring": {
+  "crs": "EPSG:32647",
+  "pixel_size_m": 100.0,
+  "weights_file": "suitability.tif",
+  "mask_file": "mask.tif",
+  "weights_sha256": "4c86569c9de19380e35b4b220c7db9bc90001e5273b40b489d80d5411bcf854c",
+  "aspects": [
+   1.0,
+   1.3333,
+   1.5,
+   2.0,
+   3.0,
+   4.0
+  ],
+  "angles": [
+   15.0,
+   30.0,
+   45.0,
+   60.0,
+   75.0
+  ],
+  "model_version": "scoring_v1.4",
+  "access_scored": false,
+  "weights_season_be": 2568
+ },
+ "streetview_anchors": [
+  {
+   "anchor_id": "SV1",
+   "lon": 100.4776195,
+   "lat": 14.4407406,
+   "heading_deg": 59.9,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV2",
+   "lon": 100.5482385,
+   "lat": 14.4158498,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.3612608,
+   "lat": 14.5328847,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  }
+ ],
+ "unlocked_layers": [
+  "ghi_seasonal",
+  "flood_freq",
+  "flood_years_hit",
+  "slope_deg",
+  "lu_class_wc",
+  "drought_freq",
+  "d_road"
+ ],
+ "difficulty_tier": 2,
+ "briefing_character": "inspector_m",
+ "briefing_text": "MEMO SSIA/TRN/002. Exercise 2 of 7. Site: Bang Ban district. Season of record: BE 2565. Area budget: 30 ha. Irradiance data is complete for this district.",
+ "briefing_script": "L02.briefing",
+ "hints_enabled": true,
+ "time_limit_s": null,
+ "assets": {
+  "suitability_png": "reveal/suitability.png",
+  "suitability_world": "reveal/suitability.pgw",
+  "flood_anim": {
+   "frames": [
+    {
+     "date": "2022-09-05",
+     "file": "public/flood/2022-09-05.png"
+    },
+    {
+     "date": "2022-09-09",
+     "file": "public/flood/2022-09-09.png"
+    },
+    {
+     "date": "2022-09-17",
+     "file": "public/flood/2022-09-17.png"
+    },
+    {
+     "date": "2022-09-21",
+     "file": "public/flood/2022-09-21.png"
+    },
+    {
+     "date": "2022-09-29",
+     "file": "public/flood/2022-09-29.png"
+    },
+    {
+     "date": "2022-10-03",
+     "file": "public/flood/2022-10-03.png"
+    },
+    {
+     "date": "2022-10-11",
+     "file": "public/flood/2022-10-11.png"
+    },
+    {
+     "date": "2022-10-23",
+     "file": "public/flood/2022-10-23.png"
+    },
+    {
+     "date": "2022-10-27",
+     "file": "public/flood/2022-10-27.png"
+    },
+    {
+     "date": "2022-11-04",
+     "file": "public/flood/2022-11-04.png"
+    },
+    {
+     "date": "2022-11-08",
+     "file": "public/flood/2022-11-08.png"
+    },
+    {
+     "date": "2022-11-16",
+     "file": "public/flood/2022-11-16.png"
+    },
+    {
+     "date": "2022-11-20",
+     "file": "public/flood/2022-11-20.png"
+    },
+    {
+     "date": "2022-11-28",
+     "file": "public/flood/2022-11-28.png"
+    },
+    {
+     "date": "2022-12-02",
+     "file": "public/flood/2022-12-02.png"
+    },
+    {
+     "date": "2022-12-10",
+     "file": "public/flood/2022-12-10.png"
+    },
+    {
+     "date": "2022-12-14",
+     "file": "public/flood/2022-12-14.png"
+    },
+    {
+     "date": "2022-12-22",
+     "file": "public/flood/2022-12-22.png"
+    },
+    {
+     "date": "2022-12-26",
+     "file": "public/flood/2022-12-26.png"
+    }
+   ]
+  },
+  "dashboard": "public/dashboard.json",
+  "explain": "explain.json",
+  "reveal_overlay": null
+ }
+}

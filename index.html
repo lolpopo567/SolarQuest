@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Solar Quest — SSIA Assessment</title>
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#1d2a44">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Solar Quest">
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/maplibre-gl.js"></script>
+  <script src="vendor/proj4.js"></script>
+  <script src="credits.js"></script>
+  <script src="engine.js"></script>
+</head>
+<body>
+  <!-- Missing UI art (spec §8 "Assets still needed") is drawn with plain CSS and marked .ph -->
+
+  <!-- title screen (bg-start) -->
+  <section id="title" class="screen active scene" data-bg="bg-start">
+    <div class="title-card">
+      <h1 class="sr-only">Solar Quest</h1>
+      <img id="logo" class="logo-img" alt="Solar Quest: become a solar site inspector">
+      <p class="tagline" data-t="title_tagline">A Solar Site Inspector Agency story · Thailand, 2038</p>
+      <label class="field"><span data-t="your_name">Your name</span>
+        <input id="player-name" maxlength="24" autocomplete="nickname" data-t-ph="name_placeholder" placeholder="Applicant">
+      </label>
+      <div class="title-actions">
+        <button id="btn-play" class="img-btn play"><img alt=""></button>
+        <button id="btn-new" class="link hidden" data-t="new_game">New game</button>
+      </div>
+      <div class="title-links">
+        <button class="img-btn settings" data-settings data-t-title="settings"><img class="settings-img" alt="Settings"></button>
+        <button id="btn-title-credits" class="link" data-t="data_credits">Data &amp; credits</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- prologue narration on black -->
+  <section id="prologue" class="screen" tabindex="-1">
+    <p id="narration" class="narration"></p>
+    <div class="narration-next" data-t="tap_next">▼ tap or press Space</div>
+    <button id="btn-skip" class="skip" data-t="skip">Skip ▸▸</button>
+  </section>
+
+  <!-- the applicant's desk (bg-work): greeting, then the camera moves into the monitor -->
+  <section id="office" class="screen scene" data-bg="bg-work"></section>
+
+  <!-- in-game computer: the exercise list and credits are windows on a desktop -->
+  <section id="home" class="screen desktop">
+    <div class="desk-icons">
+      <button class="desk-icon" data-open="win-exercises"><span class="ico ico-folder"></span><span data-t="icon_assessments">Assessments</span></button>
+      <button class="desk-icon" data-open="win-credits"><span class="ico ico-doc"></span><span data-t="data_credits">Data &amp; credits</span></button>
+      <button class="desk-icon" data-settings><span class="ico ico-gear">⚙</span><span data-t="settings">Settings</span></button>
+      <button class="desk-icon" id="btn-replay"><span class="ico ico-film"></span><span data-t="icon_intro">Intro</span></button>
+      <button class="desk-icon" id="btn-signout"><span class="ico ico-door"></span><span data-t="icon_signout">Sign out</span></button>
+    </div>
+
+    <div id="win-exercises" class="win" style="--x: 14%; --y: 6%">
+      <div class="win-bar"><span class="win-title" data-t="win_exercises">SSIA · Applicant assessment</span>
+        <button class="win-btn" data-min aria-label="Minimise">–</button>
+        <button class="win-btn" data-close aria-label="Close">×</button></div>
+      <div class="win-body">
+        <p class="hello"><span data-t="signed_in_as">Signed in as</span> <strong id="who"></strong></p>
+        <h2 data-t="exercises_heading">Assessment exercises</h2>
+        <ol id="level-list" class="level-list"></ol>
+        <p class="fine" data-t="exercises_fine">Exercises unlock in order. A grade of B or better confirms a pass.</p>
+      </div>
+    </div>
+
+    <div id="win-credits" class="win wide hidden" style="--x: 6%; --y: 4%">
+      <div class="win-bar"><span class="win-title" data-t="data_credits">Data &amp; credits</span>
+        <button class="win-btn" data-min aria-label="Minimise">–</button>
+        <button class="win-btn" data-close aria-label="Close">×</button></div>
+      <div class="win-body credits-body">
+        <p data-t="credits_intro">Every data source behind the exercises.</p>
+        <div class="credits-wrap"><table class="credits" id="credits-table"></table></div>
+        <p class="fine"><a href="privacy.html" target="_blank" rel="noopener" data-t="privacy_policy">Privacy policy</a> ·
+          <button id="btn-delete-me" class="link danger" data-t="reset_progress">Erase my name and progress on this device</button></p>
+      </div>
+    </div>
+
+    <footer class="taskbar">
+      <button class="start-btn" data-open="win-exercises" title="SSIA"><span class="seal tiny">SSIA</span></button>
+      <div id="task-wins" class="task-wins"></div>
+      <button class="task-gear" data-settings data-t-title="settings">⚙</button>
+      <div id="clock" class="clock"></div>
+    </footer>
+  </section>
+
+  <section id="game" class="screen">
+    <header class="topbar">
+      <button id="btn-home" class="ghost" data-t="back_desktop">◂ Desktop</button>
+      <div class="title"><span id="lv-num"></span> <strong id="lv-title"></strong> <span id="lv-season" class="muted"></span></div>
+      <div class="budget" aria-live="polite">
+        <div class="budget-label"><span data-t="budget">Budget</span> <span id="budget-text">–</span></div>
+        <div class="meter ph" title="Placeholder budget meter"><div id="budget-fill"></div></div>
+      </div>
+      <div id="timer" class="timer hidden"></div>
+      <button id="btn-submit" class="primary" disabled data-t="submit_site">Submit site</button>
+    </header>
+
+    <div class="game-body">
+      <div class="map-wrap">
+        <div id="map"></div>
+        <div class="tools">
+          <button data-tool="rect" class="tool" data-t="tool_rect">▭ Rectangle</button>
+          <button data-tool="poly" class="tool" data-t="tool_poly">⬠ Polygon</button>
+          <button id="btn-clear" class="tool" data-t="tool_clear">✕ Clear</button>
+          <button id="btn-basemap" class="tool">Basemap: satellite</button>
+        </div>
+        <div id="draw-help" class="draw-help hidden"></div>
+        <div id="timeline" class="timeline hidden">
+          <label class="tl-toggle"><input type="checkbox" id="tl-show"> <span data-t="flood_timeline">Flood timeline</span></label>
+          <button id="tl-play" class="ghost small" aria-label="Play">▶</button>
+          <input type="range" id="tl-range" min="0" max="0" value="0" aria-label="Flood timeline date">
+          <span id="tl-date" class="muted"></span>
+        </div>
+        <div id="sat-hud" class="sat-hud">
+          <img id="sat-img" alt="SAT, orbital data feed">
+          <div>
+            <div class="sat-name" data-t="sat_name">SAT · orbital feed</div>
+            <div id="sat-status" class="sat-status"></div>
+            <button id="btn-hint" class="ghost small hidden" data-t="ask_hint">Ask for a hint</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <nav class="tabs" role="tablist">
+          <button role="tab" data-tab="dash" class="active" data-t="tab_dashboard">Dashboard</button>
+          <button role="tab" data-tab="sv" data-t="tab_photos">Street photos</button>
+          <button role="tab" data-tab="reveal" class="hidden" id="tabbtn-reveal" data-t="tab_result">Result</button>
+        </nav>
+        <div id="tab-dash" class="tab active">
+          <div id="fp-summary" class="fp-summary muted">Place a footprint to read values inside it.</div>
+          <div id="cards"></div>
+        </div>
+        <div id="tab-sv" class="tab">
+          <p class="muted small" data-t="photos_intro">Ground-truth imagery at the mission's anchor points.</p>
+          <div id="sv-buttons" class="sv-buttons"></div>
+          <div id="sv-view" class="sv-view"></div>
+        </div>
+        <div id="tab-reveal" class="tab"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- briefing memo -->
+  <div id="memo" class="overlay hidden">
+    <article class="memo-sheet">
+      <div class="letterhead ph" title="Placeholder letterhead">
+        <div class="seal small">SSIA</div>
+        <div><span data-t="agency_name">SOLAR SITE INSPECTOR AGENCY</span><br><span data-t="memo_sub">Training Division · Internal memorandum</span></div>
+      </div>
+      <pre id="memo-text"></pre>
+      <button id="memo-ok" class="primary" data-t="memo_ack">Acknowledge</button>
+    </article>
+  </div>
+
+  <!-- visual-novel dialogue -->
+  <div id="vn" class="overlay vn hidden" tabindex="-1">
+    <img id="vn-left" class="bust left" alt="">
+    <img id="vn-right" class="bust right" alt="">
+    <div class="vn-box">
+      <img id="vn-sat" class="vn-sat hidden" alt="SAT">
+      <div class="vn-name" id="vn-name"></div>
+      <div class="vn-text" id="vn-text"></div>
+      <div class="vn-next" data-t="tap_next">▼ tap or press Space</div>
+    </div>
+  </div>
+
+  <!-- settings -->
+  <div id="settings" class="overlay hidden">
+    <div class="settings-card" role="dialog" aria-labelledby="settings-h">
+      <h2 id="settings-h" data-t="settings">Settings</h2>
+      <fieldset class="lang-pick">
+        <legend data-t="language">Language</legend>
+        <label><input type="radio" name="lang" value="th"> <span data-t="lang_th">ไทย</span></label>
+        <label><input type="radio" name="lang" value="en"> <span data-t="lang_en">English</span></label>
+      </fieldset>
+      <button id="settings-close" class="primary" data-t="close">Close</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"><img id="toast-img" alt=""><div id="toast-text"></div></div>
+
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  </script>
+</body>
+</html>

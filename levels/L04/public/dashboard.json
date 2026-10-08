@@ -1,0 +1,179 @@
+{
+ "level_id": "L04",
+ "mission_type": "rooftop",
+ "overlay_corners": [
+  [
+   100.51582,
+   13.75298
+  ],
+  [
+   100.55243,
+   13.75298
+  ],
+  [
+   100.55243,
+   13.72331
+  ],
+  [
+   100.51582,
+   13.72331
+  ]
+ ],
+ "layers": [
+  {
+   "id": "roof_irr",
+   "label": "Roof sunlight (Sep–Dec)",
+   "unit": "kWh/m²/day",
+   "description": "Sunlight reaching the roof over the flood season, after roof tilt and direction and shade from trees and neighbouring buildings (our shadow model on the Global Solar Atlas). Roofs are treated as flat.",
+   "digits": 2,
+   "prop": "s",
+   "png": null,
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#fbe3d8",
+     "#f6b89c",
+     "#f08d62",
+     "#eb6834",
+     "#c4521f",
+     "#8a3410"
+    ],
+    "min": 3.5,
+    "max": 4.8,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 3.5,
+    "median": 4.43,
+    "max": 4.56
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "roof_usable_m2",
+   "label": "Usable roof area",
+   "unit": "m²",
+   "description": "Roof area free for panels: footprint minus setbacks and the parts shaded for most of the season. Picking a roof places panels on all of it.",
+   "digits": 0,
+   "prop": "u",
+   "png": null,
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#e3f4ea",
+     "#b5e2c6",
+     "#7fcb9f",
+     "#47ad77",
+     "#1f8553",
+     "#0b5a35"
+    ],
+    "min": 20,
+    "max": 2000,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 20.0,
+    "median": 40.0,
+    "max": 44524.0
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": true,
+   "scored": true
+  },
+  {
+   "id": "n_floors",
+   "label": "Floors",
+   "unit": "floors",
+   "description": "Building floors (GISTDA). More floors use more of the electricity the roof makes. Where GISTDA has no heights (Hat Yai), floors come from the EU's GHSL building-height map, an average over 100 m blocks, so single tall buildings are missed.",
+   "digits": 0,
+   "prop": "f",
+   "png": null,
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#f2f1ee",
+     "#c9c6bf",
+     "#9b978e",
+     "#6d6a63",
+     "#45433f"
+    ],
+    "min": 1,
+    "max": 20,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 1.0,
+    "median": 3.0,
+    "max": 60.0
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "flood_years_hit",
+   "label": "Seasons flooded",
+   "unit": "of 5 seasons",
+   "description": "Flood seasons (of the last 5) seen at the building's location. Radar cannot see water between tall buildings, so city floods are under-recorded.",
+   "digits": 0,
+   "prop": "fl",
+   "png": null,
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#cde2fb",
+     "#9ec5f4",
+     "#6da7ec",
+     "#3987e5",
+     "#256abf",
+     "#184f95",
+     "#0d366b"
+    ],
+    "min": 0,
+    "max": 5,
+    "zero_clear": true
+   },
+   "district": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.0
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  }
+ ],
+ "flood_frames": [],
+ "flood_season_ce": null,
+ "flood_until": null,
+ "roofs": "public/roofs.geojson",
+ "n_roofs": 12118,
+ "basemap_s2": {
+  "file": "public/basemap_s2.jpg",
+  "corners": [
+   [
+    100.51092035592329,
+    13.757657631662912
+   ],
+   [
+    100.5577437888776,
+    13.757657631662912
+   ],
+   [
+    100.5577437888776,
+    13.718118143954143
+   ],
+   [
+    100.51092035592329,
+    13.718118143954143
+   ]
+  ],
+  "attribution": "Contains modified Copernicus Sentinel data 2026 (Jan–Apr composite)"
+ }
+}

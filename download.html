@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solar Quest — download</title>
+  <meta name="description" content="Solar Quest: a visual-novel game about siting solar farms in Thailand on real flood, sun and land data.">
+  <link rel="icon" href="icons/icon-192.png">
+  <style>
+    :root { --navy: #1d2a44; --gold: #e8b33a; --paper: #f7f5ef; --muted: #6b7180; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.55 system-ui, sans-serif; color: #1b1f27; background: var(--navy); }
+    .hero { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px;
+      background: url("art/bg-start_1280.webp") center / cover no-repeat; }
+    .card { width: min(560px, 100%); background: rgba(247,245,239,.94); border-radius: 14px; padding: 28px;
+      box-shadow: 0 18px 60px rgba(15,20,32,.35); }
+    h1 { margin: 0; color: var(--navy); letter-spacing: .08em; font-size: clamp(32px, 7vw, 46px); line-height: 1; }
+    .tag { color: var(--muted); margin: 8px 0 18px; }
+    .btns { display: grid; gap: 10px; }
+    a.btn { display: block; padding: 12px 14px; border-radius: 8px; text-decoration: none; color: #fff;
+      background: var(--navy); font-weight: 600; }
+    a.btn small { display: block; font-weight: 400; color: #c9cfdd; }
+    a.btn.alt { background: #fff; color: var(--navy); border: 1px solid #d9d6cc; }
+    a.btn.alt small { color: var(--muted); }
+    .fine { font-size: 13px; color: var(--muted); margin-top: 16px; }
+    .fine a { color: var(--navy); }
+    details { margin-top: 12px; font-size: 14px; } summary { cursor: pointer; color: var(--navy); }
+  </style>
+</head>
+<body>
+<section class="hero">
+  <div class="card">
+    <h1>SOLAR QUEST</h1>
+    <p class="tag">A Solar Site Inspector Agency story · Thailand, 2038. Choose where the country's solar farms go,
+      using real satellite records of sun, flood and land.</p>
+    <div class="btns">
+      <a class="btn" href="./">Play in your browser<small>Phone or computer · install it from the browser menu to play offline</small></a>
+      <a class="btn alt" href="{{PLAY_URL}}" id="play">Get it on Google Play<small>Android</small></a>
+      <a class="btn alt" href="https://github.com/lolpopo567/SolarQuest/releases/latest/download/SolarQuest-Windows.zip">Windows<small>Offline desktop app · about 40 MB</small></a>
+      <a class="btn alt" href="https://github.com/lolpopo567/SolarQuest/releases/latest/download/SolarQuest-macOS-AppleSilicon.zip">Mac (Apple chip, M1 and later)<small>Offline desktop app</small></a>
+      <a class="btn alt" href="https://github.com/lolpopo567/SolarQuest/releases/latest/download/SolarQuest-macOS-Intel.zip">Mac (Intel)<small>Offline desktop app</small></a>
+    </div>
+    <details>
+      <summary>First launch shows a security warning?</summary>
+      <p>The desktop apps are not code-signed yet. <b>Windows:</b> "Windows protected your PC" → <i>More info</i> →
+        <i>Run anyway</i>. <b>Mac:</b> right-click the app → <i>Open</i> → <i>Open</i> (or System Settings → Privacy
+        &amp; Security → <i>Open Anyway</i>). Unzip first, then run <i>SolarQuest</i>.</p>
+    </details>
+    <p class="fine"><a href="privacy.html">Privacy policy</a> ·
+      <a href="https://github.com/lolpopo567/SolarQuest/releases">All versions</a></p>
+  </div>
+</section>
+<script>
+  // hide the Play button until the store listing exists
+  if (document.getElementById("play").getAttribute("href").startsWith("{{")) document.getElementById("play").remove();
+</script>
+</body>
+</html>

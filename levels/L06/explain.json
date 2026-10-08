@@ -1,0 +1,62 @@
+{
+ "factors": [
+  {
+   "id": "flood_score",
+   "label": "Flood risk",
+   "weight": 0.3,
+   "layer": "flood_years_hit",
+   "good": "Rarely flooded ground: little risk of physical damage.",
+   "bad": "Frequently flooded ground: physical damage risk. Flood history outweighs sunshine."
+  },
+  {
+   "id": "solar_score",
+   "label": "Solar irradiance",
+   "weight": 0.3,
+   "layer": "ghi_seasonal",
+   "good": "Strong irradiance: more generation per panel.",
+   "bad": "Weaker irradiance: lower generation potential."
+  },
+  {
+   "id": "landuse_score",
+   "label": "Land use",
+   "weight": 0.15,
+   "layer": "lu_class_wc",
+   "good": "Open land with little conflict with farming.",
+   "bad": "Land that is costly to convert or better kept as farmland."
+  },
+  {
+   "id": "access_score",
+   "label": "Roads and grid",
+   "weight": 0.12,
+   "layer": "d_conn",
+   "good": "Close to roads and power lines: easy to install and maintain.",
+   "bad": "Far from roads and power lines: costly to connect and service."
+  },
+  {
+   "id": "terrain_score",
+   "label": "Terrain",
+   "weight": 0.08,
+   "layer": "slope_deg",
+   "good": "Flat, buildable terrain.",
+   "bad": "Steeper terrain: harder and costlier to build on."
+  },
+  {
+   "id": "drought_score",
+   "label": "Drought",
+   "weight": 0.05,
+   "layer": "drought_freq",
+   "good": "Outside recurring drought zones.",
+   "bad": "Recurring drought zone: looks open and sunny, but heat stress, no cleaning water and fire exposure."
+  }
+ ],
+ "excl_names": [
+  "built-up",
+  "flooded >= 5 of 5 seasons",
+  "forest",
+  "permanent water",
+  "protected area",
+  "reserved forest",
+  "slope > 10 deg",
+  "urban core: rooftop mission"
+ ]
+}

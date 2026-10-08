@@ -1,0 +1,198 @@
+{
+ "schema_version": "1.0",
+ "level_id": "L04",
+ "level_number": 4,
+ "title": "Rooftops of Pathum Wan",
+ "area_id": "PATHUMWAN",
+ "season_be": null,
+ "season_complete": true,
+ "mission_type": "rooftop",
+ "bbox": [
+  100.51582,
+  13.72331,
+  100.55243,
+  13.75298
+ ],
+ "zoom_min": 13,
+ "zoom_max": 19,
+ "budget_m2": 20000,
+ "par_score": 70,
+ "optimal_selection": {
+  "buildings": [
+   {
+    "building_id": "11870",
+    "area_m2": 1347.8
+   },
+   {
+    "building_id": "10922",
+    "area_m2": 12272.7
+   },
+   {
+    "building_id": "10953",
+    "area_m2": 2779.3
+   },
+   {
+    "building_id": "11810",
+    "area_m2": 1062.8
+   },
+   {
+    "building_id": "10951",
+    "area_m2": 1283.1
+   },
+   {
+    "building_id": "11600",
+    "area_m2": 1254.3
+   }
+  ],
+  "area_m2": 20000.0,
+  "mean_weight": 76.0006,
+  "family": "roofs",
+  "geometry": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      100.550255,
+      13.724934
+     ],
+     [
+      100.547648,
+      13.725509
+     ],
+     [
+      100.546228,
+      13.726071
+     ],
+     [
+      100.545347,
+      13.727364
+     ],
+     [
+      100.545418,
+      13.727764
+     ],
+     [
+      100.545609,
+      13.728761
+     ],
+     [
+      100.547894,
+      13.728399
+     ],
+     [
+      100.551248,
+      13.725583
+     ],
+     [
+      100.551249,
+      13.72545
+     ],
+     [
+      100.551254,
+      13.725079
+     ],
+     [
+      100.551256,
+      13.724949
+     ],
+     [
+      100.551239,
+      13.724939
+     ],
+     [
+      100.550255,
+      13.724934
+     ]
+    ]
+   ]
+  }
+ },
+ "size_reward": {
+  "breakeven_weight": 64.63,
+  "breakeven_pct": 50.0,
+  "gamma": 0.5,
+  "optimal_area_m2": 20000.0,
+  "optimal_net_value": 22.742
+ },
+ "scoring": {
+  "crs": "EPSG:32647",
+  "pixel_size_m": 1.0,
+  "weights_file": "roofs.json",
+  "mask_file": null,
+  "weights_sha256": "0f6bc3ea3a496b58e7af24388b34461149e7ccc6aab536383107527c45039e65",
+  "aspects": [
+   1.0,
+   1.3333,
+   1.5,
+   2.0,
+   3.0,
+   4.0
+  ],
+  "angles": [],
+  "model_version": "scoring_v1.4",
+  "access_scored": false,
+  "weights_season_be": null
+ },
+ "streetview_anchors": [
+  {
+   "anchor_id": "SV1",
+   "lon": 100.5228087,
+   "lat": 13.7423138,
+   "heading_deg": 287.4,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV2",
+   "lon": 100.4734907,
+   "lat": 13.782192,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.6111041,
+   "lat": 13.7851995,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV4",
+   "lon": 100.550256,
+   "lat": 13.7239197,
+   "heading_deg": 23.2,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  }
+ ],
+ "unlocked_layers": [
+  "roof_irr",
+  "roof_usable_m2",
+  "n_floors",
+  "flood_years_hit"
+ ],
+ "difficulty_tier": 2,
+ "briefing_character": "inspector_m",
+ "briefing_text": "MEMO SSIA/TRN/004. Exercise 4 of 7. Site: Pathum Wan district, Bangkok. Rooftop mission: no ground-mount on this district. Panel budget: 2 ha of roof. Pick whole roofs; each carries panels on its usable area.",
+ "briefing_script": "L04.briefing",
+ "hints_enabled": true,
+ "time_limit_s": null,
+ "assets": {
+  "dashboard": "public/dashboard.json",
+  "explain": "explain.json",
+  "roofs": "public/roofs.geojson",
+  "roof_weights": "reveal/roof_weights.json",
+  "flood_anim": null,
+  "reveal_overlay": null
+ }
+}

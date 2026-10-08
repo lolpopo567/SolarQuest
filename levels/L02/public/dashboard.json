@@ -1,0 +1,400 @@
+{
+ "level_id": "L02",
+ "overlay_corners": [
+  [
+   100.4083638,
+   14.4602933
+  ],
+  [
+   100.5242465,
+   14.4602933
+  ],
+  [
+   100.5242465,
+   14.3058401
+  ],
+  [
+   100.4083638,
+   14.3058401
+  ]
+ ],
+ "layers": [
+  {
+   "id": "ghi_seasonal",
+   "label": "Solar irradiance (Sep–Dec)",
+   "unit": "kWh/m²/day",
+   "description": "Mean daily global horizontal irradiance over the flood season.",
+   "digits": 2,
+   "png": "public/layers/ghi_seasonal.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#fbe3d8",
+     "#f6b89c",
+     "#f08d62",
+     "#eb6834",
+     "#c4521f",
+     "#8a3410"
+    ],
+    "min": 3.5,
+    "max": 5.75,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 4.75,
+    "median": 4.79,
+    "max": 4.84,
+    "mean": 4.79
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "flood_freq",
+   "label": "Flood frequency",
+   "unit": "share of satellite passes",
+   "description": "Share of Sentinel-1 passes that saw the cell wet, complete seasons 2564–2568.",
+   "digits": 2,
+   "png": "public/layers/flood_freq.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#cde2fb",
+     "#9ec5f4",
+     "#6da7ec",
+     "#3987e5",
+     "#256abf",
+     "#184f95",
+     "#0d366b"
+    ],
+    "min": 0,
+    "max": 1,
+    "zero_clear": true
+   },
+   "district": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.87,
+    "mean": 0.14
+   },
+   "has_gaps": false,
+   "gap_pct": 0.1,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "flood_years_hit",
+   "label": "Seasons flooded",
+   "unit": "of 5 seasons",
+   "description": "How many of the last 5 complete flood seasons the cell was flooded.",
+   "digits": 0,
+   "png": "public/layers/flood_years_hit.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#cde2fb",
+     "#9ec5f4",
+     "#6da7ec",
+     "#3987e5",
+     "#256abf",
+     "#184f95",
+     "#0d366b"
+    ],
+    "min": 0,
+    "max": 5,
+    "zero_clear": true
+   },
+   "district": {
+    "min": 0,
+    "median": 0,
+    "max": 5,
+    "mean": 1.87
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": true,
+   "scored": true
+  },
+  {
+   "id": "slope_deg",
+   "label": "Slope",
+   "unit": "°",
+   "description": "Terrain slope from the Copernicus 30 m DEM.",
+   "digits": 1,
+   "png": "public/layers/slope_deg.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#f2f1ee",
+     "#c9c6bf",
+     "#9b978e",
+     "#6d6a63",
+     "#45433f"
+    ],
+    "min": 0,
+    "max": 15,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 0.0,
+    "median": 0.9,
+    "max": 7.4,
+    "mean": 1.03
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "lu_class_wc",
+   "label": "Land cover",
+   "unit": "class",
+   "description": "ESA WorldCover 2021, 10 m, summarised per cell. This is the land cover the score uses.",
+   "digits": 0,
+   "png": "public/layers/lu_class_wc.png",
+   "legend": {
+    "type": "categorical",
+    "classes": [
+     {
+      "code": 10,
+      "label": "Trees / plantation",
+      "color": "#008300"
+     },
+     {
+      "code": 30,
+      "label": "Grassland",
+      "color": "#b8d84a"
+     },
+     {
+      "code": 40,
+      "label": "Cropland",
+      "color": "#eda100"
+     },
+     {
+      "code": 50,
+      "label": "Built-up",
+      "color": "#e87ba4"
+     },
+     {
+      "code": 60,
+      "label": "Bare / sparse",
+      "color": "#c9b79c"
+     },
+     {
+      "code": 80,
+      "label": "Water",
+      "color": "#2a78d6"
+     },
+     {
+      "code": 90,
+      "label": "Wetland",
+      "color": "#1baf7a"
+     }
+    ]
+   },
+   "district": {
+    "shares_pct": {
+     "Trees / plantation": 13.6,
+     "Grassland": 8.8,
+     "Cropland": 61.4,
+     "Built-up": 6.2,
+     "Bare / sparse": 3.0,
+     "Water": 6.7,
+     "Wetland": 0.2
+    }
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": true,
+   "scored": true
+  },
+  {
+   "id": "drought_freq",
+   "label": "Drought frequency",
+   "unit": "share of years",
+   "description": "Share of years the cell was in a GISTDA recurring-drought zone.",
+   "digits": 2,
+   "png": "public/layers/drought_freq.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#fbe3d8",
+     "#f6b89c",
+     "#f08d62",
+     "#eb6834",
+     "#c4521f",
+     "#8a3410"
+    ],
+    "min": 0,
+    "max": 0.5,
+    "zero_clear": true
+   },
+   "district": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.17,
+    "mean": 0.03
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "d_road",
+   "label": "Distance to road",
+   "unit": "m",
+   "description": "Distance to the nearest mapped road (OpenStreetMap).",
+   "digits": 0,
+   "png": "public/layers/d_road.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#0b5a35",
+     "#1f8553",
+     "#47ad77",
+     "#7fcb9f",
+     "#b5e2c6",
+     "#e3f4ea"
+    ],
+    "min": 0,
+    "max": 5000,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 0,
+    "median": 1000,
+    "max": 3329,
+    "mean": 1147.77
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  }
+ ],
+ "flood_frames": [
+  {
+   "date": "2022-09-05",
+   "file": "public/flood/2022-09-05.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-09-09",
+   "file": "public/flood/2022-09-09.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-09-17",
+   "file": "public/flood/2022-09-17.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-09-21",
+   "file": "public/flood/2022-09-21.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-09-29",
+   "file": "public/flood/2022-09-29.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-10-03",
+   "file": "public/flood/2022-10-03.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-10-11",
+   "file": "public/flood/2022-10-11.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-10-23",
+   "file": "public/flood/2022-10-23.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-10-27",
+   "file": "public/flood/2022-10-27.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-11-04",
+   "file": "public/flood/2022-11-04.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-11-08",
+   "file": "public/flood/2022-11-08.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-11-16",
+   "file": "public/flood/2022-11-16.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-11-20",
+   "file": "public/flood/2022-11-20.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-11-28",
+   "file": "public/flood/2022-11-28.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-12-02",
+   "file": "public/flood/2022-12-02.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-12-10",
+   "file": "public/flood/2022-12-10.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-12-14",
+   "file": "public/flood/2022-12-14.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-12-22",
+   "file": "public/flood/2022-12-22.png",
+   "pct_observed": 99.9
+  },
+  {
+   "date": "2022-12-26",
+   "file": "public/flood/2022-12-26.png",
+   "pct_observed": 99.9
+  }
+ ],
+ "flood_season_ce": 2022,
+ "flood_until": null,
+ "basemap_s2": {
+  "file": "public/basemap_s2.jpg",
+  "corners": [
+   [
+    100.40461382040102,
+    14.464587023827264
+   ],
+   [
+    100.52724383712233,
+    14.464587023827264
+   ],
+   [
+    100.52724383712233,
+    14.302146707380565
+   ],
+   [
+    100.40461382040102,
+    14.302146707380565
+   ]
+  ],
+  "attribution": "Contains modified Copernicus Sentinel data 2026 (Jan–Apr composite)"
+ }
+}

@@ -1,10 +1,10 @@
 # Solar Quest
 
 A visual-novel game about choosing where Thailand's solar farms go, using real satellite records of sun, flood
-and land. This repository holds the public builds only.
+and land. Thai and English.
 
-- **Download page:** https://lolpopo567.github.io/SolarQuest/
-- **Windows / Mac:** see [Releases](https://github.com/lolpopo567/SolarQuest/releases)
-- **Privacy policy:** [privacy.html](privacy.html)
+- **Play in your browser:** https://lolpopo567.github.io/SolarQuest/ (install it from the browser menu to play offline)
+- **Downloads (Windows, Mac):** https://lolpopo567.github.io/SolarQuest/download.html
+- **Privacy policy:** https://lolpopo567.github.io/SolarQuest/privacy.html
 
-`setup.sh` installs the game server on an Oracle Cloud Always Free VM (for the maintainers).
+This repository holds the built game only; it is updated automatically.

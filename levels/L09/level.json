@@ -1,0 +1,1372 @@
+{
+ "schema_version": "1.0",
+ "level_id": "L09",
+ "level_number": 7,
+ "title": "Final Assessment",
+ "area_id": "HATYAI",
+ "season_be": 2568,
+ "season_complete": true,
+ "mission_type": "mixed",
+ "bbox": [
+  100.18996,
+  6.78612,
+  100.6093,
+  7.18798
+ ],
+ "zoom_min": 10,
+ "zoom_max": 18,
+ "budget_m2": 300000,
+ "par_score": 65,
+ "optimal_selection": {
+  "geometry": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      100.481804,
+      6.955627
+     ],
+     [
+      100.481818,
+      6.960149
+     ],
+     [
+      100.476388,
+      6.960166
+     ],
+     [
+      100.476374,
+      6.955644
+     ],
+     [
+      100.481804,
+      6.955627
+     ]
+    ]
+   ]
+  },
+  "geometry_grid": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      663700.0,
+      769100.0
+     ],
+     [
+      663700.0,
+      769600.0
+     ],
+     [
+      663100.0,
+      769600.0
+     ],
+     [
+      663100.0,
+      769100.0
+     ],
+     [
+      663700.0,
+      769100.0
+     ]
+    ]
+   ]
+  },
+  "area_m2": 300000.0,
+  "mean_weight": 78.4954,
+  "family": "rect 5x6"
+ },
+ "denominator_table": [
+  {
+   "n_pixels": 1,
+   "mean_weight": 81.1058,
+   "family": "rect 1x1",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       672600.0,
+       785700.0
+      ],
+      [
+       672600.0,
+       785800.0
+      ],
+      [
+       672500.0,
+       785800.0
+      ],
+      [
+       672500.0,
+       785700.0
+      ],
+      [
+       672600.0,
+       785700.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 2,
+   "mean_weight": 81.0828,
+   "family": "rect 1x2",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       672600.0,
+       785500.0
+      ],
+      [
+       672600.0,
+       785600.0
+      ],
+      [
+       672400.0,
+       785600.0
+      ],
+      [
+       672400.0,
+       785500.0
+      ],
+      [
+       672600.0,
+       785500.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 3,
+   "mean_weight": 81.0793,
+   "family": "rect 1x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       672600.0,
+       785500.0
+      ],
+      [
+       672600.0,
+       785600.0
+      ],
+      [
+       672300.0,
+       785600.0
+      ],
+      [
+       672300.0,
+       785500.0
+      ],
+      [
+       672600.0,
+       785500.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 4,
+   "mean_weight": 80.5802,
+   "family": "rect 4x1 @45deg",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       672476.8,
+       785543.9
+      ],
+      [
+       672193.9,
+       785826.8
+      ],
+      [
+       672123.2,
+       785756.1
+      ],
+      [
+       672406.1,
+       785473.2
+      ],
+      [
+       672476.8,
+       785543.9
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 5,
+   "mean_weight": 80.003,
+   "family": "rect 5x1 @45deg",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       672512.1,
+       785508.6
+      ],
+      [
+       672158.6,
+       785862.1
+      ],
+      [
+       672087.9,
+       785791.4
+      ],
+      [
+       672441.4,
+       785437.9
+      ],
+      [
+       672512.1,
+       785508.6
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 6,
+   "mean_weight": 79.7729,
+   "family": "rect 2x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769400.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769400.0
+      ],
+      [
+       663600.0,
+       769400.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 7,
+   "mean_weight": 79.7687,
+   "family": "rect 4x2",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769200.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769200.0
+      ],
+      [
+       663600.0,
+       769200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 8,
+   "mean_weight": 79.7687,
+   "family": "rect 4x2",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769200.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769200.0
+      ],
+      [
+       663600.0,
+       769200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 9,
+   "mean_weight": 79.7666,
+   "family": "rect 5x2",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 10,
+   "mean_weight": 79.7666,
+   "family": "rect 5x2",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769600.0
+      ],
+      [
+       663400.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 11,
+   "mean_weight": 79.4564,
+   "family": "rect 4x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769200.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769200.0
+      ],
+      [
+       663600.0,
+       769200.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 12,
+   "mean_weight": 79.5612,
+   "family": "rect 2x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663700.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769300.0
+      ],
+      [
+       663100.0,
+       769300.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 13,
+   "mean_weight": 79.5169,
+   "family": "rect 5x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 14,
+   "mean_weight": 79.5169,
+   "family": "rect 5x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 15,
+   "mean_weight": 79.5169,
+   "family": "rect 5x3",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769600.0
+      ],
+      [
+       663300.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 16,
+   "mean_weight": 79.2971,
+   "family": "rect 4x4",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663500.0,
+       769100.0
+      ],
+      [
+       663500.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663500.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 17,
+   "mean_weight": 79.3905,
+   "family": "rect 4x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 18,
+   "mean_weight": 79.3905,
+   "family": "rect 4x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 19,
+   "mean_weight": 79.3905,
+   "family": "rect 4x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 20,
+   "mean_weight": 79.3905,
+   "family": "rect 4x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769500.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 21,
+   "mean_weight": 79.2971,
+   "family": "rect 4x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 22,
+   "mean_weight": 79.2971,
+   "family": "rect 4x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 23,
+   "mean_weight": 79.2971,
+   "family": "rect 4x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 24,
+   "mean_weight": 79.2971,
+   "family": "rect 4x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 25,
+   "mean_weight": 78.7475,
+   "family": "rect 5x5",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663600.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769600.0
+      ],
+      [
+       663100.0,
+       769600.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663600.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 26,
+   "mean_weight": 79.1066,
+   "family": "rect 4x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663700.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 27,
+   "mean_weight": 79.1066,
+   "family": "rect 4x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663700.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 28,
+   "mean_weight": 79.1066,
+   "family": "rect 4x7",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663700.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769500.0
+      ],
+      [
+       663000.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 29,
+   "mean_weight": 78.4954,
+   "family": "rect 5x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663700.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769600.0
+      ],
+      [
+       663100.0,
+       769600.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "n_pixels": 30,
+   "mean_weight": 78.4954,
+   "family": "rect 5x6",
+   "geometry_grid": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       663700.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769600.0
+      ],
+      [
+       663100.0,
+       769600.0
+      ],
+      [
+       663100.0,
+       769100.0
+      ],
+      [
+       663700.0,
+       769100.0
+      ]
+     ]
+    ]
+   }
+  }
+ ],
+ "size_reward": {
+  "breakeven_weight": 65.891,
+  "breakeven_pct": 50.0,
+  "gamma": 0.5,
+  "optimal_area_m2": 300000.0,
+  "optimal_net_value": 378.121
+ },
+ "scoring": {
+  "crs": "EPSG:32647",
+  "pixel_size_m": 100.0,
+  "weights_file": "suitability.tif",
+  "mask_file": "mask.tif",
+  "weights_sha256": "aff878fc5f2c8131cf919c4eab9e5686660fbaf2262ef5e41b0c6d2b6a6a34ab",
+  "aspects": [
+   1.0,
+   1.3333,
+   1.5,
+   2.0,
+   3.0,
+   4.0
+  ],
+  "angles": [
+   15.0,
+   30.0,
+   45.0,
+   60.0,
+   75.0
+  ],
+  "model_version": "scoring_v1.4",
+  "access_scored": true,
+  "weights_season_be": 2568
+ },
+ "streetview_anchors": [
+  {
+   "anchor_id": "SV1",
+   "lon": 100.1383782,
+   "lat": 6.7797157,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV2",
+   "lon": 100.533815,
+   "lat": 7.1199813,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.4744993,
+   "lat": 6.9588671,
+   "heading_deg": 101.8,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV4",
+   "lon": 100.1383782,
+   "lat": 6.7797157,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV5",
+   "lon": 100.533815,
+   "lat": 7.1199813,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV6",
+   "lon": 100.4753768,
+   "lat": 7.0160834,
+   "heading_deg": 348.1,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  }
+ ],
+ "unlocked_layers": [
+  "ghi_seasonal",
+  "flood_freq",
+  "flood_years_s1_eos",
+  "slope_deg",
+  "lu_class_wc",
+  "drought_freq",
+  "d_road",
+  "d_conn"
+ ],
+ "difficulty_tier": 5,
+ "briefing_character": "inspector_m",
+ "briefing_text": "MEMO SSIA/ASSESS/007. Final assessment. Site: Hat Yai district, Songkhla, the whole district. Two installations: one ground-mount footprint of up to 30 ha outside the city core, and up to 20,000 m² of rooftop panels in the city. Both are graded; the final mark is their average. No hints.",
+ "briefing_script": "L09.briefing",
+ "hints_enabled": false,
+ "time_limit_s": 1200,
+ "assets": {
+  "suitability_png": "reveal/suitability.png",
+  "suitability_world": "reveal/suitability.pgw",
+  "flood_anim": {
+   "frames": [
+    {
+     "date": "2025-09-06",
+     "file": "public/flood/2025-09-06.png"
+    },
+    {
+     "date": "2025-09-12",
+     "file": "public/flood/2025-09-12.png"
+    },
+    {
+     "date": "2025-09-18",
+     "file": "public/flood/2025-09-18.png"
+    },
+    {
+     "date": "2025-09-24",
+     "file": "public/flood/2025-09-24.png"
+    },
+    {
+     "date": "2025-09-30",
+     "file": "public/flood/2025-09-30.png"
+    },
+    {
+     "date": "2025-10-06",
+     "file": "public/flood/2025-10-06.png"
+    },
+    {
+     "date": "2025-10-12",
+     "file": "public/flood/2025-10-12.png"
+    },
+    {
+     "date": "2025-10-18",
+     "file": "public/flood/2025-10-18.png"
+    },
+    {
+     "date": "2025-10-24",
+     "file": "public/flood/2025-10-24.png"
+    },
+    {
+     "date": "2025-10-30",
+     "file": "public/flood/2025-10-30.png"
+    },
+    {
+     "date": "2025-11-05",
+     "file": "public/flood/2025-11-05.png"
+    },
+    {
+     "date": "2025-11-11",
+     "file": "public/flood/2025-11-11.png"
+    },
+    {
+     "date": "2025-11-23",
+     "file": "public/flood/2025-11-23.png"
+    },
+    {
+     "date": "2025-11-29",
+     "file": "public/flood/2025-11-29.png"
+    },
+    {
+     "date": "2025-11-29",
+     "file": "public/flood/2025-11-29.png"
+    },
+    {
+     "date": "2025-12-05",
+     "file": "public/flood/2025-12-05.png"
+    },
+    {
+     "date": "2025-12-05",
+     "file": "public/flood/2025-12-05.png"
+    },
+    {
+     "date": "2025-12-11",
+     "file": "public/flood/2025-12-11.png"
+    },
+    {
+     "date": "2025-12-17",
+     "file": "public/flood/2025-12-17.png"
+    },
+    {
+     "date": "2025-12-23",
+     "file": "public/flood/2025-12-23.png"
+    },
+    {
+     "date": "2025-12-29",
+     "file": "public/flood/2025-12-29.png"
+    }
+   ]
+  },
+  "dashboard": "public/dashboard.json",
+  "explain": "explain.json",
+  "reveal_overlay": {
+   "date": "2025-11-23",
+   "extent_file": "reveal/flood_event.png",
+   "depth_file": null
+  },
+  "roofs": "public/roofs.geojson",
+  "roof_weights": "reveal/roof_weights.json"
+ },
+ "rooftop": {
+  "budget_m2": 20000,
+  "optimal_selection": {
+   "buildings": [
+    {
+     "building_id": "1214",
+     "area_m2": 1014.4
+    },
+    {
+     "building_id": "3467",
+     "area_m2": 1490.4
+    },
+    {
+     "building_id": "4557",
+     "area_m2": 9559.6
+    },
+    {
+     "building_id": "3384",
+     "area_m2": 1252.0
+    },
+    {
+     "building_id": "2104",
+     "area_m2": 1356.0
+    },
+    {
+     "building_id": "672",
+     "area_m2": 2534.7
+    },
+    {
+     "building_id": "2360",
+     "area_m2": 1007.9
+    },
+    {
+     "building_id": "2390",
+     "area_m2": 1709.0
+    },
+    {
+     "building_id": "727",
+     "area_m2": 76.0
+    }
+   ],
+   "area_m2": 20000.0,
+   "mean_weight": 70.4513,
+   "family": "roofs",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       100.480439,
+       7.000235
+      ],
+      [
+       100.480246,
+       7.000477
+      ],
+      [
+       100.458202,
+       7.036496
+      ],
+      [
+       100.458216,
+       7.03653
+      ],
+      [
+       100.458332,
+       7.036717
+      ],
+      [
+       100.458563,
+       7.036946
+      ],
+      [
+       100.458762,
+       7.037017
+      ],
+      [
+       100.45925,
+       7.037048
+      ],
+      [
+       100.493556,
+       7.018865
+      ],
+      [
+       100.493417,
+       7.018121
+      ],
+      [
+       100.480754,
+       7.000394
+      ],
+      [
+       100.480597,
+       7.000315
+      ],
+      [
+       100.480439,
+       7.000235
+      ]
+     ]
+    ]
+   }
+  },
+  "size_reward": {
+   "breakeven_weight": 63.49,
+   "breakeven_pct": 50.0,
+   "gamma": 0.5,
+   "optimal_area_m2": 20000.0,
+   "optimal_net_value": 13.923
+  },
+  "weights_file": "roofs.json",
+  "weights_sha256": "33e3367e3bf9fe06295c12c0be8a7e88d00d5dc1f1ffc6a2e9b07570f7fc8aac",
+  "unlocked_layers": [
+   "roof_irr",
+   "roof_usable_m2",
+   "n_floors",
+   "flood_years_hit"
+  ]
+ }
+}

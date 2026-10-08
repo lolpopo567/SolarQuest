@@ -1,0 +1,454 @@
+{
+ "level_id": "L07",
+ "overlay_corners": [
+  [
+   100.1899585,
+   7.1879754
+  ],
+  [
+   100.6094718,
+   7.1879754
+  ],
+  [
+   100.6094718,
+   6.7858446
+  ],
+  [
+   100.1899585,
+   6.7858446
+  ]
+ ],
+ "layers": [
+  {
+   "id": "ghi_seasonal",
+   "label": "Solar irradiance (Sep–Dec)",
+   "unit": "kWh/m²/day",
+   "description": "Mean daily global horizontal irradiance over the flood season.",
+   "digits": 2,
+   "png": "public/layers/ghi_seasonal.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#fbe3d8",
+     "#f6b89c",
+     "#f08d62",
+     "#eb6834",
+     "#c4521f",
+     "#8a3410"
+    ],
+    "min": 3.5,
+    "max": 5.75,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 3.83,
+    "median": 4.21,
+    "max": 4.4,
+    "mean": 4.18
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "flood_freq",
+   "label": "Flood frequency",
+   "unit": "share of satellite passes",
+   "description": "Share of Sentinel-1 passes that saw the cell wet, complete seasons 2564–2568.",
+   "digits": 2,
+   "png": "public/layers/flood_freq.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#cde2fb",
+     "#9ec5f4",
+     "#6da7ec",
+     "#3987e5",
+     "#256abf",
+     "#184f95",
+     "#0d366b"
+    ],
+    "min": 0,
+    "max": 1,
+    "zero_clear": true
+   },
+   "district": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.97,
+    "mean": 0.03
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "flood_years_s1_eos",
+   "label": "Seasons flooded (radar + mapped floods)",
+   "unit": "of 5 seasons",
+   "description": "Seasons flooded out of the last 5: Sentinel-1 radar plus the Earth Observatory of Singapore flood maps of Dec 2024 and 23 Nov 2025. This is the flood record the score uses.",
+   "digits": 0,
+   "png": "public/layers/flood_years_s1_eos.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#cde2fb",
+     "#9ec5f4",
+     "#6da7ec",
+     "#3987e5",
+     "#256abf",
+     "#184f95",
+     "#0d366b"
+    ],
+    "min": 0,
+    "max": 5,
+    "zero_clear": true
+   },
+   "district": {
+    "min": 0,
+    "median": 0,
+    "max": 5,
+    "mean": 0.3
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": true,
+   "scored": true
+  },
+  {
+   "id": "slope_deg",
+   "label": "Slope",
+   "unit": "°",
+   "description": "Terrain slope from the Copernicus 30 m DEM.",
+   "digits": 1,
+   "png": "public/layers/slope_deg.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#f2f1ee",
+     "#c9c6bf",
+     "#9b978e",
+     "#6d6a63",
+     "#45433f"
+    ],
+    "min": 0,
+    "max": 15,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 0.0,
+    "median": 4.7,
+    "max": 52.0,
+    "mean": 7.29
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": true,
+   "scored": true
+  },
+  {
+   "id": "lu_class_wc",
+   "label": "Land cover",
+   "unit": "class",
+   "description": "ESA WorldCover 2021, 10 m, summarised per cell. This is the land cover the score uses.",
+   "digits": 0,
+   "png": "public/layers/lu_class_wc.png",
+   "legend": {
+    "type": "categorical",
+    "classes": [
+     {
+      "code": 10,
+      "label": "Trees / plantation",
+      "color": "#008300"
+     },
+     {
+      "code": 20,
+      "label": "Shrubland",
+      "color": "#9b8a3c"
+     },
+     {
+      "code": 30,
+      "label": "Grassland",
+      "color": "#b8d84a"
+     },
+     {
+      "code": 40,
+      "label": "Cropland",
+      "color": "#eda100"
+     },
+     {
+      "code": 50,
+      "label": "Built-up",
+      "color": "#e87ba4"
+     },
+     {
+      "code": 60,
+      "label": "Bare / sparse",
+      "color": "#c9b79c"
+     },
+     {
+      "code": 80,
+      "label": "Water",
+      "color": "#2a78d6"
+     },
+     {
+      "code": 90,
+      "label": "Wetland",
+      "color": "#1baf7a"
+     },
+     {
+      "code": 95,
+      "label": "Mangrove",
+      "color": "#4a3aa7"
+     }
+    ]
+   },
+   "district": {
+    "shares_pct": {
+     "Trees / plantation": 78.1,
+     "Shrubland": 0.0,
+     "Grassland": 6.5,
+     "Cropland": 2.4,
+     "Built-up": 7.2,
+     "Bare / sparse": 0.5,
+     "Water": 4.5,
+     "Wetland": 0.7,
+     "Mangrove": 0.1
+    }
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": true,
+   "scored": true
+  },
+  {
+   "id": "drought_freq",
+   "label": "Drought frequency",
+   "unit": "share of years",
+   "description": "Share of years the cell was in a GISTDA recurring-drought zone.",
+   "digits": 2,
+   "png": "public/layers/drought_freq.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#fbe3d8",
+     "#f6b89c",
+     "#f08d62",
+     "#eb6834",
+     "#c4521f",
+     "#8a3410"
+    ],
+    "min": 0,
+    "max": 0.5,
+    "zero_clear": true
+   },
+   "district": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.17,
+    "mean": 0.01
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "d_road",
+   "label": "Distance to road",
+   "unit": "m",
+   "description": "Distance to the nearest mapped road (OpenStreetMap).",
+   "digits": 0,
+   "png": "public/layers/d_road.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#0b5a35",
+     "#1f8553",
+     "#47ad77",
+     "#7fcb9f",
+     "#b5e2c6",
+     "#e3f4ea"
+    ],
+    "min": 0,
+    "max": 5000,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 0,
+    "median": 1965,
+    "max": 10496,
+    "mean": 2751.49
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  },
+  {
+   "id": "d_conn",
+   "label": "Distance to grid",
+   "unit": "m",
+   "description": "Distance to the nearest mapped power line or substation. OSM has no 22/33 kV lines in Thailand, so this is an upper bound.",
+   "digits": 0,
+   "png": "public/layers/d_conn.png",
+   "legend": {
+    "type": "ramp",
+    "colors": [
+     "#0b5a35",
+     "#1f8553",
+     "#47ad77",
+     "#7fcb9f",
+     "#b5e2c6",
+     "#e3f4ea"
+    ],
+    "min": 0,
+    "max": 10000,
+    "zero_clear": false
+   },
+   "district": {
+    "min": 0,
+    "median": 2474,
+    "max": 13761,
+    "mean": 3299.49
+   },
+   "has_gaps": false,
+   "gap_pct": 0.0,
+   "hard_constraint": false,
+   "scored": true
+  }
+ ],
+ "flood_frames": [
+  {
+   "date": "2025-09-06",
+   "file": "public/flood/2025-09-06.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-09-12",
+   "file": "public/flood/2025-09-12.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-09-18",
+   "file": "public/flood/2025-09-18.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-09-24",
+   "file": "public/flood/2025-09-24.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-09-30",
+   "file": "public/flood/2025-09-30.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-10-06",
+   "file": "public/flood/2025-10-06.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-10-12",
+   "file": "public/flood/2025-10-12.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-10-18",
+   "file": "public/flood/2025-10-18.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-10-24",
+   "file": "public/flood/2025-10-24.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-10-30",
+   "file": "public/flood/2025-10-30.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-11-05",
+   "file": "public/flood/2025-11-05.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-11-11",
+   "file": "public/flood/2025-11-11.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-11-23",
+   "file": "public/flood/2025-11-23.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-11-29",
+   "file": "public/flood/2025-11-29.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-11-29",
+   "file": "public/flood/2025-11-29.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-12-05",
+   "file": "public/flood/2025-12-05.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-12-05",
+   "file": "public/flood/2025-12-05.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-12-11",
+   "file": "public/flood/2025-12-11.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-12-17",
+   "file": "public/flood/2025-12-17.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-12-23",
+   "file": "public/flood/2025-12-23.png",
+   "pct_observed": 100.0
+  },
+  {
+   "date": "2025-12-29",
+   "file": "public/flood/2025-12-29.png",
+   "pct_observed": 100.0
+  }
+ ],
+ "flood_season_ce": 2025,
+ "flood_until": null,
+ "basemap_s2": {
+  "file": "public/basemap_s2.jpg",
+  "corners": [
+   [
+    100.18594830723683,
+    7.192358348573497
+   ],
+   [
+    100.61333934498545,
+    7.192358348573497
+   ],
+   [
+    100.61333934498545,
+    6.7825385453393645
+   ],
+   [
+    100.18594830723683,
+    6.7825385453393645
+   ]
+  ],
+  "attribution": "Contains modified Copernicus Sentinel data 2026 (Jan–Apr composite)"
+ }
+}
