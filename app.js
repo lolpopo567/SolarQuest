@@ -868,11 +868,12 @@ function countUp(el, target, done) {
 /* ------------------------------------------------------------------ data & credits */
 function renderCredits() {
   const tag = { used: t("status_used"), repl: t("status_repl"), no: t("status_no") };
-  $("#credits-table").innerHTML = `<thead><tr><th>${t("col_source")}</th><th>${t("col_owner")}</th><th>${t("col_time")}</th><th>${t("col_use")}</th>
+  const html = `<thead><tr><th>${t("col_source")}</th><th>${t("col_owner")}</th><th>${t("col_time")}</th><th>${t("col_use")}</th>
     <th>${t("col_limits")}</th><th>${t("col_status")}</th></tr></thead><tbody>` + window.SQ_SOURCES.map((r) => r.length === 1
       ? `<tr class="grp"><td colspan="6">${esc(r[0])}</td></tr>`
       : `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td>
          <td><span class="src-tag ${r[5]}">${tag[r[5]]}</span></td></tr>`).join("") + "</tbody>";
+  $$("table.credits").forEach((tb) => { tb.innerHTML = html; });   // desktop window and title-screen overlay
 }
 
 /* ------------------------------------------------------------------ story: title, prologue, office */
@@ -960,7 +961,12 @@ $("#btn-delete-me").onclick = async () => {
 $("#btn-play").onclick = () => { saveName(); if ($("#btn-play").dataset.mode === "continue") renderHome(); else playIntro(); };
 $("#btn-new").onclick = () => { saveName(); playIntro(); };
 $("#player-name").onkeydown = (e) => { if (e.key === "Enter") $("#btn-play").click(); };
-$("#btn-title-credits").onclick = () => { saveName(); renderHome().then(() => openWin("win-credits")); };
+$("#btn-title-credits").onclick = () => {
+  if (!$("#credits-table").innerHTML) renderCredits();
+  $("#title-credits").classList.remove("hidden");
+};
+$("#title-credits-close").onclick = () => $("#title-credits").classList.add("hidden");
+$("#title-credits").onclick = (e) => { if (e.target.id === "title-credits") $("#title-credits").classList.add("hidden"); };
 
 /* ------------------------------------------------------------------ the in-game desktop */
 function openWin(id) {

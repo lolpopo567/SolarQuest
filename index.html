@@ -207,6 +207,19 @@
     </div>
   </div>
 
+  <!-- data & credits from the title screen (the desktop has its own window) -->
+  <div id="title-credits" class="overlay hidden">
+    <div class="credits-card" role="dialog" aria-labelledby="title-credits-h">
+      <div class="credits-card-head">
+        <h2 id="title-credits-h" data-t="data_credits">Data &amp; credits</h2>
+        <button id="title-credits-close" class="primary" data-t="close">Close</button>
+      </div>
+      <p data-t="credits_intro">Every data source behind the exercises.</p>
+      <div class="credits-wrap"><table class="credits"></table></div>
+      <p class="fine"><a href="privacy.html" target="_blank" rel="noopener" data-t="privacy_policy">Privacy policy</a></p>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden" role="status"><img id="toast-img" alt=""><div id="toast-text"></div></div>
 
   <script src="app.js"></script>

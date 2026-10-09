@@ -264,6 +264,14 @@ table.credits tr.grp td { font-weight: 700; text-transform: uppercase; font-size
 table.credits td:first-child { font-weight: 600; }
 .src-tag { font-size: 0.7rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
 .src-tag.used { color: #1d7f4e; } .src-tag.repl { color: #1f5fbf; } .src-tag.no { color: #b8432f; }
+#title-credits { z-index: 2500; }
+.credits-card { width: min(1200px, 100%); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow: auto;
+  display: flex; flex-direction: column; gap: 12px; padding: 18px 20px; border-radius: 12px; background: var(--paper);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .4); }
+.credits-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: -18px;
+  margin: -18px -20px 0; padding: 14px 20px; background: var(--paper); z-index: 1; border-bottom: 1px solid var(--line); }
+.credits-card h2 { margin: 0; color: var(--navy); }
+.credits-card p { max-width: 75ch; margin: 0; }
 #credits { overflow: auto; background: var(--paper); }
 
 .maptiler-logo { position: absolute; left: 10px; bottom: 10px; z-index: 2; }
