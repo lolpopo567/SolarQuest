@@ -310,6 +310,19 @@ function buildMap(lv) {
       }
       setBasemap(basemapOrder().includes(S.basemap) ? S.basemap : basemapOrder()[0]);
       const empty = { type: "FeatureCollection", features: [] };
+      const taken = lv.dashboard.taken_sites;                    // earlier exercises' approved sites: off limits
+      if (taken) {
+        map.addSource("taken", { type: "geojson", data: { type: "Feature", geometry: taken, properties: {} } });
+        map.addLayer({ id: "taken-fill", type: "fill", source: "taken", paint: { "fill-color": "#3a3f4b", "fill-opacity": 0.55 } });
+        map.addLayer({ id: "taken-line", type: "line", source: "taken",
+                       paint: { "line-color": "#f0a43a", "line-width": 2.5, "line-dasharray": [2, 1.5] } });
+        const ring = taken.type === "Polygon" ? taken.coordinates[0] : taken.coordinates.flatMap((p) => p[0]);
+        const xs = ring.map((c) => c[0]), ys = ring.map((c) => c[1]);
+        const tag = document.createElement("div");
+        tag.className = "taken-tag";
+        tag.textContent = "🚧 " + t("taken_label");
+        new maplibregl.Marker({ element: tag }).setLngLat([(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2]).addTo(map);
+      }
       map.addSource("fp", { type: "geojson", data: empty });
       map.addSource("fp-handles", { type: "geojson", data: empty });
       map.addSource("optimal", { type: "geojson", data: empty });

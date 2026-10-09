@@ -44,7 +44,8 @@
  "excl_names": [
   "built-up",
   "flooded >= 5 of 5 seasons",
-  "permanent water"
+  "permanent water",
+  "under construction (approved site)"
  ],
  "not_scored": [
   {

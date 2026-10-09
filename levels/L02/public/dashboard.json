@@ -2,20 +2,20 @@
  "level_id": "L02",
  "overlay_corners": [
   [
-   100.4083638,
-   14.4602933
+   100.4981041,
+   14.4073138
   ],
   [
-   100.5242465,
-   14.4602933
+   100.6292581,
+   14.4073138
   ],
   [
-   100.5242465,
-   14.3058401
+   100.6292581,
+   14.2789425
   ],
   [
-   100.4083638,
-   14.3058401
+   100.4981041,
+   14.2789425
   ]
  ],
  "layers": [
@@ -41,10 +41,10 @@
     "zero_clear": false
    },
    "district": {
-    "min": 4.75,
-    "median": 4.79,
-    "max": 4.84,
-    "mean": 4.79
+    "min": 4.74,
+    "median": 4.76,
+    "max": 4.78,
+    "mean": 4.76
    },
    "has_gaps": false,
    "gap_pct": 0.0,
@@ -76,11 +76,11 @@
    "district": {
     "min": 0.0,
     "median": 0.0,
-    "max": 0.87,
-    "mean": 0.14
+    "max": 0.88,
+    "mean": 0.02
    },
    "has_gaps": false,
-   "gap_pct": 0.1,
+   "gap_pct": 0.0,
    "hard_constraint": false,
    "scored": true
   },
@@ -110,7 +110,7 @@
     "min": 0,
     "median": 0,
     "max": 5,
-    "mean": 1.87
+    "mean": 0.34
    },
    "has_gaps": false,
    "gap_pct": 0.0,
@@ -139,9 +139,9 @@
    },
    "district": {
     "min": 0.0,
-    "median": 0.9,
-    "max": 7.4,
-    "mean": 1.03
+    "median": 1.2,
+    "max": 8.9,
+    "mean": 1.32
    },
    "has_gaps": false,
    "gap_pct": 0.0,
@@ -197,13 +197,13 @@
    },
    "district": {
     "shares_pct": {
-     "Trees / plantation": 13.6,
-     "Grassland": 8.8,
-     "Cropland": 61.4,
-     "Built-up": 6.2,
-     "Bare / sparse": 3.0,
-     "Water": 6.7,
-     "Wetland": 0.2
+     "Trees / plantation": 28.0,
+     "Grassland": 10.9,
+     "Cropland": 35.8,
+     "Built-up": 21.1,
+     "Bare / sparse": 0.4,
+     "Water": 3.8,
+     "Wetland": 0.0
     }
    },
    "has_gaps": false,
@@ -235,8 +235,8 @@
    "district": {
     "min": 0.0,
     "median": 0.0,
-    "max": 0.17,
-    "mean": 0.03
+    "max": 0.83,
+    "mean": 0.15
    },
    "has_gaps": false,
    "gap_pct": 0.0,
@@ -266,9 +266,9 @@
    },
    "district": {
     "min": 0,
-    "median": 1000,
-    "max": 3329,
-    "mean": 1147.77
+    "median": 361,
+    "max": 2385,
+    "mean": 458.89
    },
    "has_gaps": false,
    "gap_pct": 0.0,
@@ -280,121 +280,100 @@
   {
    "date": "2022-09-05",
    "file": "public/flood/2022-09-05.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-09-09",
    "file": "public/flood/2022-09-09.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-09-17",
    "file": "public/flood/2022-09-17.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-09-21",
    "file": "public/flood/2022-09-21.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-09-29",
    "file": "public/flood/2022-09-29.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-10-03",
    "file": "public/flood/2022-10-03.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-10-11",
    "file": "public/flood/2022-10-11.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-10-23",
    "file": "public/flood/2022-10-23.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-10-27",
    "file": "public/flood/2022-10-27.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-11-04",
    "file": "public/flood/2022-11-04.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-11-08",
    "file": "public/flood/2022-11-08.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-11-16",
    "file": "public/flood/2022-11-16.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-11-20",
    "file": "public/flood/2022-11-20.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-11-28",
    "file": "public/flood/2022-11-28.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-12-02",
    "file": "public/flood/2022-12-02.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-12-10",
    "file": "public/flood/2022-12-10.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-12-14",
    "file": "public/flood/2022-12-14.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-12-22",
    "file": "public/flood/2022-12-22.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   },
   {
    "date": "2022-12-26",
    "file": "public/flood/2022-12-26.png",
-   "pct_observed": 99.9
+   "pct_observed": 100.0
   }
  ],
  "flood_season_ce": 2022,
  "flood_until": null,
- "basemap_s2": {
-  "file": "public/basemap_s2.jpg",
-  "corners": [
-   [
-    100.40461382040102,
-    14.464587023827264
-   ],
-   [
-    100.52724383712233,
-    14.464587023827264
-   ],
-   [
-    100.52724383712233,
-    14.302146707380565
-   ],
-   [
-    100.40461382040102,
-    14.302146707380565
-   ]
-  ],
-  "attribution": "Contains modified Copernicus Sentinel data 2026 (Jan–Apr composite)"
- }
+ "taken_sites": null
 }
