@@ -4,7 +4,9 @@
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const NAMES = { inspector_m: "Senior Inspector", inspector_f: "Agency Officer", sat: "SAT · orbital feed" };   // names stay English
+const NAMES = { inspector_m: "Senior Inspector", inspector_f: "Agency Officer", sat: "SAT · orbital feed",
+                news: "Channel 38 News" };                                                             // names stay English
+const speaker = (c) => c === "player" ? playerName() : NAMES[c] || c;    // "player" is the main character
 const ha = (m2) => (m2 / 1e4).toLocaleString(undefined, { maximumFractionDigits: 1 });
 
 const store = {
@@ -61,6 +63,7 @@ function spriteUrl(key, width) {
   return "";
 }
 function preload(keys) {
+  keys = keys.filter(Boolean);                                   // speakers without a portrait have no sprite
   const urls = keys.flatMap((k) => k.startsWith("sat_") ? [spriteUrl(k, 128)] : [spriteUrl(k, 512), spriteUrl(k, 256)]);
   return Promise.all(urls.map((u) => new Promise((res) => { const i = new Image(); i.onload = i.onerror = res; i.src = u; })));
 }
@@ -126,14 +129,14 @@ function playDialogue(lines) {
       i += 1;
       if (i >= lines.length) { vn.classList.add("hidden"); vn.onclick = null; document.onkeydown = null; return resolve(); }
       const ln = lines[i];
-      $("#vn-name").textContent = NAMES[ln.character] || ln.character;
+      $("#vn-name").textContent = speaker(ln.character);
       typeLine($("#vn-text"), ln.text, ln.character);
       const left = $("#vn-left"), right = $("#vn-right"), sat = $("#vn-sat");
       sat.classList.toggle("hidden", ln.layout !== "hud");
       if (ln.layout === "hud") { sat.src = spriteUrl(ln.sprite, 128); setSat(ln.sprite); }
       if (ln.layout === "bust_left") { left.src = spriteUrl(ln.sprite, 512); left.classList.remove("hidden", "dim"); right.classList.add("dim"); }
       if (ln.layout === "bust_right") { right.src = spriteUrl(ln.sprite, 512); right.classList.remove("hidden", "dim"); left.classList.add("dim"); }
-      if (ln.layout === "hud") { left.classList.add("dim"); right.classList.add("dim"); }
+      if (ln.layout === "hud" || ln.layout === "none") { left.classList.add("dim"); right.classList.add("dim"); }
     };
     $("#vn-left").classList.add("hidden"); $("#vn-right").classList.add("hidden");
     vn.classList.remove("hidden"); vn.focus();
@@ -160,17 +163,19 @@ const renderHome = () => showScreen("home", fillHome);
 async function fillHome() {
   $("#who").textContent = playerName();
   if (!S.desktopReady) initDesktop();
-  const list = await api(`/api/levels?player_id=${S.playerId}`);
+  const list = await refreshDay();
+  $("#day-done").classList.toggle("hidden", !evening());
   const ol = $("#level-list"); ol.innerHTML = "";
   for (const l of list) {
     const li = document.createElement("li");
-    li.className = "level-card" + (l.unlocked ? "" : " locked");
+    const today = l.unlocked && l.level_number <= S.day;              // one new exercise per day
+    li.className = "level-card" + (today ? "" : " locked");
     const grade = l.best_score == null ? "" : gradeBadge(gradeOf(l.best_score), "chip");
     li.innerHTML = `<div class="num">${l.level_number}</div>
       <div><strong>${esc(levelTitle(l.level_id, l.title))}</strong><div class="meta">${esc(areaName(l.area_id))} · ${t("mission_" + l.mission_type)}
       ${l.season_be ? "· " + t("season_be", { be: l.season_be }) : ""} ${l.attempts ? "· " + t("attempts", { n: l.attempts }) : ""}</div></div>
-      <div class="lv-right">${grade}<button class="${l.unlocked ? "primary" : ""}" ${l.unlocked ? "" : "disabled"}>${t(l.unlocked ? "begin" : "locked")}</button></div>`;
-    if (l.unlocked) $("button", li).onclick = () => startLevel(l.level_id);
+      <div class="lv-right">${grade}<button class="${today ? "primary" : ""}" ${today ? "" : "disabled"}>${today ? t("begin") : t("on_day", { n: l.level_number })}</button></div>`;
+    if (today) $("button", li).onclick = () => startLevel(l.level_id);
     ol.appendChild(li);
   }
 }
@@ -864,6 +869,11 @@ function revealMap(r, fit = true) {
 
 function renderReveal(r) {
   const res = r.result, ex = r.explanation, tab = $("#tab-reveal");
+  if (r.passed && S.level.level_number === S.day && S.day <= S.days) {       // today's exercise passed: the day is over
+    const ev = evening(), keep = ev && GRADE_RANK[ev.grade] >= GRADE_RANK[res.grade];  // a retry can only raise it
+    store.set(EVENING_KEY, JSON.stringify({ day: S.day, grade: keep ? ev.grade : res.grade }));
+  }
+  const dayOver = !!evening();
   $("#tabbtn-reveal").classList.remove("hidden");
   const factorText = (f) => {
     const tab = f.roof || f.part === "roofs" ? "roof_factor_text" : "factor_text";
@@ -906,7 +916,7 @@ function renderReveal(r) {
     <h3>${t("why_best")}</h3>${factors}${notScored}
     <div class="reveal-actions">
       <button id="btn-retry">${t("try_again")}</button>
-      ${r.next_level && (r.passed || r.unlocked.length) ? `<button class="primary" id="btn-next">${t("next_exercise")}</button>` : ""}
+      ${dayOver ? `<button class="primary" id="btn-end-day">${t("end_day")}</button>` : ""}
       <button id="btn-levels" class="ghost">${t("all_exercises")}</button></div>
     <h3>${t("leaderboard")}</h3><table class="lb" id="lb"></table>`;
   countUp($("#score-num"), res.score, () => $("#stamp").classList.add("on"));
@@ -914,7 +924,7 @@ function renderReveal(r) {
     S.map.setLayoutProperty("flood-event", "visibility", e.target.checked ? "visible" : "none");
   $("#btn-retry").onclick = () => startLevel(S.level.level_id);
   $("#btn-levels").onclick = renderHome;
-  if ($("#btn-next")) $("#btn-next").onclick = () => startLevel(r.next_level);
+  if ($("#btn-end-day")) $("#btn-end-day").onclick = endDay;
   api(`/api/leaderboard/${S.level.level_id}?name=${encodeURIComponent(playerName())}`).then((rows) => {
     $("#lb").innerHTML = rows.map((x) => `<tr><td>${x.rank}</td><td>${esc(x.date)}</td><td>${x.grade}</td><td style="text-align:right">${x.score.toFixed(1)}</td></tr>`).join("");
   });
@@ -1004,23 +1014,77 @@ function narrate(cards) {               // black screen, one card per click / Sp
     scr.focus(); next();
   });
 }
-async function playIntro() {
-  const story = await api("/api/story/prologue");
-  const lines = story.lines.map((l) => ({ ...l, text: fillName(l.text) }));
-  await Promise.all([preload([...new Set(lines.map((l) => l.sprite))]),
-                     new Promise((r) => { const i = new Image(); i.onload = i.onerror = r; i.src = bgUrl(story.background); })]);
-  await showScreen("prologue");
-  await narrate(story.narration);
+/* ------------------------------------------------------------------ the day loop
+   One day = one new exercise passed (7 days). Morning: [Day N] -> office (outside) -> desk -> computer.
+   Evening ("End the day"): house -> door closed -> door open -> TV off -> TV on (the news) -> next morning.
+   sq_evening holds the finished day and its grade until the player has gone home. Text: dialogue.yaml days/evening. */
+const EVENING_KEY = "sq_evening";
+const GRADE_RANK = { S: 4, A: 3, B: 2, C: 1, D: 0 };
+function evening() { try { return JSON.parse(store.get(EVENING_KEY) || "null"); } catch { return null; } }
+async function refreshDay() {
+  const list = await api(`/api/levels?player_id=${S.playerId}`);
+  const passed = list.filter((l) => l.best_score != null && l.best_score >= S.config.pass_score).length;
+  const ev = evening();
+  S.days = list.length;
+  S.day = ev ? ev.day : Math.min(passed + 1, S.days + 1);       // days + 1: the story is finished
+  if (S.clockTick) S.clockTick();                                // the taskbar shows "Day N"
+  return list;
+}
+const say = (lines) => playDialogue(lines.map((l) => ({ ...l, text: fillName(l.text) })));
+const loadImg = (src) => new Promise((r) => { const i = new Image(); i.onload = i.onerror = r; i.src = src; });
+async function scene(bg) {                                       // a full-screen picture: office, house, door, TV
+  await loadImg(bgUrl(bg));
+  await showScreen("stage", () => { $("#stage").style.backgroundImage = `url("${bgUrl(bg)}")`; }, true);
+  await wait(250);
+}
+async function dayCard(text, sub = "") {                         // white text on black between days
+  await showScreen("daycard", () => { $("#daycard-text").textContent = text; $("#daycard-sub").textContent = sub; }, true);
+  await wait(2200);
+}
+async function playMorning(n) {
+  const st = await api(`/api/story/day/${n}`);
+  await preload([...new Set([...st.office, ...st.desk].map((l) => l.sprite))]);
+  await dayCard(t("day_n", { n }));
+  await scene("office");
+  await say(st.office);
   const office = $("#office");
   office.classList.remove("zoom");
   await showScreen("office");
   await wait(300);
-  await playDialogue(lines);
+  await say(st.desk);
   office.classList.add("zoom");                                // the camera moves into the monitor
-  await new Promise((r) => setTimeout(r, 1100));
-  store.set("sq_intro_seen", "1");
+  await wait(1100);
   await renderHome();
   office.classList.remove("zoom");
+}
+async function endDay() {
+  const ev = evening();
+  if (!ev) return renderHome();
+  clearInterval(S.timer);
+  const st = await api(`/api/story/day/${ev.day}`);
+  await scene("house");
+  await say(ev.grade === "S" || ev.grade === "A" ? st.house_top : st.house_pass);
+  await scene("door-closed");
+  await say(st.door);
+  await scene("door-open");
+  await wait(1000);
+  await scene("tv-off");
+  await say(st.tv_off);
+  await scene("tv-on");
+  await say(st.tv);
+  store.set(EVENING_KEY, "");
+  await refreshDay();
+  if (S.day <= S.days) return playMorning(S.day);
+  await dayCard(t("the_end"), t("the_end_sub"));                // after day 7: the story is over
+  await wait(1500);
+  return showTitle();
+}
+async function playIntro() {
+  const story = await api("/api/story/prologue");
+  await showScreen("prologue");
+  await narrate(story.narration);
+  store.set("sq_intro_seen", "1");
+  await playMorning(1);                                        // Day 1: office, then the Senior Inspector's greeting
   if (!store.get("sq_tutorial_seen")) await playTutorial();    // first visit to the desktop
 }
 async function playTutorial() {                                  // SAT walks through the desktop (dialogue.yaml: tutorial)
@@ -1033,10 +1097,14 @@ async function playTutorial() {                                  // SAT walks th
 $("#btn-delete-me").onclick = async () => {
   if (!confirm(t("reset_confirm"))) return;
   await api(`/api/players/${S.playerId}`, { method: "DELETE" });
-  ["sq_player", "sq_name", "sq_intro_seen", "sq_tutorial_seen"].forEach((k) => store.set(k, ""));
+  ["sq_player", "sq_name", "sq_intro_seen", "sq_tutorial_seen", EVENING_KEY].forEach((k) => store.set(k, ""));
   location.reload();
 };
-$("#btn-play").onclick = () => { saveName(); if ($("#btn-play").dataset.mode === "continue") renderHome(); else playIntro(); };
+$("#btn-play").onclick = () => {
+  saveName();
+  if ($("#btn-play").dataset.mode !== "continue") return playIntro();
+  return evening() ? endDay() : renderHome();                  // a finished day the player never went home from
+};
 $("#btn-new").onclick = () => { saveName(); playIntro(); };
 $("#player-name").onkeydown = (e) => { if (e.key === "Enter") $("#btn-play").click(); };
 $("#btn-title-credits").onclick = () => {
@@ -1089,12 +1157,13 @@ function initDesktop() {
   });
   $("#btn-replay").onclick = () => playIntro();
   $("#btn-tutorial").onclick = () => playTutorial();
+  $("#btn-end-day-home").onclick = () => endDay();
   $("#btn-signout").onclick = () => showTitle();
   const tick = () => {
     const d = new Date();
-    $("#clock").innerHTML = `${d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}<small>${d.getDate()} ${d.toLocaleString("en-GB", { month: "short" })} 2038</small>`;
+    $("#clock").innerHTML = `${d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}<small>${S.day ? t("day_n", { n: Math.min(S.day, S.days) }) + " · " : ""}${d.getDate()} ${d.toLocaleString("en-GB", { month: "short" })} 2038</small>`;
   };
-  tick(); setInterval(tick, 15000);
+  S.clockTick = tick; tick(); setInterval(tick, 15000);
   focusWin($("#win-exercises")); renderTasks();
 }
 

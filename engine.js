@@ -63,7 +63,8 @@ const SQEngine = (() => {
     return { sprite: `${who}_${emo}`, layout: chars[emo].layout };
   }
   function line(node, scene, vars = {}, id = null) {
-    const r = resolveSprite(node.who, node.mood, scene);
+    const r = C.art.characters[node.who] ? resolveSprite(node.who, node.mood, scene)
+                                         : { sprite: null, layout: "none" };          // player, TV news: no portrait
     return { line_id: id, character: node.who, text: fill(pick(node), vars), scene, requested_emotion: node.mood, ...r };
   }
   const react = (key, scene, vars) => line(C.dialogue.reactions[key], scene, vars, `reactions.${key}`);
@@ -429,6 +430,15 @@ const SQEngine = (() => {
   on("GET", /^\/api\/story\/prologue$/, () => ({
     narration: Object.values(C.dialogue.prologue_narration).map(pick), background: "bg-work",
     lines: group(C.dialogue.prologue_greeting, "prologue") }));
+  // the day loop (dialogue.yaml: days, evening): morning at the office, evening at home with the TV news
+  on("GET", /^\/api\/story\/day\/(\d+)$/, ([, n]) => {
+    const d = C.dialogue.days[`day_${n}`] || {}, ev = C.dialogue.evening;
+    return { day: +n, office: group(d.office, "progression"),
+             desk: +n === 1 ? group(C.dialogue.prologue_greeting, "prologue") : group(d.desk, "progression"),
+             tv: group(d.tv, "progression"), house_top: group(ev.house_top, "progression"),
+             house_pass: group(ev.house_pass, "progression"), door: group(ev.door, "progression"),
+             tv_off: group(ev.tv_off, "progression") };
+  });
   on("GET", /^\/api\/story\/tutorial$/, () => ({ lines: group(C.dialogue.tutorial, "progression") }));
   on("POST", /^\/api\/players$/, () => ({ ok: true }));                       // the name lives in localStorage (app.js)
   on("DELETE", /^\/api\/players\/[0-9a-f]{32}$/, () => {

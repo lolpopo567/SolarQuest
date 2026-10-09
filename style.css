@@ -24,11 +24,10 @@ button.small { padding: 2px 8px; font-size: 13px; }
 /* ---------- story scenes: title (bg-start), prologue (black), office (bg-work) */
 .scene { background: #10151f center / cover no-repeat; position: relative; }
 #title.active { display: grid; place-items: center; padding: 16px 16px 84px; overflow-y: auto; }
-/* only the logo sits on a light card; the rest floats on bg-start */
-.title-stack { width: min(420px, 100%); text-align: center; }
-.title-card { padding: 16px 20px 12px; border-radius: 14px;
-  background: rgba(247, 245, 239, .9); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  box-shadow: 0 18px 60px rgba(15, 20, 32, .35); }
+/* the logo (transparent PNG) and everything else float on bg-start: no card */
+.title-stack { width: min(460px, 100%); text-align: center; }
+.title-card { padding: 0; }
+.title-card .logo-img { filter: drop-shadow(0 6px 18px rgba(15, 20, 32, .35)); }
 #title .tagline { display: inline-block; margin: 14px 0 16px; padding: 4px 12px; border-radius: 12px;
   background: rgba(16, 21, 31, .62); color: #f4f1e8; }
 #title .field { margin: 0 auto 16px; text-align: left; }
@@ -280,7 +279,7 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
 
 /* ---------- title art, settings, grade art (2026-10-08) */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.logo-img { display: block; width: 100%; max-width: 380px; margin: 0 auto; }
+.logo-img { display: block; width: 100%; max-width: 440px; margin: 0 auto; }
 .img-btn { border: 0; background: none; padding: 0; cursor: pointer; transition: transform .12s, filter .12s; }
 .img-btn:hover, .img-btn:focus-visible { transform: translateY(-2px) scale(1.03); filter: brightness(1.05); }
 .img-btn:active { transform: scale(.97); }
@@ -317,3 +316,12 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
 .fader.boot { animation: fader-boot 1s ease .15s both; }
 @keyframes fader-boot { from { opacity: 1; } to { opacity: 0; } }
 #prologue.typing .narration-next { visibility: hidden; }
+/* the day loop (2026-10-09) */
+#daycard { background: #000; color: #f1ede2; justify-content: center; align-items: center; text-align: center; padding: 24px; }
+#daycard.active { display: flex; flex-direction: column; }
+.daycard { margin: 0; font: 600 clamp(34px, 6vw, 64px)/1.1 Georgia, "Times New Roman", "Noto Serif Thai", serif; letter-spacing: .04em;
+  animation: fadein 1.2s ease both; }
+.daycard-sub { margin: 14px 0 0; color: #a9a496; font-size: clamp(14px, 2vw, 18px); animation: fadein 1.2s ease .4s both; }
+.daycard-sub:empty { display: none; }
+.day-done { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 12px;
+  padding: 10px 12px; border-radius: 8px; background: #fff6dd; border: 1px solid var(--gold); }

@@ -69,6 +69,9 @@
 
   <!-- the applicant's desk (bg-work): greeting, then the camera moves into the monitor -->
   <section id="office" class="screen scene" data-bg="bg-work"></section>
+  <!-- the day loop: office (outside), house, door, TV (the picture is set by scene() in app.js) -->
+  <section id="stage" class="screen scene"></section>
+  <section id="daycard" class="screen"><p id="daycard-text" class="daycard"></p><p id="daycard-sub" class="daycard-sub"></p></section>
 
   <!-- in-game computer: the exercise list and credits are windows on a desktop -->
   <section id="home" class="screen desktop">
@@ -88,6 +91,8 @@
       <div class="win-body">
         <p class="hello"><span data-t="signed_in_as">Signed in as</span> <strong id="who"></strong></p>
         <h2 data-t="exercises_heading">Assessment exercises</h2>
+        <div id="day-done" class="day-done hidden"><span data-t="day_done">Today's exercise is done. Time to go home.</span>
+          <button id="btn-end-day-home" class="primary" data-t="end_day">End the day ▸</button></div>
         <ol id="level-list" class="level-list"></ol>
         <p class="fine" data-t="exercises_fine">Exercises unlock in order. A grade of B or better confirms a pass.</p>
       </div>
