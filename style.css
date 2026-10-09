@@ -309,3 +309,10 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
 .toast { z-index: 2100; }
 .vn-rest { visibility: hidden; }
 .vn-box.typing .vn-next { visibility: hidden; }   /* the "tap" prompt appears once the line is complete */
+/* page changes fade through black (showScreen in app.js) */
+.fader { position: fixed; inset: 0; z-index: 5000; background: #000; opacity: 0; pointer-events: none;
+  transition: opacity .6s ease; }
+.fader.on { opacity: 1; }
+.fader.busy { pointer-events: auto; }
+.fader.boot { animation: fader-boot 1s ease .15s both; }
+@keyframes fader-boot { from { opacity: 1; } to { opacity: 0; } }

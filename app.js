@@ -155,8 +155,8 @@ function setSat(sprite, status) {
 }
 
 /* ------------------------------------------------------------------ home */
-async function renderHome() {
-  showScreen("home");
+const renderHome = () => showScreen("home", fillHome);
+async function fillHome() {
   $("#who").textContent = playerName();
   if (!S.desktopReady) initDesktop();
   const list = await api(`/api/levels?player_id=${S.playerId}`);
@@ -181,7 +181,29 @@ function gradeBadge(g, cls = "") {                     // A–C have art; S and 
   return `<span class="grade-chip ${cls}">${g}</span>`;
 }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-function showScreen(id) { $$(".screen").forEach((s) => s.classList.toggle("active", s.id === id)); }
+/* Page changes: the old page fades to black, the new one fades in from black. prepare() runs while the screen is
+   black (the new page is already laid out underneath, so maps get their size). Same-page refreshes (language
+   switch) skip the fade unless force is set (retry / next exercise). */
+const FADE_OUT_MS = 600, FADE_HOLD_MS = 250, FADE_IN_MS = 700;
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function showScreen(id, prepare, force = false) {
+  const cur = document.querySelector(".screen.active");
+  const swap = () => $$(".screen").forEach((s) => s.classList.toggle("active", s.id === id));
+  if (!cur || (cur.id === id && !force)) { swap(); if (prepare) await prepare(); return; }
+  const f = $("#fader");
+  if (f.classList.contains("boot")) { f.classList.remove("boot"); void f.offsetWidth; }   // end the first-load animation
+  f.classList.add("busy");                                    // no clicks while the screen changes
+  f.style.transitionDuration = FADE_OUT_MS + "ms"; f.classList.add("on");
+  await wait(FADE_OUT_MS);
+  swap();
+  try { if (prepare) await prepare(); }
+  finally {
+    await wait(FADE_HOLD_MS);
+    f.style.transitionDuration = FADE_IN_MS + "ms"; f.classList.remove("on");
+    await wait(FADE_IN_MS);
+    f.classList.remove("busy");
+  }
+}
 
 /* ------------------------------------------------------------------ level flow */
 async function startLevel(levelId) {
@@ -195,23 +217,24 @@ async function startLevel(levelId) {
   S.P = proj4("EPSG:4326", "EPSG:32647");
   await preload([...lv.preload, "inspector_f_default", "sat_taunt", "sat_smile"]);   // no pop-in mid-dialogue
 
-  $("#lv-num").textContent = t("exercise_n", { n: lv.level_number });
-  $("#lv-title").textContent = levelTitle(lv.level_id, lv.title);
-  $("#lv-season").textContent = lv.season_be ? `· BE ${lv.season_be}${lv.season_complete ? "" : " " + t("in_progress")}` : "";
-  $("#tabbtn-reveal").classList.add("hidden");
-  $("#tab-reveal").innerHTML = "";
-  selectTab("dash");
-  showScreen("game");
-  await buildMap(lv);
-  if (S.roof || S.mixed) await loadRoofs(lv);
-  $$(".tool[data-tool]").forEach((b) => b.classList.toggle("hidden", S.roof));
-  $("#fp-summary").textContent = t(S.roof ? "fp_roofs" : S.mixed ? "fp_mixed" : "fp_place");
-  buildCards(lv);
-  buildStreetView(lv);
-  buildTimeline(lv);
-  $("#btn-hint").classList.toggle("hidden", !lv.hints_enabled);
-  setSat(lv.sat_line.sprite, lv.sat_line.text);
-  updateBudget(0);
+  await showScreen("game", async () => {                       // set up under the black screen
+    $("#lv-num").textContent = t("exercise_n", { n: lv.level_number });
+    $("#lv-title").textContent = levelTitle(lv.level_id, lv.title);
+    $("#lv-season").textContent = lv.season_be ? `· BE ${lv.season_be}${lv.season_complete ? "" : " " + t("in_progress")}` : "";
+    $("#tabbtn-reveal").classList.add("hidden");
+    $("#tab-reveal").innerHTML = "";
+    selectTab("dash");
+    await buildMap(lv);
+    if (S.roof || S.mixed) await loadRoofs(lv);
+    $$(".tool[data-tool]").forEach((b) => b.classList.toggle("hidden", S.roof));
+    $("#fp-summary").textContent = t(S.roof ? "fp_roofs" : S.mixed ? "fp_mixed" : "fp_place");
+    buildCards(lv);
+    buildStreetView(lv);
+    buildTimeline(lv);
+    $("#btn-hint").classList.toggle("hidden", !lv.hints_enabled);
+    setSat(lv.sat_line.sprite, lv.sat_line.text);
+    updateBudget(0);
+  }, true);
 
   $("#memo-text").textContent = lv.briefing_text;
   $("#memo").classList.remove("hidden");
@@ -939,8 +962,7 @@ function showTitle() {
   $("#btn-play").dataset.mode = seen ? "continue" : "new";
   $("#btn-play").setAttribute("aria-label", t(seen ? "continue" : "new_game"));
   $("#btn-new").classList.toggle("hidden", !seen);
-  showScreen("title");
-  $("#player-name").focus();
+  return showScreen("title").then(() => $("#player-name").focus());
 }
 function artSrc(name) {
   const ws = (S.art.ui || {})[name] || {}, k = Object.keys(ws).map(Number).sort((a, b) => a - b);
@@ -984,12 +1006,12 @@ async function playIntro() {
   const lines = story.lines.map((l) => ({ ...l, text: fillName(l.text) }));
   await Promise.all([preload([...new Set(lines.map((l) => l.sprite))]),
                      new Promise((r) => { const i = new Image(); i.onload = i.onerror = r; i.src = bgUrl(story.background); })]);
-  showScreen("prologue");
+  await showScreen("prologue");
   await narrate(story.narration);
   const office = $("#office");
   office.classList.remove("zoom");
-  showScreen("office");
-  await new Promise((r) => setTimeout(r, 600));
+  await showScreen("office");
+  await wait(300);
   await playDialogue(lines);
   office.classList.add("zoom");                                // the camera moves into the monitor
   await new Promise((r) => setTimeout(r, 1100));
