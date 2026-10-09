@@ -316,3 +316,4 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
 .fader.busy { pointer-events: auto; }
 .fader.boot { animation: fader-boot 1s ease .15s both; }
 @keyframes fader-boot { from { opacity: 1; } to { opacity: 0; } }
+#prologue.typing .narration-next { visibility: hidden; }

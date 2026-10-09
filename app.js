@@ -78,7 +78,8 @@ const TYPE_MS = 45;
 const TYPE_PAUSE = { ".": 280, "!": 280, "?": 280, "…": 280, ":": 180, ";": 180, ",": 140, "。": 280 };
 const BLIP_EVERY = 2;                        // a voice blip on every 2nd letter (spaces skipped)
 /* Dialogue voice blips: none yet. When the sound files arrive, list one per speaker here, e.g.
-   inspector_m: "sound/voice-inspector_m.mp3" (files go in web/sound/). Missing speakers stay silent. */
+   inspector_m: "sound/voice-inspector_m.mp3" (files go in web/sound/); "narrator" is the prologue on black.
+   Missing speakers stay silent. */
 const VOICE_FILES = {};
 const voices = {};
 function voiceBlip(character) {
@@ -93,7 +94,7 @@ const graphemes = (s) => typeof Intl !== "undefined" && Intl.Segmenter      // T
   ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(s)].map((x) => x.segment)
   : (s.match(/\P{M}\p{M}*/gu) || []);
 let typing = null;                           // the line being typed: { finish() }
-function typeLine(el, text, character) {
+function typeLine(el, text, character, box = el.closest(".vn-box")) {   // box gets .typing while it runs
   if (typing) typing.finish();
   // the whole line is laid out from the start (the unread part invisible), so words never jump between lines
   el.textContent = "";
@@ -103,7 +104,7 @@ function typeLine(el, text, character) {
   const parts = graphemes(text);
   let k = 0, typed = "", visible = 0, timer = null;
   return new Promise((done) => {
-    const end = () => { clearTimeout(timer); shown.data = text; rest.textContent = ""; typing = null; el.closest(".vn-box").classList.remove("typing"); done(); };
+    const end = () => { clearTimeout(timer); shown.data = text; rest.textContent = ""; typing = null; box.classList.remove("typing"); done(); };
     const step = () => {
       if (k >= parts.length) return end();
       const ch = parts[k++];
@@ -112,7 +113,7 @@ function typeLine(el, text, character) {
       timer = setTimeout(step, TYPE_MS + (TYPE_PAUSE[ch] && k < parts.length ? TYPE_PAUSE[ch] : 0));
     };
     typing = { finish: end };
-    el.closest(".vn-box").classList.add("typing");
+    box.classList.add("typing");
     step();
   });
 }
@@ -988,12 +989,14 @@ function saveName() {
 function narrate(cards) {               // black screen, one card per click / Space; Skip ends it
   return new Promise((resolve) => {
     const el = $("#narration"), scr = $("#prologue"); let i = -1;
-    const done = () => { scr.onclick = null; document.onkeydown = null; resolve(); };
+    const done = () => { if (typing) typing.finish(); scr.onclick = null; document.onkeydown = null; resolve(); };
     const next = () => {
+      if (typing) return typing.finish();                    // first tap: show the whole card
       i += 1;
       if (i >= cards.length) return done();
       el.classList.remove("in"); void el.offsetWidth;          // restart the fade
-      el.textContent = fillName(cards[i]); el.classList.add("in");
+      el.classList.add("in");
+      typeLine(el, fillName(cards[i]), "narrator", scr);       // letter by letter, like the dialogue
     };
     $("#btn-skip").onclick = (e) => { e.stopPropagation(); done(); };
     scr.onclick = next;
