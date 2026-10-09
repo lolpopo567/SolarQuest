@@ -159,7 +159,7 @@ function setSat(sprite, status) {
 }
 
 /* ------------------------------------------------------------------ home */
-const renderHome = () => showScreen("home", fillHome);
+const renderHome = () => { Snd.stop(); return showScreen("home", fillHome); };   // the computer is quiet
 async function fillHome() {
   $("#who").textContent = playerName();
   if (!S.desktopReady) initDesktop();
@@ -973,6 +973,7 @@ function showTitle() {
   $("#btn-play").dataset.mode = seen ? "continue" : "new";
   $("#btn-play").setAttribute("aria-label", t(seen ? "continue" : "new_game"));
   $("#btn-new").classList.toggle("hidden", !seen);
+  Snd.loop("theme", 0.5);                                      // starts on the player's first tap if the browser waits
   return showScreen("title").then(() => $("#player-name").focus());
 }
 function artSrc(name) {
@@ -992,6 +993,8 @@ function setLang(l) {
 function openSettings() { $("#settings").classList.remove("hidden"); }
 $("#settings-close").onclick = () => $("#settings").classList.add("hidden");
 $$("#settings input[name=lang]").forEach((r) => (r.onchange = () => setLang(r.value)));
+$("#sound-on").checked = Snd.on;
+$("#sound-on").onchange = (e) => Snd.setOn(e.target.checked);
 $$("[data-settings]").forEach((b) => (b.onclick = openSettings));
 function saveName() {
   store.set("sq_name", $("#player-name").value.trim().slice(0, 24));
@@ -1032,9 +1035,12 @@ async function refreshDay() {
 }
 const say = (lines) => playDialogue(lines.map((l) => ({ ...l, text: fillName(l.text) })));
 const loadImg = (src) => new Promise((r) => { const i = new Image(); i.onload = i.onerror = r; i.src = src; });
-async function scene(bg) {                                       // a full-screen picture: office, house, door, TV
+async function scene(bg, onShow) {                               // a full-screen picture: office, house, door, TV
   await loadImg(bgUrl(bg));
-  await showScreen("stage", () => { $("#stage").style.backgroundImage = `url("${bgUrl(bg)}")`; }, true);
+  await showScreen("stage", () => {                              // onShow: the scene's sound, as the picture appears
+    $("#stage").style.backgroundImage = `url("${bgUrl(bg)}")`;
+    if (onShow) onShow();
+  }, true);
   await wait(250);
 }
 async function dayCard(text, sub = "") {                         // white text on black between days
@@ -1045,7 +1051,7 @@ async function playMorning(n) {
   const st = await api(`/api/story/day/${n}`);
   await preload([...new Set([...st.office, ...st.desk].map((l) => l.sprite))]);
   await dayCard(t("day_n", { n }));
-  await scene("office");
+  await scene("office", () => Snd.loop("office", 0.5));        // the agency's morning bustle, outside and at the desk
   await say(st.office);
   const office = $("#office");
   office.classList.remove("zoom");
@@ -1062,16 +1068,18 @@ async function endDay() {
   if (!ev) return renderHome();
   clearInterval(S.timer);
   const st = await api(`/api/story/day/${ev.day}`);
-  await scene("house");
+  await scene("house", () => Snd.loop("walk", 0.8, 0.3));     // walking home
   await say(ev.grade === "S" || ev.grade === "A" ? st.house_top : st.house_pass);
-  await scene("door-closed");
+  await scene("door-closed", () => Snd.stop(0.6));
   await say(st.door);
-  await scene("door-open");
+  await scene("door-open", () => Snd.play("door_open"));
   await wait(1000);
-  await scene("tv-off");
+  await scene("tv-off", () => Snd.play("door_close"));        // inside: the door shuts and locks behind
   await say(st.tv_off);
-  await scene("tv-on");
+  await scene("tv-on", () => { Snd.play("tv_on"); setTimeout(() => Snd.loop("news", 0.35), 600); });
   await say(st.tv);
+  Snd.stop(0.8);
+  await Snd.play("tv_off");
   store.set(EVENING_KEY, "");
   await refreshDay();
   if (S.day <= S.days) return playMorning(S.day);
@@ -1081,6 +1089,7 @@ async function endDay() {
 }
 async function playIntro() {
   const story = await api("/api/story/prologue");
+  Snd.stop(1.5);                                               // the title theme fades out over the black prologue
   await showScreen("prologue");
   await narrate(story.narration);
   store.set("sq_intro_seen", "1");

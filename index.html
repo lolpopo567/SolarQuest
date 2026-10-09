@@ -209,6 +209,10 @@
         <label><input type="radio" name="lang" value="th"> <span data-t="lang_th">ไทย</span></label>
         <label><input type="radio" name="lang" value="en"> <span data-t="lang_en">English</span></label>
       </fieldset>
+      <fieldset class="lang-pick">
+        <legend data-t="sound">Sound</legend>
+        <label><input type="checkbox" id="sound-on" checked> <span data-t="sound_on">Music and sound effects</span></label>
+      </fieldset>
       <button id="settings-close" class="primary" data-t="close">Close</button>
     </div>
   </div>
@@ -231,6 +235,7 @@
 
   <div id="toast" class="toast hidden" role="status"><img id="toast-img" alt=""><div id="toast-text"></div></div>
 
+  <script src="sound.js"></script>
   <script src="app.js"></script>
   <script>
     if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
