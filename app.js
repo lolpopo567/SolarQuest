@@ -72,16 +72,61 @@ function eventLine(event, text) {           // client-side events, sprite from t
 }
 
 /* ------------------------------------------------------------------ dialogue (visual-novel layout) */
+/* Lines appear letter by letter. Tap / Space while a line is typing shows the rest at once; the next tap moves on.
+   TYPE_MS is the time per letter: slow enough for a voice blip on each one. Sentence ends and commas pause. */
+const TYPE_MS = 45;
+const TYPE_PAUSE = { ".": 280, "!": 280, "?": 280, "…": 280, ":": 180, ";": 180, ",": 140, "。": 280 };
+const BLIP_EVERY = 2;                        // a voice blip on every 2nd letter (spaces skipped)
+/* Dialogue voice blips: none yet. When the sound files arrive, list one per speaker here, e.g.
+   inspector_m: "sound/voice-inspector_m.mp3" (files go in web/sound/). Missing speakers stay silent. */
+const VOICE_FILES = {};
+const voices = {};
+function voiceBlip(character) {
+  const src = VOICE_FILES[character];
+  if (!src) return;
+  try {
+    const a = (voices[character] ||= new Audio(src));
+    a.currentTime = 0; a.play().catch(() => {});
+  } catch { /* no audio on this device */ }
+}
+const graphemes = (s) => typeof Intl !== "undefined" && Intl.Segmenter      // Thai vowels and tone marks stay on their letter
+  ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(s)].map((x) => x.segment)
+  : (s.match(/\P{M}\p{M}*/gu) || []);
+let typing = null;                           // the line being typed: { finish() }
+function typeLine(el, text, character) {
+  if (typing) typing.finish();
+  // the whole line is laid out from the start (the unread part invisible), so words never jump between lines
+  el.textContent = "";
+  const shown = document.createTextNode(""), rest = document.createElement("span");
+  rest.className = "vn-rest"; rest.textContent = text;
+  el.append(shown, rest);
+  const parts = graphemes(text);
+  let k = 0, typed = "", visible = 0, timer = null;
+  return new Promise((done) => {
+    const end = () => { clearTimeout(timer); shown.data = text; rest.textContent = ""; typing = null; el.closest(".vn-box").classList.remove("typing"); done(); };
+    const step = () => {
+      if (k >= parts.length) return end();
+      const ch = parts[k++];
+      typed += ch; shown.data = typed; rest.textContent = text.slice(typed.length);
+      if (/\S/.test(ch) && visible++ % BLIP_EVERY === 0) voiceBlip(character);
+      timer = setTimeout(step, TYPE_MS + (TYPE_PAUSE[ch] && k < parts.length ? TYPE_PAUSE[ch] : 0));
+    };
+    typing = { finish: end };
+    el.closest(".vn-box").classList.add("typing");
+    step();
+  });
+}
 function playDialogue(lines) {
   return new Promise((resolve) => {
     if (!lines.length) return resolve();
     const vn = $("#vn"); let i = -1;
     const show = () => {
+      if (typing) return typing.finish();                    // first tap: show the whole line
       i += 1;
       if (i >= lines.length) { vn.classList.add("hidden"); vn.onclick = null; document.onkeydown = null; return resolve(); }
       const ln = lines[i];
       $("#vn-name").textContent = NAMES[ln.character] || ln.character;
-      $("#vn-text").textContent = ln.text;
+      typeLine($("#vn-text"), ln.text, ln.character);
       const left = $("#vn-left"), right = $("#vn-right"), sat = $("#vn-sat");
       sat.classList.toggle("hidden", ln.layout !== "hud");
       if (ln.layout === "hud") { sat.src = spriteUrl(ln.sprite, 128); setSat(ln.sprite); }

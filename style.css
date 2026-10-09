@@ -307,3 +307,5 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
   background: #7a1f12; color: #fff; font: 13px/1.4 system-ui, sans-serif; box-shadow: 0 6px 20px rgba(0,0,0,.4); cursor: pointer; }
 #vn { z-index: 2000; }          /* above the desktop taskbar (1000) and windows */
 .toast { z-index: 2100; }
+.vn-rest { visibility: hidden; }
+.vn-box.typing .vn-next { visibility: hidden; }   /* the "tap" prompt appears once the line is complete */
