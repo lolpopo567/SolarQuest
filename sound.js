@@ -53,6 +53,8 @@ const Snd = (() => {
     s.start();
     return new Promise((r) => { s.onended = r; });
   }
+  /* volumes are set where each sound is used (app.js), balanced from their measured loudness: the news jingle is
+     much louder than the room sounds, so it plays at about a quarter */
   /* the one looping track (music or ambience): fades out whatever loops now, fades this in */
   async function loop(name, vol = 0.6, fade = 1.2) {
     if (wanted === name) return;
@@ -92,7 +94,7 @@ const Snd = (() => {
   addEventListener("pointerdown", unlock, true);
   addEventListener("keydown", unlock, true);
   // every button clicks (dialogue taps do not: they are not buttons)
-  addEventListener("click", (e) => { if (e.target.closest && e.target.closest("button")) play("click", 0.5); }, true);
+  addEventListener("click", (e) => { if (e.target.closest && e.target.closest("button")) play("click", 1); }, true);
 
   return { play, loop, stop, setOn, get on() { return on; }, get playing() { return music ? music.name : null; } };
 })();

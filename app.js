@@ -973,7 +973,7 @@ function showTitle() {
   $("#btn-play").dataset.mode = seen ? "continue" : "new";
   $("#btn-play").setAttribute("aria-label", t(seen ? "continue" : "new_game"));
   $("#btn-new").classList.toggle("hidden", !seen);
-  Snd.loop("theme", 0.5);                                      // starts on the player's first tap if the browser waits
+  Snd.loop("theme", 0.45);                                      // starts on the player's first tap if the browser waits
   return showScreen("title").then(() => $("#player-name").focus());
 }
 function artSrc(name) {
@@ -1051,7 +1051,7 @@ async function playMorning(n) {
   const st = await api(`/api/story/day/${n}`);
   await preload([...new Set([...st.office, ...st.desk].map((l) => l.sprite))]);
   await dayCard(t("day_n", { n }));
-  await scene("office", () => Snd.loop("office", 0.5));        // the agency's morning bustle, outside and at the desk
+  await scene("office", () => Snd.loop("office", 0.9));        // the agency's morning bustle, outside and at the desk
   await say(st.office);
   const office = $("#office");
   office.classList.remove("zoom");
@@ -1068,7 +1068,7 @@ async function endDay() {
   if (!ev) return renderHome();
   clearInterval(S.timer);
   const st = await api(`/api/story/day/${ev.day}`);
-  await scene("house", () => Snd.loop("walk", 0.8, 0.3));     // walking home
+  await scene("house", () => Snd.loop("walk", 1, 0.3));     // walking home
   await say(ev.grade === "S" || ev.grade === "A" ? st.house_top : st.house_pass);
   await scene("door-closed", () => Snd.stop(0.6));
   await say(st.door);
@@ -1076,7 +1076,7 @@ async function endDay() {
   await wait(1000);
   await scene("tv-off", () => Snd.play("door_close"));        // inside: the door shuts and locks behind
   await say(st.tv_off);
-  await scene("tv-on", () => { Snd.play("tv_on"); setTimeout(() => Snd.loop("news", 0.35), 600); });
+  await scene("tv-on", () => { Snd.play("tv_on"); setTimeout(() => Snd.loop("news", 0.22), 600); });
   await say(st.tv);
   Snd.stop(0.8);
   await Snd.play("tv_off");
