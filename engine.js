@@ -429,6 +429,7 @@ const SQEngine = (() => {
   on("GET", /^\/api\/story\/prologue$/, () => ({
     narration: Object.values(C.dialogue.prologue_narration).map(pick), background: "bg-work",
     lines: group(C.dialogue.prologue_greeting, "prologue") }));
+  on("GET", /^\/api\/story\/tutorial$/, () => ({ lines: group(C.dialogue.tutorial, "progression") }));
   on("POST", /^\/api\/players$/, () => ({ ok: true }));                       // the name lives in localStorage (app.js)
   on("DELETE", /^\/api\/players\/[0-9a-f]{32}$/, () => {
     const n = attempts().length; saveAttempts([]); return { deleted_attempts: n };

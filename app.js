@@ -951,11 +951,19 @@ async function playIntro() {
   store.set("sq_intro_seen", "1");
   await renderHome();
   office.classList.remove("zoom");
+  if (!store.get("sq_tutorial_seen")) await playTutorial();    // first visit to the desktop
+}
+async function playTutorial() {                                  // SAT walks through the desktop (dialogue.yaml: tutorial)
+  const { lines } = await api("/api/story/tutorial");
+  const ls = lines.map((l) => ({ ...l, text: fillName(l.text) }));
+  await preload([...new Set(ls.map((l) => l.sprite))]);
+  await playDialogue(ls);
+  store.set("sq_tutorial_seen", "1");
 }
 $("#btn-delete-me").onclick = async () => {
   if (!confirm(t("reset_confirm"))) return;
   await api(`/api/players/${S.playerId}`, { method: "DELETE" });
-  ["sq_player", "sq_name", "sq_intro_seen"].forEach((k) => store.set(k, ""));
+  ["sq_player", "sq_name", "sq_intro_seen", "sq_tutorial_seen"].forEach((k) => store.set(k, ""));
   location.reload();
 };
 $("#btn-play").onclick = () => { saveName(); if ($("#btn-play").dataset.mode === "continue") renderHome(); else playIntro(); };
@@ -1010,6 +1018,7 @@ function initDesktop() {
     };
   });
   $("#btn-replay").onclick = () => playIntro();
+  $("#btn-tutorial").onclick = () => playTutorial();
   $("#btn-signout").onclick = () => showTitle();
   const tick = () => {
     const d = new Date();
