@@ -589,13 +589,30 @@ const SQEngine = (() => {
   function explainGround(L, G, rings, area, optRing, res) {
     const pk = coverageSites(G, rings), ok = coverage(G, optRing), oarea = ringArea(optRing);
     const mean = (a, k, ar) => { let s = 0; for (let i = 0; i < k.h; i++) for (let j = 0; j < k.w; j++) { const v = a[(k.r0 + i) * G.W + k.c0 + j]; s += (Number.isFinite(v) ? v : 0) * k.cov[i * k.w + j]; } return s / ar; };
+    // factors are judged on the part of the footprint inside the study area (every factor layer has data); the
+    // rest scores 0 and gets its own "outside" line instead of being blamed on the heaviest factor (server.explain)
+    const lys = L.explain.factors.map((f) => G.layers[f.id]);
+    let inside = 0;
+    const inData = new Uint8Array(pk.h * pk.w);
+    for (let i = 0; i < pk.h; i++) for (let j = 0; j < pk.w; j++) {
+      const at = (pk.r0 + i) * G.W + pk.c0 + j;
+      if (lys.every((a) => Number.isFinite(a[at]))) { inData[i * pk.w + j] = 1; inside += pk.cov[i * pk.w + j]; }
+    }
+    const meanIn = (a) => { let s = 0; for (let i = 0; i < pk.h; i++) for (let j = 0; j < pk.w; j++) if (inData[i * pk.w + j]) s += a[(pk.r0 + i) * G.W + pk.c0 + j] * pk.cov[i * pk.w + j]; return s / inside; };
+    let parts = 0;
     const factors = L.explain.factors.map((f) => {
-      const p = mean(G.layers[f.id], pk, area), o = mean(G.layers[f.id], ok, oarea), raw = f.layer;
+      const o = mean(G.layers[f.id], ok, oarea), p = inside > 0 ? meanIn(G.layers[f.id]) : o, raw = f.layer;
+      parts += 100 * f.weight * p;
       return { id: f.id, label: f.label, weight_pct: Math.round(100 * f.weight), points: round(100 * f.weight * (p - o), 1),
                player_score: round(p, 3), optimal_score: round(o, 3), good: p >= o - 0.02, text: p >= o - 0.02 ? f.good : f.bad,
                player_raw: layerSummary(G, pk, [raw])[raw], optimal_raw: layerSummary(G, ok, [raw])[raw], raw_layer: raw,
-               raw_label: C.meta.layers[raw].label, raw_unit: C.meta.layers[raw].unit };
-    }).sort((a, b) => a.points - b.points);
+               raw_label: C.meta.layers[raw].label, raw_unit: C.meta.layers[raw].unit, no_data: inside <= 0 };
+    });
+    const outShare = Math.max(0, 1 - inside / area);
+    if (outShare > 5e-4) factors.push({ id: "outside", label: "Outside the study area", weight_pct: null,
+                                        points: round(-outShare * parts, 1), outside_pct: round(100 * outShare, 1),
+                                        text: "Part of the site lies outside the district's data: it scores zero." });
+    factors.sort((a, b) => a.points - b.points);
     let covered = 0; for (const c of pk.cov) covered += c;
     const sr = L.lv.size_reward;
     return { factors, not_scored: L.explain.not_scored || [], excluded_pct: excludedSummary(G, pk, area),
@@ -685,7 +702,7 @@ const SQEngine = (() => {
     } else {
       out.push(react("below_threshold", "reveal"));
       const worst = explanation.factors[0];
-      if (worst && worst.points < 0) out.push(react("poor_site", "reveal", { factor: worst.label, points: f1(Math.abs(worst.points)) }));
+      if (worst && worst.points < 0) out.push(react("poor_site", "reveal", { factor: worst.id === "outside" ? pick(C.ui.outside_label) || worst.label : worst.label, points: f1(Math.abs(worst.points)) }));
       if (recent.length && ["C", "D"].includes(recent[0]) && ["C", "D"].includes(g)) out.push(react("repeated_mistake", "reveal"));
       if (g === "D") out.push(react("grade_d", "reveal"));
     }

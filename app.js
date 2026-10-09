@@ -926,10 +926,13 @@ function renderReveal(r) {
     const tab = f.roof || f.part === "roofs" ? "roof_factor_text" : "factor_text";
     return ((((UI[tab] || {})[f.id] || {})[f.good ? "good" : "bad"]) || {})[lang()] || f.text;
   };
-  const factors = ex.factors.map((f) => `<div class="factor">
+  const factors = ex.factors.map((f) => f.id === "outside" ? `<div class="factor">
+      <div class="fh"><span>${f.part ? t(f.part) + " · " : ""}${esc(t("outside_label"))}</span>
+      <span class="pts neg">${t("pts", { p: f.points.toFixed(1) })}</span></div>
+      <div>${esc(t("outside_text", { pct: f.outside_pct }))}</div></div>` : `<div class="factor">
       <div class="fh"><span>${f.part ? t(f.part) + " · " : ""}${esc(f.label)} <span class="muted">· ${t("weight_pct", { w: f.weight_pct })}</span></span>
       <span class="pts ${f.points < -0.05 ? "neg" : f.points > 0.05 ? "pos" : ""}">${t("pts", { p: (f.points > 0 ? "+" : "") + f.points.toFixed(1) })}</span></div>
-      <div>${esc(factorText(f))}</div>
+      <div>${esc(f.no_data ? t("factor_no_data") : factorText(f))}</div>
       <div class="raw">${esc(t("yours_vs_best", { label: f.raw_label, yours: fmtRaw(f.player_raw, unitT(f.raw_unit)), best: fmtRaw(f.optimal_raw, unitT(f.raw_unit)) }))}</div></div>`).join("");
   const notScored = ex.not_scored.map((n) => `<div class="factor muted"><strong>${esc(n.label)}</strong>: ${esc(tr("not_scored_note", n.label, n.note))}</div>`).join("");
   const excl = Object.entries(ex.excluded_pct).map(([k, v]) => `${v}% ${esc(exclT(k))}`).join(", ");
