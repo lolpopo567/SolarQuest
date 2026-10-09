@@ -12,6 +12,26 @@
   <meta name="apple-mobile-web-app-title" content="Solar Quest">
   <link rel="stylesheet" href="vendor/maplibre-gl.css">
   <link rel="stylesheet" href="style.css">
+  <script>
+    /* show the first script error on screen (plain ES5 so it runs on any browser): lets players screenshot it */
+    (function () {
+      var shown = false;
+      function report(msg) {
+        if (shown || !document.body) return; shown = true;
+        var d = document.createElement("div");
+        d.className = "err-bar";
+        d.textContent = "Something went wrong / เกิดข้อผิดพลาด: " + msg + " — " + navigator.userAgent;
+        d.onclick = function () { d.parentNode.removeChild(d); };
+        document.body.appendChild(d);
+      }
+      window.addEventListener("error", function (e) {
+        if (e.message) report(e.message + " (" + String(e.filename || "").split("/").pop() + ":" + e.lineno + ")");
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        report(String(e.reason && (e.reason.message || e.reason)));
+      });
+    })();
+  </script>
   <script src="vendor/maplibre-gl.js"></script>
   <script src="vendor/proj4.js"></script>
   <script src="credits.js"></script>
@@ -22,9 +42,11 @@
 
   <!-- title screen (bg-start) -->
   <section id="title" class="screen active scene" data-bg="bg-start">
-    <div class="title-card">
-      <h1 class="sr-only">Solar Quest</h1>
-      <img id="logo" class="logo-img" alt="Solar Quest: become a solar site inspector">
+    <div class="title-stack">
+      <div class="title-card">
+        <h1 class="sr-only">Solar Quest</h1>
+        <img id="logo" class="logo-img" alt="Solar Quest: become a solar site inspector">
+      </div>
       <p class="tagline" data-t="title_tagline">A Solar Site Inspector Agency story · Thailand, 2038</p>
       <label class="field"><span data-t="your_name">Your name</span>
         <input id="player-name" maxlength="24" autocomplete="nickname" data-t-ph="name_placeholder" placeholder="Applicant">
@@ -33,11 +55,9 @@
         <button id="btn-play" class="img-btn play"><img alt=""></button>
         <button id="btn-new" class="link hidden" data-t="new_game">New game</button>
       </div>
-      <div class="title-links">
-        <button class="img-btn settings" data-settings data-t-title="settings"><img class="settings-img" alt="Settings"></button>
-        <button id="btn-title-credits" class="link" data-t="data_credits">Data &amp; credits</button>
-      </div>
     </div>
+    <button class="img-btn settings title-corner left" data-settings data-t-title="settings"><img class="settings-img" alt="Settings"></button>
+    <button id="btn-title-credits" class="title-corner right credits-pill" data-t="data_credits">Data &amp; credits</button>
   </section>
 
   <!-- prologue narration on black -->

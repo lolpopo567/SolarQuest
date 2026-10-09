@@ -23,11 +23,26 @@ const SQEngine = (() => {
     if (!cache.has(p)) cache.set(p, fetch(p).then((r) => { if (!r.ok) throw new Error(`${p}: ${r.status}`); return r.json(); }));
     return cache.get(p);
   };
+  // DecompressionStream needs Safari 16.4+ (iPads on older iPadOS lack it): fall back to vendor/fflate.js
+  let fflate = null;
+  const loadFflate = () => fflate || (fflate = new Promise((ok, no) => {
+    if (self.fflate) return ok(self.fflate);
+    const s = document.createElement("script");
+    s.src = "vendor/fflate.js"; s.onload = () => ok(self.fflate); s.onerror = () => no(new Error("vendor/fflate.js"));
+    document.head.appendChild(s);
+  }));
+  async function gunzip(r) {
+    if (typeof DecompressionStream === "function" && r.body)
+      return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+    const [zip, ff] = await Promise.all([r.arrayBuffer(), loadFflate()]);
+    const out = ff.gunzipSync(new Uint8Array(zip));
+    return out.byteOffset === 0 && out.byteLength === out.buffer.byteLength ? out.buffer : out.slice().buffer;
+  }
   async function getArray(p, Type) {
     if (!cache.has(p)) cache.set(p, (async () => {
       const r = await fetch(p);
       if (!r.ok) throw new Error(`${p}: ${r.status}`);
-      const buf = await new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+      const buf = await gunzip(r);
       return new Type(buf);
     })());
     return cache.get(p);

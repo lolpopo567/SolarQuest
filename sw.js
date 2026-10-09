@@ -1,11 +1,11 @@
 /* Solar Quest service worker. The game is static files scored on the device (web/engine.js), so once loaded it
    plays offline: the app shell is cached on install, and every other file of the site (levels, grids, art,
    flood frames) is cached the first time it is used. Bump VERSION whenever web/ files change. */
-const VERSION = "sq-2026-10-08-5";
+const VERSION = "sq-2026-10-09-1";
 const SHELL = ["./", "index.html", "app.js", "engine.js", "style.css", "credits.js", "manifest.webmanifest",
                "config.json", "meta.json", "content/dialogue.json", "content/ui.json", "art/manifest.json",
                "levels/index.json", "icons/icon-192.png", "icons/icon-512.png",
-               "vendor/maplibre-gl.css", "vendor/maplibre-gl.js", "vendor/proj4.js"];
+               "vendor/maplibre-gl.css", "vendor/maplibre-gl.js", "vendor/proj4.js", "vendor/fflate.js"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

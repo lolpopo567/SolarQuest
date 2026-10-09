@@ -1,4 +1,5 @@
-/* Data sources and credits: the SRC list from viewer/index.html. Keep the two in sync. */
+/* Data sources and credits shown in the game: only data the game actually uses. viewer/index.html keeps the full
+   project record (SRC), including sources that were inspected or requested but not used. */
 "use strict";
 window.SQ_SOURCES = [
  ["Flood"],
@@ -11,7 +12,6 @@ window.SQ_SOURCES = [
  ["Solar"],
  ["Global Solar Atlas monthly GHI and diffuse share (point API, national rasters)","World Bank Group (ESMAP); model by Solargis","Long-term monthly averages: point API to 2025, national rasters 1999–2018","Sep–Dec solar score on fixed bands (3.5–5.75 kWh/m²/day); beam share for terrain shading.","Long-term average. Varies under 1% inside a district, so it separates districts and roofs, not ground cells.","used"],
  ["NASA POWER (CERES / MERRA-2)","NASA Langley Research Center","Climatology 2001–2020; seasons 2021–2025; 2026 to early Oct","One factor per season 2021–2026 for the per-season levels.","0.5° cells: one number per area; never changes the ranking inside a map.","repl"],
- ["Google Solar API, Data Layers (no longer used)","Google","Downloaded 6 Oct 2026; deleted 8 Oct 2026","Used in scoring v1.2–v1.3 only, then dropped: it could not be refreshed after the trial within its 30-day storage limit. Kept as the benchmark the open roof model was checked against.","Nothing from it remains in the game or the repo.","no"],
  ["Roof shadow model (our own, pvlib sun positions)","Solar Quest (our code); pvlib is open source","Sun path Sep–Dec, any year","Sunlight on every roof after shade from neighbouring buildings and trees, and usable roof area.","Roofs treated as flat (no tilt or direction). On Pathum Wan it separates real solar roofs slightly less sharply than Google Solar did (p = 5.7e-10 vs 1.9e-11).","used"],
  ["GHSL building height 2018 (GHS-BUILT-H R2023A)","European Commission, Joint Research Centre","2018, 100 m","Building heights and floors in Hat Yai, where GISTDA has only a 3 m placeholder.","An average per 100 m block: right on the typical level (error 3.6 m) but misses single tall buildings. 3D-GloBFP was tested and rejected (2–4× too tall here).","used"],
  ["Global Canopy Height 1 m (Meta and WRI)","Meta; World Resources Institute","Imagery 2018–2020","Tree shade on roofs.","Trees grown or cut since 2020 are missed; trees under 3 m and right next to buildings are ignored.","used"],
@@ -28,17 +28,12 @@ window.SQ_SOURCES = [
  ["OpenStreetMap power lines, substations, roads (Overpass mirror)","OpenStreetMap contributors","Downloaded Oct 2026","Distance to grid and road (access score 0.12); building-count cross-check.","No 22/33 kV lines mapped, so grid distance is an upper bound and large farms are under-rated. The mirror is slow: one national tile every 2 minutes.","used"],
  ["OCHA COD-AB boundaries (HDX)","UN OCHA, from Thai government boundaries","Valid from 22 Jan 2022","District outlines and the analysis grids.","Area checks fail against official figures: Pathum Wan −4.0%, Khlong Toei +3.6%, Hat Yai −7.8%.","used"],
  ["GISTDA delivery, admin shapefiles (Drive, 2023 share)","Shared by a Prince of Songkla University staff member; original owner not stated","2023","Cross-check of boundaries; province outlines for the nationwide test.","Names only, no codes; a university share, not GISTDA's own file. Agrees with COD-AB within 0.4–2.5%.","used"],
- ["GISTDA delivery, building footprints 2022 (Drive, 3.5 GB)","GISTDA","May 2022","Inspected, not used.","24.5 million outlines with only an ID: no heights or floors.","no"],
- ["GISTDA delivery, viewer links (flood, drought, crop portals; DOAE; DWR)","GISTDA; Department of Agricultural Extension; Department of Water Resources","Current (live viewers)","Checked: they show the same APIs already used.","Web viewers with no download.","no"],
  ["Game display"],
- ["Sentinel-2 L2A composites (Planetary Computer)","ESA, Copernicus programme (EU); hosted by Microsoft Planetary Computer","Jan–Apr 2026","Basemaps on this page and in the game.","Dry season Jan–Apr 2026, not Sep–Dec; 10 m is coarse for city roofs.","repl"],
- ["MapTiler satellite and streets basemaps","MapTiler AG; streets from OpenStreetMap contributors","Current tiles","Satellite and streets basemaps in the game (when the server has a MapTiler key).","Free plan: 100,000 tile requests a month, MapTiler logo required; display only, not an analysis input.","used"],
+ ["Sentinel-2 L2A composites (Planetary Computer)","ESA, Copernicus programme (EU); hosted by Microsoft Planetary Computer","Jan–Apr 2026","Sentinel-2 basemap option in the game.","Dry season Jan–Apr 2026, not Sep–Dec; 10 m is coarse for city roofs.","repl"],
+ ["MapTiler satellite and streets basemaps","MapTiler AG; streets from OpenStreetMap contributors","Current tiles","Satellite and streets basemaps in the game.","Free plan: 100,000 tile requests a month, MapTiler logo required; display only, not an analysis input.","used"],
  ["Mapillary street photos","Mapillary (Meta); photos by contributors, CC BY-SA 4.0","Photos of varying age","Street-photo panel in the game.","Volunteer coverage: some points have no photo nearby, and those link out to mapillary.com instead.","used"],
  ["Validation only"],
  ["OSM solar sites","OpenStreetMap contributors","Downloaded Oct 2026","Ayutthaya and Pathum Wan tests.","Volunteer mapping; many factory roofs tagged as plants.","used"],
  ["Microsoft Global Renewables Watch, TransitionZero TZ-SAM, WRI Global Power Plant Database","Microsoft; TransitionZero; World Resources Institute","GRW Q4 2017–Q2 2024; TZ-SAM Q1 2024; WRI 2021 release","Independent farm inventories (630 Thai farms).","Machine-detected or registry data; GRW ends mid-2024; TZ-SAM is a non-commercial licence.","used"],
  ["JRC GloFAS river flood hazard","EU Joint Research Centre, Copernicus Emergency Management Service","Modelled 10- and 100-year floods (v2.1.2, 2026)","Nationwide flood test.","Modelled, not observed; floods 90–95% of the Ayutthaya plain, so it cannot separate sites there.","used"],
- ["Not reached"],
- ["GISTDA LiDAR 2 m DTM, sphere and Vallaris platforms","GISTDA","—","Probed at the start of the project.","LiDAR is identify-only; sphere and Vallaris need separate keys.","no"],
- ["GISTDA SAR flood scenes, solar radiation, satellite imagery","GISTDA","Requested for 2021–2026","Requested; GISTDA could not supply them.","Replaced by Sentinel-1 + EOS, GSA + NASA POWER + our roof shadow model, and Sentinel-2.","no"]
 ];
