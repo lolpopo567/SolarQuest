@@ -16,7 +16,7 @@ const store = {
 
 const S = {
   config: null, art: null, playerId: null, level: null, attemptId: null, map: null, P: null,
-  fp: null, tool: null, drag: null, inspectTimer: null, lastWarn: "", overlays: new Set(),
+  fp: null, sites: [], tool: null, drag: null, inspectTimer: null, lastWarn: "", overlays: new Set(),
   basemap: "satellite", timer: null, deadline: null, frames: [], playTimer: null, revealed: false, floodSeen: false,
   roof: false, roofFC: null, sel: new Map(), roofLayer: null, heatRange: [55, 90],
 };
@@ -216,7 +216,7 @@ async function startLevel(levelId) {
   const name = playerName();
   await api("/api/players", { method: "POST", body: { player_id: S.playerId, name } });
   const lv = await api(`/api/levels/${levelId}`);
-  S.level = lv; S.revealed = false; S.fp = null; S.attemptId = null; S.floodSeen = false;
+  S.level = lv; S.revealed = false; S.fp = null; S.sites = []; S.attemptId = null; S.floodSeen = false;
   S.roof = lv.mission_type === "rooftop"; S.mixed = lv.mission_type === "mixed";
   S.sel = new Map(); S.roofLayer = null; S.groundArea = 0; S.roofArea = 0; S.optFeats = [];
   proj4.defs("EPSG:32647", lv.proj4_scoring);
@@ -233,6 +233,7 @@ async function startLevel(levelId) {
     await buildMap(lv);
     if (S.roof || S.mixed) await loadRoofs(lv);
     $$(".tool[data-tool]").forEach((b) => b.classList.toggle("hidden", S.roof));
+    updateSiteButton();
     $("#fp-summary").textContent = t(S.roof ? "fp_roofs" : S.mixed ? "fp_mixed" : "fp_place");
     buildCards(lv);
     buildStreetView(lv);
@@ -312,8 +313,10 @@ function buildMap(lv) {
       map.addSource("fp", { type: "geojson", data: empty });
       map.addSource("fp-handles", { type: "geojson", data: empty });
       map.addSource("optimal", { type: "geojson", data: empty });
-      map.addLayer({ id: "fp-fill", type: "fill", source: "fp", paint: { "fill-color": "#e8b33a", "fill-opacity": 0.28 } });
-      map.addLayer({ id: "fp-line", type: "line", source: "fp", paint: { "line-color": "#e8b33a", "line-width": 2.5 } });
+      map.addLayer({ id: "fp-fill", type: "fill", source: "fp",                 // the selected site is brighter
+                     paint: { "fill-color": "#e8b33a", "fill-opacity": ["case", ["==", ["get", "active"], 1], 0.32, 0.18] } });
+      map.addLayer({ id: "fp-line", type: "line", source: "fp",
+                     paint: { "line-color": "#e8b33a", "line-width": ["case", ["==", ["get", "active"], 1], 3, 2] } });
       map.addLayer({ id: "optimal-line", type: "line", source: "optimal",
                      paint: { "line-color": "#ffffff", "line-width": 3, "line-dasharray": [2, 1.5] } });
       map.addLayer({ id: "fp-handles", type: "circle", source: "fp-handles",
@@ -432,32 +435,37 @@ function rotateHandle(f) {
   const d = f.h / 2 + Math.max(40, 0.25 * f.h), c = Math.cos(f.angle), s = Math.sin(f.angle);
   return [f.cx - d * s, f.cy + d * c];
 }
-function ringXY() {
-  if (!S.fp) return null;
-  if (S.fp.mode === "rect") return rectCorners(S.fp);
-  return S.fp.pts.length >= 3 && S.fp.closed ? S.fp.pts : null;
+/* Up to C.max_sites separate sites (2026-10-10): S.sites holds them, S.fp is the one being edited. */
+function ringXY(f = S.fp) {
+  if (!f) return null;
+  if (f.mode === "rect") return rectCorners(f);
+  return f.pts.length >= 3 && f.closed ? f.pts : null;
 }
+const siteRings = () => S.sites.map((f) => ringXY(f)).filter(Boolean);
+const maxSites = () => SQEngine.content().config.max_sites || 1;
+const sitesOverlap = () => SQEngine.sitesOverlap(siteRings());
 function areaXY(ring) {
   let a = 0;
   for (let i = 0; i < ring.length; i++) { const [x1, y1] = ring[i], [x2, y2] = ring[(i + 1) % ring.length]; a += x1 * y2 - x2 * y1; }
   return Math.abs(a) / 2;
 }
-function geometry() {
-  const ring = ringXY();
-  if (!ring) return null;
-  const ll = ring.map(inv);
-  return { type: "Polygon", coordinates: [[...ll, ll[0]]] };
+function geometry() {                                    // Polygon for one site, MultiPolygon for several
+  const polys = siteRings().map((ring) => { const ll = ring.map(inv); return [[...ll, ll[0]]]; });
+  if (!polys.length) return null;
+  return polys.length === 1 ? { type: "Polygon", coordinates: polys[0] } : { type: "MultiPolygon", coordinates: polys };
 }
 
 function renderFootprint() {
   const map = S.map;
-  const g = geometry();
   const feats = [];
-  if (g) feats.push({ type: "Feature", geometry: g, properties: {} });
-  else if (S.fp && S.fp.mode === "poly" && S.fp.pts.length) {
-    const ll = S.fp.pts.map(inv);
-    feats.push({ type: "Feature", geometry: { type: "LineString", coordinates: ll.length > 1 ? ll : [ll[0], ll[0]] }, properties: {} });
-  }
+  S.sites.forEach((f, i) => {
+    const ring = ringXY(f), props = { site: i, active: f === S.fp ? 1 : 0 };
+    if (ring) { const ll = ring.map(inv); feats.push({ type: "Feature", geometry: { type: "Polygon", coordinates: [[...ll, ll[0]]] }, properties: props }); }
+    else if (f.mode === "poly" && f.pts.length) {
+      const ll = f.pts.map(inv);
+      feats.push({ type: "Feature", geometry: { type: "LineString", coordinates: ll.length > 1 ? ll : [ll[0], ll[0]] }, properties: props });
+    }
+  });
   map.getSource("fp").setData({ type: "FeatureCollection", features: feats });
   const handles = [];
   if (S.fp && !S.revealed) {
@@ -469,8 +477,25 @@ function renderFootprint() {
     }
   }
   map.getSource("fp-handles").setData({ type: "FeatureCollection", features: handles });
-  const area = g ? areaXY(ringXY()) : 0;
-  updateBudget(area);
+  updateBudget(siteRings().reduce((a, r) => a + areaXY(r), 0));
+  updateSiteButton();
+}
+function updateSiteButton() {
+  const b = $("#btn-add-site");
+  b.textContent = t("tool_add_site", { n: S.sites.length, max: maxSites() });
+  b.disabled = S.revealed || S.sites.length >= maxSites() || (S.fp && S.fp.mode === "poly" && !S.fp.closed);
+  b.classList.toggle("hidden", !!S.roof);
+}
+function addSite() {                                     // a new rectangle beside the others, sized to the budget left
+  if (S.revealed || S.roof || S.sites.length >= maxSites()) return;
+  const used = siteRings().reduce((a, r) => a + areaXY(r), 0), left = S.level.budget_m2 - used;
+  const side = Math.sqrt(Math.max(0.1 * S.level.budget_m2, Math.min(0.5 * S.level.budget_m2, 0.8 * left)));
+  const c = fwd(S.map.getCenter().toArray());
+  const f = { mode: "rect", cx: c[0], cy: c[1], w: side, h: side, angle: 0 };
+  for (let k = 0; k < 12 && SQEngine.sitesOverlap([...siteRings(), rectCorners(f)]); k++) f.cx += 1.2 * side;   // step clear of the others
+  S.sites.push(f); S.fp = f;
+  $$(".tool[data-tool]").forEach((x) => x.classList.toggle("active", x.dataset.tool === "rect"));
+  renderFootprint(); scheduleInspect();
 }
 const pt = (c, p) => ({ type: "Feature", geometry: { type: "Point", coordinates: c }, properties: p });
 
@@ -489,8 +514,9 @@ function updateBudget(area, kind = S.roof ? "roofs" : "ground") {
   $("#budget-fill").style.width = `${Math.min(100, 100 * frac)}%`;
   $("#budget-fill").classList.toggle("over", overG || overR);
   const any = S.mixed ? S.groundArea > 0 || S.roofArea > 0 : (S.roof ? S.roofArea : S.groundArea) > 0;
-  $("#btn-submit").disabled = !any || overG || overR || S.revealed || !S.attemptId;
-  $("#btn-submit").title = overG || overR ? t("over_budget") : "";
+  const clash = !S.roof && S.sites.length > 1 && sitesOverlap();
+  $("#btn-submit").disabled = !any || overG || overR || clash || S.revealed || !S.attemptId;
+  $("#btn-submit").title = overG || overR ? t("over_budget") : clash ? t("sites_overlap") : "";
 }
 
 function setTool(tool) {
@@ -498,17 +524,24 @@ function setTool(tool) {
   S.tool = tool;
   $$(".tool[data-tool]").forEach((b) => b.classList.toggle("active", b.dataset.tool === tool));
   const help = $("#draw-help");
+  const put = (f) => {                                    // the tool reshapes the selected site, or makes the first one
+    const i = S.sites.indexOf(S.fp);
+    if (i >= 0) S.sites[i] = f; else S.sites.push(f);
+    S.fp = f;
+  };
   if (tool === "rect") {
     if (!S.fp || S.fp.mode !== "rect") {
       const c = fwd(S.map.getCenter().toArray());
       const side = Math.sqrt(0.5 * S.level.budget_m2);
-      S.fp = { mode: "rect", cx: c[0], cy: c[1], w: side, h: side, angle: 0 };
-      const r = 3 * side;                                   // bring the new footprint to a workable size on screen
-      S.map.fitBounds([inv([c[0] - r, c[1] - r]), inv([c[0] + r, c[1] + r])], { duration: 600 });
+      put({ mode: "rect", cx: c[0], cy: c[1], w: side, h: side, angle: 0 });
+      if (S.sites.length === 1) {
+        const r = 3 * side;                                 // bring the new footprint to a workable size on screen
+        S.map.fitBounds([inv([c[0] - r, c[1] - r]), inv([c[0] + r, c[1] + r])], { duration: 600 });
+      }
     }
     help.textContent = t("help_rect");
   } else {
-    S.fp = { mode: "poly", pts: [], closed: false };
+    put({ mode: "poly", pts: [], closed: false });
     help.textContent = t("help_poly");
   }
   help.classList.remove("hidden");
@@ -518,7 +551,16 @@ function setTool(tool) {
   renderFootprint(); scheduleInspect();
 }
 $$(".tool[data-tool]").forEach((b) => (b.onclick = () => setTool(b.dataset.tool)));
-$("#btn-clear").onclick = () => { if (S.revealed) return; if (S.roof) return clearRoofs(); if (S.mixed) clearRoofs(); S.fp = null; renderFootprint(); $("#fp-summary").textContent = t("fp_place"); };
+$("#btn-add-site").onclick = addSite;
+$("#btn-clear").onclick = () => {                         // removes the selected site; roofs when no site is left
+  if (S.revealed) return;
+  if (S.roof) return clearRoofs();
+  if (!S.sites.length) { if (S.mixed) clearRoofs(); return; }
+  S.sites = S.sites.filter((f) => f !== S.fp);
+  S.fp = S.sites[S.sites.length - 1] || null;
+  renderFootprint();
+  if (S.sites.length || (S.mixed && S.sel.size)) scheduleInspect(); else $("#fp-summary").textContent = t("fp_place");
+};
 
 function wireFootprint(map) {
   const startDrag = (e, kind, i) => {
@@ -531,6 +573,8 @@ function wireFootprint(map) {
   const onBody = (e) => {
     if (map.queryRenderedFeatures(e.point, { layers: ["fp-handles"] }).length) return;
     if (S.fp && S.fp.mode === "poly" && !S.fp.closed) return;
+    const hit = S.sites[e.features[0].properties.site];       // grab any site: it becomes the selected one
+    if (hit && hit !== S.fp) { S.fp = hit; renderFootprint(); }
     startDrag(e, "move");
   };
   map.on("mousedown", "fp-handles", onHandle); map.on("touchstart", "fp-handles", onHandle);
@@ -609,6 +653,7 @@ async function inspect() {
         ? t("roofs_summary", { n: r.n_roofs, area: Math.round(r.area_m2).toLocaleString("en-US") }) +
           (excl ? " · " + t("roofs_excluded", { pct: excl.toFixed(0) }) : "")
         : t("fp_summary", { area: ha(r.area_m2), budget: ha(r.budget_m2) }) +
+          (S.sites.length > 1 ? " · " + t("fp_sites", { n: S.sites.length, pts: S.sites.length * 3 - 3 }) : "") +
           (r.on_map_pct < 100 ? " · " + t("fp_offmap", { pct: (100 - r.on_map_pct).toFixed(0) }) : "") +
           (excl ? " · " + t("fp_excluded", { pct: excl.toFixed(0) }) : ""));
       for (const [lid, v] of Object.entries(r.layers)) {
@@ -622,7 +667,7 @@ async function inspect() {
     if (warns.length && key !== S.lastWarn) toast(warns[0]);
     S.lastWarn = key;
   } catch (e) {
-    $("#fp-summary").textContent = e.message;
+    $("#fp-summary").textContent = /overlap/.test(e.message) ? t("sites_overlap") : e.message;
   }
 }
 function fmtHere(lid, v, roofs = S.roof) {
@@ -770,7 +815,7 @@ async function submit(timedOut = false) {
   if (!g) {
     if (!timedOut) return;
     const c = fwd(S.map.getCenter().toArray());          // nothing placed at the deadline: a token footprint
-    S.fp = { mode: "rect", cx: c[0], cy: c[1], w: 50, h: 50, angle: 0 }; g = geometry();
+    S.fp = { mode: "rect", cx: c[0], cy: c[1], w: 50, h: 50, angle: 0 }; S.sites = [S.fp]; g = geometry();
   }
   $("#btn-submit").disabled = true;
   let r;
@@ -810,7 +855,7 @@ async function submitMixed(timedOut) {
   if (!g && !ids.length) {
     if (!timedOut) return;
     const c = fwd(S.map.getCenter().toArray());                          // nothing placed at the deadline
-    S.fp = { mode: "rect", cx: c[0], cy: c[1], w: 50, h: 50, angle: 0 }; g = geometry();
+    S.fp = { mode: "rect", cx: c[0], cy: c[1], w: 50, h: 50, angle: 0 }; S.sites = [S.fp]; g = geometry();
   }
   $("#btn-submit").disabled = true;
   let r;
@@ -841,7 +886,9 @@ async function revealRoofs(r) {
   return opt;
 }
 function fitFeatures(feats, maxZoom) {
-  const coords = feats.filter(Boolean).flatMap((f) => f.geometry.type === "Polygon" ? f.geometry.coordinates[0] : f.geometry.coordinates.flat(1));
+  const pts = (g) => g.type === "Polygon" ? g.coordinates[0] : g.type === "MultiPolygon" ? g.coordinates.flatMap((p) => p[0])
+    : g.coordinates.flat(1);                                       // several sites arrive as a MultiPolygon
+  const coords = feats.filter(Boolean).flatMap((f) => pts(f.geometry));
   const b = coords.reduce((bb, [x, y]) => [[Math.min(bb[0][0], x), Math.min(bb[0][1], y)], [Math.max(bb[1][0], x), Math.max(bb[1][1], y)]],
                           [[180, 90], [-180, -90]]);
   S.map.fitBounds(b, { padding: { top: 80, left: 80, right: 80, bottom: 120 }, maxZoom, duration: 1200 });
@@ -905,7 +952,8 @@ function renderReveal(r) {
       ? t("roof_sizes", { yours: m2s(ex.size.player_area_m2), best: m2s(ex.size.optimal_area_m2) })
       : t("ground_sizes", { yours: ha(ex.size.player_area_m2), best: ha(ex.size.optimal_area_m2) })}
       ${S.mixed ? "" : t("breakeven", { w: ex.size.breakeven_weight.toFixed(0) })}
-      ${excl ? `<br><strong>${t("on_excluded")}</strong> ${excl}.` : ""} ${ex.off_map_pct > 0.5 ? `<br><strong>${t("off_the_map")}</strong> ${ex.off_map_pct}%.` : ""}</p>
+      ${excl ? `<br><strong>${t("on_excluded")}</strong> ${excl}.` : ""}
+      ${(res.site_penalty || (res.parts && res.parts.ground.site_penalty)) ? `<br><strong>${t("split_note", { n: res.n_sites || Math.round((res.parts.ground.site_penalty || 0) / 3) + 1, pts: res.site_penalty || res.parts.ground.site_penalty })}</strong>` : ""} ${ex.off_map_pct > 0.5 ? `<br><strong>${t("off_the_map")}</strong> ${ex.off_map_pct}%.` : ""}</p>
     <div class="legend-heat"><div class="legend-ramp" style="background:linear-gradient(90deg,#cde2fb,#9ec5f4,#6da7ec,#3987e5,#256abf,#184f95,#0d366b)"></div>
       <div class="legend-ends"><span>${t("heat_suitability", { v: S.roof ? S.heatRange[0] : 55 })}</span><span>${S.roof ? S.heatRange[1] : 90}</span></div>
       ${S.mixed ? `<div class="fine">${t("heat_mixed_note", { lo: S.heatRange[0], hi: S.heatRange[1] })}</div>` : ""}

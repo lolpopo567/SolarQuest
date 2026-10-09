@@ -124,6 +124,42 @@ const SQEngine = (() => {
     const c = ring.map((p) => P.inverse(p).map((v) => round(v, 7)));
     return { type: "Polygon", coordinates: [[...c, c[0]]] };
   };
+  const toGeoSites = (rings) => rings.length === 1 ? toGeo(rings[0])
+    : { type: "MultiPolygon", coordinates: rings.map((r) => toGeo(r).coordinates) };
+
+  /* several sites (hssa.MAX_SITES, 2026-10-10): a footprint is a Polygon or a MultiPolygon of up to 3 sites that
+     must not overlap. Returns the sites as rings in grid metres. */
+  function pointIn(pt, r) {                                                    // strictly inside (boundary = outside)
+    let inside = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [xi, yi] = r[i], [xj, yj] = r[j];
+      const cross = (xj - xi) * (pt[1] - yi) - (yj - yi) * (pt[0] - xi);
+      if (Math.abs(cross) < 1e-9 && Math.min(xi, xj) - 1e-9 <= pt[0] && pt[0] <= Math.max(xi, xj) + 1e-9
+          && Math.min(yi, yj) - 1e-9 <= pt[1] && pt[1] <= Math.max(yi, yj) + 1e-9) return false;
+      if ((yi > pt[1]) !== (yj > pt[1]) && pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  function overlaps(a, b) {                                                    // interiors meet (touching is fine)
+    const o = (p, q, r) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
+    for (let i = 0; i < a.length; i++) for (let j = 0; j < b.length; j++) {
+      const p1 = a[i], p2 = a[(i + 1) % a.length], p3 = b[j], p4 = b[(j + 1) % b.length];
+      if (o(p3, p4, p1) * o(p3, p4, p2) < 0 && o(p1, p2, p3) * o(p1, p2, p4) < 0) return true;
+    }
+    const probes = (r) => r.flatMap((p, i) => { const q = r[(i + 1) % r.length]; return [p, [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]]; });
+    return probes(a).some((p) => pointIn(p, b)) || probes(b).some((p) => pointIn(p, a));
+  }
+  function toGridSites(geojson) {
+    if (geojson && geojson.type === "MultiPolygon" && Array.isArray(geojson.coordinates)) {
+      if (!geojson.coordinates.length) throw new SelectionError("footprint is empty");
+      if (geojson.coordinates.length > C.config.max_sites) throw new SelectionError(`at most ${C.config.max_sites} sites`);
+      const rings = geojson.coordinates.map((c) => toGridRing({ type: "Polygon", coordinates: c }));
+      for (let i = 0; i < rings.length; i++) for (let j = i + 1; j < rings.length; j++)
+        if (overlaps(rings[i], rings[j])) throw new SelectionError("sites overlap");
+      return rings;
+    }
+    return [toGridRing(geojson)];
+  }
   const translate = (ring, dx, dy) => ring.map(([x, y]) => [x + dx, y + dy]);
 
   function clipArea(ring, xa, ya, xb, yb) {                                    // area of ring ∩ [xa,xb]×[ya,yb]
@@ -162,6 +198,17 @@ const SQEngine = (() => {
     }
     return { r0, c0, h, w, cov };
   }
+  function coverageSites(G, rings, clip = true) {                             // sites never overlap: coverages add
+    if (rings.length === 1) return coverage(G, rings[0], clip);
+    const ks = rings.map((r) => coverage(G, r, clip)).filter((k) => k.h && k.w);
+    if (!ks.length) return { r0: 0, c0: 0, h: 0, w: 0, cov: new Float64Array(0) };
+    const r0 = Math.min(...ks.map((k) => k.r0)), c0 = Math.min(...ks.map((k) => k.c0));
+    const h = Math.max(...ks.map((k) => k.r0 + k.h)) - r0, w = Math.max(...ks.map((k) => k.c0 + k.w)) - c0;
+    const cov = new Float64Array(h * w);
+    for (const k of ks) for (let i = 0; i < k.h; i++) for (let j = 0; j < k.w; j++) cov[(k.r0 - r0 + i) * w + k.c0 - c0 + j] += k.cov[i * k.w + j];
+    return { r0, c0, h, w, cov };
+  }
+  const sitesArea = (rings) => rings.reduce((a, r) => a + ringArea(r), 0);
   const wAt = (G, a, r, c) => (r >= 0 && r < G.H && c >= 0 && c < G.W ? a[r * G.W + c] : 0);
 
   /* ------------------------------------------------------------------ HSSA (hssa.py) */
@@ -213,18 +260,31 @@ const SQEngine = (() => {
     }
     return best;
   }
-  function bestTranslation(G, ring, area) {                                    // the player's own shape, every whole-pixel shift
+  function bestTranslation(G, ring, area, w = G.w) {                           // the player's own shape, every whole-pixel shift
     const k = coverage(G, ring, false), kmax = Math.max(k.h, k.w), off = kmax - 1;
     const nz = [];
     for (let a = 0; a < k.h; a++) for (let b = 0; b < k.w; b++) { const v = k.cov[a * k.w + b]; if (v > 0) nz.push([a, b, v]); }
     let bs = -Infinity, bt = 0, bu = 0;
     for (let t = -off; t <= G.H + off - k.h; t++) for (let u = -off; u <= G.W + off - k.w; u++) {
       let s = 0;
-      for (const [a, b, v] of nz) { const r = t + a, c = u + b; if (r >= 0 && r < G.H && c >= 0 && c < G.W) s += v * G.w[r * G.W + c]; }
+      for (const [a, b, v] of nz) { const r = t + a, c = u + b; if (r >= 0 && r < G.H && c >= 0 && c < G.W) s += v * w[r * G.W + c]; }
       if (s > bs + 1e-9) { bs = s; bt = t; bu = u; }
     }
     return { mean: Math.max(bs, 0) / area, ring: translate(ring, (bu - k.c0) * G.px, -(bt - k.r0) * G.px),
              family: "player_shape", area };
+  }
+  function bestArrangement(G, rings, area) {                                  // hssa.best_arrangement
+    const w = Float64Array.from(G.w), placed = [];
+    let total = 0;
+    const order = rings.map((r, i) => [ringArea(r), i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]).map(([, i]) => rings[i]);
+    for (const ring of order) {
+      const a = ringArea(ring), opt = bestTranslation(G, ring, a, w);
+      total += opt.mean * a;
+      placed.push(opt.ring);
+      const k = coverage(G, opt.ring);
+      for (let i = 0; i < k.h; i++) for (let j = 0; j < k.w; j++) if (k.cov[i * k.w + j] > 0) w[(k.r0 + i) * G.W + k.c0 + j] = 0;
+    }
+    return { mean: Math.max(total, 0) / area, rings: placed, family: "player_sites", area };
   }
   function tableRow(table, n) {
     n = Math.min(n, table.length);
@@ -232,14 +292,14 @@ const SQEngine = (() => {
     if (row.n_pixels !== n) throw new Error("denominator table is not indexed 1..N");
     return row;
   }
-  function denominator(G, area, ring, table) {
+  function denominator(G, area, rings, table) {
     let best = bestRectangle(G, area);
     const row = tableRow(table, nPixels(G, area));
     if (row.mean_weight > best.mean) {
       const r = row.geometry_grid.coordinates[0].slice(0, -1);
       best = { mean: row.mean_weight, ring: r, family: row.family, area: ringArea(r) };
     }
-    const own = bestTranslation(G, ring, area);
+    const own = rings.length > 1 ? bestArrangement(G, rings, area) : bestTranslation(G, rings[0], area);
     if (own.mean > best.mean) best = own;
     if (best.mean <= 0) throw new Error("no positive-weight footprint of this size exists");
     return best;
@@ -253,8 +313,8 @@ const SQEngine = (() => {
   const sizeFactor = (vp, vs, gamma) => { if (vs <= 0) throw new Error("level is not shippable"); return Math.max(0, Math.min(1, vp / vs)) ** gamma; };
   const grade = (score) => { for (const [lo, g] of C.config.grades) if (score >= lo) return g; return "D"; };
 
-  function selectionStats(G, ring, area) {
-    const k = coverage(G, ring);
+  function selectionStats(G, rings, area) {
+    const k = coverageSites(G, rings);
     let s = 0, on = 0, zero = 0;
     for (let i = 0; i < k.h; i++) for (let j = 0; j < k.w; j++) {
       const a = k.cov[i * k.w + j], wv = G.w[(k.r0 + i) * G.W + k.c0 + j];
@@ -262,14 +322,14 @@ const SQEngine = (() => {
     }
     return { area, on, zero, sum: s, mean: s / area, k };
   }
-  function scoreGround(G, ring, budget, table, reward) {
-    const area = ringArea(ring);
+  function scoreGround(G, rings, budget, table, reward) {
+    const area = sitesArea(rings);
     if (area <= 0) throw new SelectionError("footprint has zero area");
     if (overBudget(area, budget)) throw new SelectionError(`footprint ${f0(area)} m² exceeds budget ${f0(budget)} m²`);
     const flags = [], n = nPixels(G, area);
     const axis = bestRectangle(G, area);
-    const player = selectionStats(G, ring, area);
-    const best = denominator(G, area, ring, table);
+    const player = selectionStats(G, rings, area);
+    const best = denominator(G, area, rings, table);
     const ratio = player.mean / best.mean, position = Math.min(1, ratio);
     if (ratio > 1) flags.push("exceeds_optimum");
     const famMean = Math.max(axis.mean, tableRow(table, n).mean_weight);
@@ -279,8 +339,11 @@ const SQEngine = (() => {
     if (area < 0.9 * aStar) flags.push("undersized"); else if (area > 1.1 * aStar) flags.push("oversized");
     if (player.on < player.area - Math.max(1e-6, 1e-9 * player.area) - 1e-3) flags.push("off_map");  // clip sums carry float error
     if (player.zero > 0) flags.push("touches_excluded");
-    const score = round(100 * position * size, 1), g = grade(score);
+    const nSites = rings.length, penalty = C.config.site_penalty * (nSites - 1);    // each extra site: its own grid link
+    if (nSites > 1) flags.push("split_sites");
+    const score = round(Math.max(0, round(100 * position * size, 1) - penalty), 1), g = grade(score);
     return { res: { score, grade: g, verdict: g, position_pct: round(100 * position, 1), size_pct: round(100 * size, 1),
+                    n_sites: nSites, site_penalty: penalty,
                     player: { area_m2: round(area, 1), on_map_m2: round(player.on, 1), zero_weight_m2: round(player.zero, 1),
                               mean_weight: round(player.mean, 3) },
                     best_at_player_size: { family: best.family, area_m2: round(best.area, 1), mean_weight: round(best.mean, 3) },
@@ -498,9 +561,9 @@ const SQEngine = (() => {
     const L = await level(id);
     if (L.rooftop || (L.mixed && body.buildings != null)) return inspectRoofs(L, body);
     const G = await grid(L);
-    let ring;
-    try { ring = toGridRing(body.geometry); } catch (e) { throw new HttpError(422, e.message); }
-    const area = ringArea(ring), k = coverage(G, ring), excl = excludedSummary(G, k, area), budget = L.lv.budget_m2;
+    let rings;
+    try { rings = toGridSites(body.geometry); } catch (e) { throw new HttpError(422, e.message); }
+    const area = sitesArea(rings), k = coverageSites(G, rings), excl = excludedSummary(G, k, area), budget = L.lv.budget_m2;
     const warnings = [];
     if (overBudget(area, budget)) warnings.push(react("warn_budget_ground", "warning", { area: f1(area / 1e4), budget: fg(budget / 1e4) }));
     const ex = Object.values(excl).reduce((a, b) => a + b, 0);
@@ -523,8 +586,8 @@ const SQEngine = (() => {
              layers: roofSummary(L, idx, rc.unlocked_layers), warnings };
   }
 
-  function explainGround(L, G, ring, area, optRing, res) {
-    const pk = coverage(G, ring), ok = coverage(G, optRing), oarea = ringArea(optRing);
+  function explainGround(L, G, rings, area, optRing, res) {
+    const pk = coverageSites(G, rings), ok = coverage(G, optRing), oarea = ringArea(optRing);
     const mean = (a, k, ar) => { let s = 0; for (let i = 0; i < k.h; i++) for (let j = 0; j < k.w; j++) { const v = a[(k.r0 + i) * G.W + k.c0 + j]; s += (Number.isFinite(v) ? v : 0) * k.cov[i * k.w + j]; } return s / ar; };
     const factors = L.explain.factors.map((f) => {
       const p = mean(G.layers[f.id], pk, area), o = mean(G.layers[f.id], ok, oarea), raw = f.layer;
@@ -542,15 +605,16 @@ const SQEngine = (() => {
   }
   async function groundPart(L, body, aid) {
     if (!body.geometry) throw new SelectionError("send a footprint geometry");
-    const G = await grid(L), ring = toGridRing(body.geometry), lv = L.lv;
-    const { res, best } = scoreGround(G, ring, lv.budget_m2, lv.denominator_table, reward(lv.size_reward));
-    res.best_at_player_size.geometry = toGeo(best.ring);
+    const G = await grid(L), rings = toGridSites(body.geometry), lv = L.lv;
+    const { res, best } = scoreGround(G, rings, lv.budget_m2, lv.denominator_table, reward(lv.size_reward));
+    const bestGeo = best.rings ? toGeoSites(best.rings) : toGeo(best.ring);
+    res.best_at_player_size.geometry = bestGeo;
     const optRing = lv.optimal_selection.geometry_grid.coordinates[0].slice(0, -1);
-    const explanation = explainGround(L, G, ring, ringArea(ring), optRing, res);
+    const explanation = explainGround(L, G, rings, sitesArea(rings), optRing, res);
     const reveal = { heatmap_url: L.base + "reveal/suitability.png", heatmap_corners: L.dashboard.overlay_corners, heatmap_range: [55, 90],
                      optimal_selection: { geometry: lv.optimal_selection.geometry, area_m2: lv.optimal_selection.area_m2,
                                           mean_weight: lv.optimal_selection.mean_weight },
-                     best_at_player_size: toGeo(best.ring), player_geometry: toGeo(ring) };
+                     best_at_player_size: bestGeo, player_geometry: toGeoSites(rings) };
     const ev = lv.assets.reveal_overlay;
     if (ev) reveal.flood_event = { date: ev.date, corners: L.dashboard.overlay_corners, url: L.base + "reveal/" + ev.extent_file.split("/").pop() };
     return [res, explanation, reveal];
@@ -589,7 +653,8 @@ const SQEngine = (() => {
     const score = round((rg.score + rr.score) / 2, 1), g = grade(score);
     const res = { score, grade: g, verdict: g, position_pct: round((rg.position_pct + rr.position_pct) / 2, 1),
                   size_pct: round((rg.size_pct + rr.size_pct) / 2, 1), flags: [...new Set([...rg.flags, ...rr.flags])].sort(),
-                  player: rg.player, parts: { ground: { score: rg.score, grade: rg.grade, position_pct: rg.position_pct, size_pct: rg.size_pct },
+                  player: rg.player, parts: { ground: { score: rg.score, grade: rg.grade, position_pct: rg.position_pct, size_pct: rg.size_pct,
+                                                          site_penalty: rg.site_penalty },
                                               roofs: { score: rr.score, grade: rr.grade, position_pct: rr.position_pct, size_pct: rr.size_pct } } };
     const factors = [];
     for (const [tag, e] of [["ground", eg], ["roofs", er]]) for (const f of (e || {}).factors || []) factors.push({ ...f, part: tag, points: round(f.points / 2, 1) });
@@ -669,7 +734,9 @@ const SQEngine = (() => {
     }
     throw new HttpError(404, `no route ${method} ${path}`);
   }
-  return { handle, init, setLang(l) { lang = l; }, say: (k, vars = {}, scene = "inspection") => react(k, scene, vars), get lang() { return lang; }, content: () => C, HttpError,
+  // app.js: warn before submitting when sites overlap (rings in grid metres)
+  const sitesOverlap = (rings) => rings.some((a, i) => rings.slice(i + 1).some((b) => overlaps(a, b)));
+  return { handle, init, sitesOverlap, setLang(l) { lang = l; }, say: (k, vars = {}, scene = "inspection") => react(k, scene, vars), get lang() { return lang; }, content: () => C, HttpError,
            _test: { rectSizes, coverage, ringArea, clipArea, scoreRooftop } };
 })();
 if (typeof module !== "undefined") module.exports = SQEngine;
