@@ -374,7 +374,8 @@ async function loadRoofs(lv) {
   const map = S.map;
   map.addSource("roofs", { type: "geojson", data: S.roofFC, promoteId: "id" });
   map.addLayer({ id: "roofs-fill", type: "fill", source: "roofs",
-                 paint: { "fill-color": roofFillColor(), "fill-opacity": ["case", ["boolean", ["feature-state", "sel"], false], 0.85, 0.6] } },
+                 paint: { "fill-color": roofFillColor(), "fill-opacity": ["case", ["==", ["coalesce", ["get", "x"], 0], 1], 0.92,
+                                                                    ["boolean", ["feature-state", "sel"], false], 0.85, 0.6] } },
                FIRST_FP_LAYER);
   map.addLayer({ id: "roofs-line", type: "line", source: "roofs",
                  paint: { "line-color": ["case", ["boolean", ["feature-state", "sel"], false], "#e8b33a", "rgba(20,24,30,0.45)"],
@@ -390,7 +391,8 @@ function roofFillColor() {
             ["interpolate", ["linear"], ["coalesce", ["feature-state", "w"], 0],
              ...HEAT.flatMap((c, i) => [lo + (i * (hi - lo)) / (HEAT.length - 1), c])]];
   }
-  const sel = ["case", ["boolean", ["feature-state", "sel"], false], "#e8b33a"];
+  const sel = ["case", ["==", ["coalesce", ["get", "x"], 0], 1], "#15171c",          // already has solar: near black
+               ["boolean", ["feature-state", "sel"], false], "#e8b33a"];
   const c = S.roofLayer;
   if (!c) return [...sel, "#d9d4c7"];
   const lg = c.legend, n = lg.colors.length;
@@ -399,7 +401,8 @@ function roofFillColor() {
 }
 function roofHelp() {
   const help = $("#draw-help");
-  help.textContent = t("help_roofs");
+  const cap = S.level.dashboard.max_roof_m2;
+  help.textContent = t("help_roofs") + (cap ? " " + t("help_roofs_taken", { m: cap.toLocaleString("en-US") }) : "");
   help.classList.remove("hidden");
   clearTimeout(S.helpTimer);
   S.helpTimer = setTimeout(() => help.classList.add("hidden"), 9000);
@@ -409,6 +412,7 @@ function toggleRoof(f) {
   if (S.revealed || !S.attemptId) return;
   if (S.fp && S.fp.mode === "poly" && !S.fp.closed) return;          // a click while drawing adds a corner, not a roof
   const id = f.properties.id, u = f.properties.u;
+  if (f.properties.x) { toast(eventLine("rules", t("roof_has_solar"))); return; }   // large roof: already has panels
   if (S.sel.has(id)) S.sel.delete(id);
   else {
     const now = [...S.sel.values()].reduce((a, b) => a + b, 0), budget = roofBudget();

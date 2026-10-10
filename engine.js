@@ -367,7 +367,9 @@ const SQEngine = (() => {
     if (total <= 0) throw new SelectionError("no array placed");
     if (overBudget(total, budget)) throw new SelectionError(`placed ${f0(total)} m² exceeds budget ${f0(budget)} m²`);
     const [got, bestS, chosen] = roofGreedy(weights, usable, total);
-    const bestMean = bestS / got, position = Math.min(1, (s / total) / bestMean), w0 = reward.breakeven_weight;
+    const bestMean = bestS / got, w0 = reward.breakeven_weight;
+    const position = bestMean > w0 ? Math.min(1, Math.max(0, (s / total - w0) / (bestMean - w0)))   // hssa.score_rooftop:
+                                   : Math.min(1, (s / total) / bestMean);                            // above break-even
     const [aStar, sStar] = roofGreedy(weights, usable, budget, w0);
     const vStar = aStar > 0 ? netValue(aStar, sStar / aStar, w0) : 0;
     const size = sizeFactor(netValue(got, bestMean, w0), vStar, reward.gamma);
@@ -443,6 +445,8 @@ const SQEngine = (() => {
     const n = L.roofs.ids.length;
     if (!ids || !ids.length) throw new SelectionError("pick at least one roof");
     if (new Set(ids).size !== ids.length || Math.min(...ids) < 0 || Math.max(...ids) >= n) throw new SelectionError("unknown or repeated roof id");
+    const taken = new Set(L.roofs.has_solar || []);                   // large roofs that already carry solar
+    if (ids.some((i) => taken.has(i))) throw new SelectionError("roof already has solar panels");
     return ids;
   }
   function roofSummary(L, idx, ids) {

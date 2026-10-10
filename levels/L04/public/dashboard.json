@@ -154,6 +154,8 @@
  "flood_until": null,
  "roofs": "public/roofs.geojson",
  "n_roofs": 12118,
+ "max_roof_m2": 1000,
+ "n_has_solar": 289,
  "basemap_s2": {
   "file": "public/basemap_s2.jpg",
   "corners": [

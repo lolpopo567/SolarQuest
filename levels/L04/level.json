@@ -15,111 +15,203 @@
  ],
  "zoom_min": 13,
  "zoom_max": 19,
- "budget_m2": 20000,
+ "budget_m2": 10000,
  "par_score": 70,
  "optimal_selection": {
   "buildings": [
    {
-    "building_id": "11870",
-    "area_m2": 1347.8
+    "building_id": "11745",
+    "area_m2": 584.6
    },
    {
-    "building_id": "10922",
-    "area_m2": 12272.7
+    "building_id": "11190",
+    "area_m2": 513.7
    },
    {
-    "building_id": "10953",
-    "area_m2": 2779.3
+    "building_id": "11577",
+    "area_m2": 338.8
    },
    {
-    "building_id": "11810",
-    "area_m2": 1062.8
+    "building_id": "11811",
+    "area_m2": 684.0
    },
    {
-    "building_id": "10951",
-    "area_m2": 1283.1
+    "building_id": "10082",
+    "area_m2": 336.7
    },
    {
-    "building_id": "11600",
-    "area_m2": 1254.3
+    "building_id": "11747",
+    "area_m2": 425.6
+   },
+   {
+    "building_id": "10809",
+    "area_m2": 385.1
+   },
+   {
+    "building_id": "11812",
+    "area_m2": 824.2
+   },
+   {
+    "building_id": "10791",
+    "area_m2": 651.7
+   },
+   {
+    "building_id": "9495",
+    "area_m2": 826.0
+   },
+   {
+    "building_id": "11043",
+    "area_m2": 459.4
+   },
+   {
+    "building_id": "11048",
+    "area_m2": 446.3
+   },
+   {
+    "building_id": "11061",
+    "area_m2": 500.6
+   },
+   {
+    "building_id": "11301",
+    "area_m2": 490.6
+   },
+   {
+    "building_id": "9502",
+    "area_m2": 750.5
+   },
+   {
+    "building_id": "10164",
+    "area_m2": 821.6
+   },
+   {
+    "building_id": "11049",
+    "area_m2": 311.6
+   },
+   {
+    "building_id": "9487",
+    "area_m2": 347.3
+   },
+   {
+    "building_id": "9951",
+    "area_m2": 301.7
    }
   ],
-  "area_m2": 20000.0,
-  "mean_weight": 76.0006,
+  "area_m2": 10000.0,
+  "mean_weight": 74.4331,
   "family": "roofs",
   "geometry": {
    "type": "Polygon",
    "coordinates": [
     [
      [
-      100.550255,
-      13.724934
+      100.550465,
+      13.725704
      ],
      [
-      100.547648,
-      13.725509
+      100.545519,
+      13.730935
      ],
      [
-      100.546228,
-      13.726071
+      100.544211,
+      13.734346
      ],
      [
-      100.545347,
-      13.727364
+      100.544211,
+      13.734482
      ],
      [
-      100.545418,
-      13.727764
+      100.549978,
+      13.742744
      ],
      [
-      100.545609,
-      13.728761
+      100.550187,
+      13.742706
      ],
      [
-      100.547894,
-      13.728399
+      100.550193,
+      13.742703
      ],
      [
-      100.551248,
-      13.725583
+      100.550198,
+      13.742699
      ],
      [
-      100.551249,
-      13.72545
+      100.550208,
+      13.742691
      ],
      [
-      100.551254,
-      13.725079
+      100.550216,
+      13.74268
      ],
      [
-      100.551256,
-      13.724949
+      100.55022,
+      13.742674
      ],
      [
-      100.551239,
-      13.724939
+      100.550225,
+      13.742664
      ],
      [
-      100.550255,
-      13.724934
+      100.550228,
+      13.742658
+     ],
+     [
+      100.550231,
+      13.742651
+     ],
+     [
+      100.550237,
+      13.742633
+     ],
+     [
+      100.55024,
+      13.742621
+     ],
+     [
+      100.550241,
+      13.742615
+     ],
+     [
+      100.551125,
+      13.735945
+     ],
+     [
+      100.551873,
+      13.729264
+     ],
+     [
+      100.551871,
+      13.729185
+     ],
+     [
+      100.551836,
+      13.72887
+     ],
+     [
+      100.551231,
+      13.725737
+     ],
+     [
+      100.550465,
+      13.725704
      ]
     ]
    ]
   }
  },
  "size_reward": {
-  "breakeven_weight": 64.63,
+  "breakeven_weight": 64.561,
   "breakeven_pct": 50.0,
   "gamma": 0.5,
-  "optimal_area_m2": 20000.0,
-  "optimal_net_value": 22.742
+  "optimal_area_m2": 10000.0,
+  "optimal_net_value": 9.873
  },
  "scoring": {
   "crs": "EPSG:32647",
   "pixel_size_m": 1.0,
   "weights_file": "roofs.json",
   "mask_file": null,
-  "weights_sha256": "0f6bc3ea3a496b58e7af24388b34461149e7ccc6aab536383107527c45039e65",
+  "weights_sha256": "0f5a5cb18ebf5ab2d6f84ff3f8ba7d11571e54958e1c92ce1f6d9a2ffac1ee7e",
   "aspects": [
    1.0,
    1.3333,
@@ -136,9 +228,9 @@
  "streetview_anchors": [
   {
    "anchor_id": "SV1",
-   "lon": 100.5228087,
-   "lat": 13.7423138,
-   "heading_deg": 287.4,
+   "lon": 100.5218238,
+   "lat": 13.7496657,
+   "heading_deg": 123.8,
    "pitch_deg": 0,
    "provider": "mapillary",
    "pano_id": null,
@@ -146,6 +238,26 @@
   },
   {
    "anchor_id": "SV2",
+   "lon": 100.534448,
+   "lat": 13.7369079,
+   "heading_deg": 272.7,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.5515405,
+   "lat": 13.7295057,
+   "heading_deg": 193.9,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV4",
    "lon": 100.4734907,
    "lat": 13.782192,
    "heading_deg": 90.0,
@@ -155,20 +267,10 @@
    "captured": null
   },
   {
-   "anchor_id": "SV3",
+   "anchor_id": "SV5",
    "lon": 100.6111041,
    "lat": 13.7851995,
    "heading_deg": 90.0,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV4",
-   "lon": 100.550256,
-   "lat": 13.7239197,
-   "heading_deg": 23.2,
    "pitch_deg": 0,
    "provider": "mapillary",
    "pano_id": null,
@@ -183,7 +285,7 @@
  ],
  "difficulty_tier": 2,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/004. Exercise 4 of 7. Site: Pathum Wan district, Bangkok. Rooftop mission: no ground-mount on this district. Panel budget: 2 ha of roof. Pick whole roofs; each carries panels on its usable area.",
+ "briefing_text": "MEMO SSIA/TRN/004. Exercise 4 of 7. Site: Pathum Wan district, Bangkok. Rooftop mission: no ground-mount on this district. Panel budget: 1 ha of roof. Roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
  "briefing_script": "L04.briefing",
  "hints_enabled": true,
  "time_limit_s": null,
