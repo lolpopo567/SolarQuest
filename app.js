@@ -1183,13 +1183,36 @@ async function refreshDay() {
   return list;
 }
 const say = (lines) => playDialogue(lines.map((l) => ({ ...l, text: fillName(l.text) })));
-const loadImg = (src) => new Promise((r) => { const i = new Image(); i.onload = i.onerror = r; i.src = src; });
+const loadImg = (src) => new Promise((r) => { const i = new Image(); i.onload = i.onerror = () => r(i); i.src = src; });
+/* A picture on a screen inside the scene (art manifest "screens": the evening news on the TV). It sits exactly on
+   the background's blank screen, which the stage draws with background-size: cover, and slides in once shown. */
+function placeScreen() {
+  const el = $("#stage .tv-screen"), st = $("#stage"), sc = S.stageScreen;
+  if (!el || !sc) return;
+  const W = st.clientWidth, H = st.clientHeight, s = Math.max(W / sc.w, H / sc.h);
+  const ox = (W - sc.w * s) / 2, oy = (H - sc.h * s) / 2, [l, t, r, b] = sc.box;
+  Object.assign(el.style, { left: `${ox + l * sc.w * s}px`, top: `${oy + t * sc.h * s}px`,
+                            width: `${(r - l) * sc.w * s}px`, height: `${(b - t) * sc.h * s}px` });
+}
+addEventListener("resize", placeScreen);
 async function scene(bg, onShow) {                               // a full-screen picture: office, house, door, TV
-  await loadImg(bgUrl(bg));
+  const img = await loadImg(bgUrl(bg));
+  const sc = (S.art.screens || {})[bg];
+  $("#stage .tv-screen")?.remove();
+  S.stageScreen = sc ? { box: sc.box, w: img.naturalWidth || 16, h: img.naturalHeight || 9 } : null;
+  let pic = null;
+  if (sc) {
+    const ws = Object.keys(sc.pic).map(Number).sort((a, b) => a - b);
+    pic = document.createElement("div"); pic.className = "tv-screen";
+    const im = await loadImg(sc.pic[String(ws.find((w) => w >= 600) || ws[ws.length - 1])]);
+    pic.appendChild(im);
+  }
   await showScreen("stage", () => {                              // onShow: the scene's sound, as the picture appears
     $("#stage").style.backgroundImage = `url("${bgUrl(bg)}")`;
+    if (pic) { $("#stage").appendChild(pic); placeScreen(); }
     if (onShow) onShow();
   }, true);
+  if (pic) { await wait(300); pic.classList.add("on"); await wait(900); }   // the picture slides onto the screen
   await wait(250);
 }
 async function dayCard(text, sub = "") {                         // white text on black between days
