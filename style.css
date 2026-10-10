@@ -133,6 +133,18 @@ button.link { margin-top: 14px; border: 0; background: none; color: var(--navy);
 #budget-fill { height: 100%; width: 0; background: var(--gold); transition: width .15s; }
 #budget-fill.over { background: #ff6b4a; }
 .timer { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--gold); }
+/* submit: the one action on this screen; gold on the navy bar, pulses a few times once it can be pressed */
+#btn-submit { background: var(--gold); color: var(--navy); border: 2px solid var(--gold); font-weight: 800; font-size: 17px;
+  padding: 10px 22px; border-radius: 10px; margin-left: auto; box-shadow: 0 0 0 0 rgba(232,179,58,.6), 0 3px 10px rgba(0,0,0,.35);
+  transition: transform .12s, background .15s, box-shadow .15s; }
+#btn-submit::before { content: "✓ "; }
+#btn-submit:not(:disabled) { animation: submit-pulse 1.6s ease-out 3; }
+#btn-submit:not(:disabled):hover { background: #f5c64f; transform: translateY(-1px); }
+#btn-submit:not(:disabled):active { transform: translateY(1px); }
+#btn-submit:disabled { background: rgba(232,179,58,.12); color: var(--gold); border: 2px solid rgba(232,179,58,.55); box-shadow: none; animation: none; opacity: .75; }
+@keyframes submit-pulse { 0% { box-shadow: 0 0 0 0 rgba(232,179,58,.65), 0 3px 10px rgba(0,0,0,.35); }
+  100% { box-shadow: 0 0 0 14px rgba(232,179,58,0), 0 3px 10px rgba(0,0,0,.35); } }
+@media (prefers-reduced-motion: reduce) { #btn-submit:not(:disabled) { animation: none; } }
 .timer.low { color: #ff6b4a; }
 
 .game-body { flex: 1; display: grid; grid-template-columns: 1fr 360px; min-height: 0; }
