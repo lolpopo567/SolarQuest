@@ -162,6 +162,11 @@ button.link { margin-top: 14px; border: 0; background: none; color: var(--navy);
   .game-body { grid-template-columns: 1fr; grid-template-rows: 52vh minmax(0, 1fr); overflow: hidden; }
   .panel { border-left: 0; border-top: 1px solid var(--line); max-height: none; min-height: 0; overflow: hidden; }
   .topbar .title { order: -1; flex-basis: 100%; }
+  /* phones: Desktop, budget and Submit share one row, so the map keeps its height */
+  .topbar { gap: 8px; padding: 6px 10px; }
+  .topbar #btn-home { padding: 6px 8px; }
+  .budget { min-width: 0; flex: 1; }
+  #btn-submit { font-size: 14px; padding: 7px 12px; border-radius: 8px; margin-left: 0; }
 }
 
 /* ---------- map tools */
