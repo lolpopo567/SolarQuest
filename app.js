@@ -1075,6 +1075,12 @@ function renderCredits() {
       : `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td>
          <td><span class="src-tag ${r[5]}">${tag[r[5]]}</span></td></tr>`).join("") + "</tbody>";
   $$("table.credits").forEach((tb) => { tb.innerHTML = html; });   // desktop window and title-screen overlay
+  const team = UI.team || {}, pick = (v) => (v && (v[lang()] || v.en)) || "";
+  const people = (team.members || []).filter((m) => m && String(m.name || "").trim());
+  const teamHtml = !people.length ? "" : `<h3>${esc(pick(team.title) || t("team"))}</h3>
+    <ul class="team-list">${people.map((m) => `<li><b>${esc(m.name)}</b><span>${esc(pick(m.role))}</span></li>`).join("")}</ul>
+    ${pick(team.note) ? `<p class="team-note">${esc(pick(team.note))}</p>` : ""}`;
+  $$(".team").forEach((el) => { el.innerHTML = teamHtml; el.hidden = !teamHtml; });   // content/team.yaml
 }
 
 /* ------------------------------------------------------------------ story: title, prologue, office */

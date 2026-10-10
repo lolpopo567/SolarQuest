@@ -258,6 +258,13 @@ button.link { margin-top: 14px; border: 0; background: none; color: var(--navy);
 }
 
 /* data & credits */
+.team h3 { margin: 0 0 10px; font-size: 1.05rem; }
+.team-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.team-list li { border: 1px solid var(--line, #d8d4c8); border-radius: 8px; padding: 10px 12px; background: var(--paper, #fff); display: grid; gap: 2px; }
+.team-list b { font-size: 1rem; }
+.team-list span { font-size: 0.85rem; opacity: 0.75; }
+.team-note { margin: 10px 0 0; font-size: 0.9rem; opacity: 0.8; }
+.team + p { margin-top: 6px; }
 .credits-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; max-width: 1400px; margin: 0 auto; }
 .credits-body p { max-width: 75ch; margin: 0; }
 .credits-wrap { overflow-x: auto; border: 1px solid var(--line, #d8d4c8); border-radius: 8px; background: var(--paper, #fff); }
