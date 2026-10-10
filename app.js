@@ -106,7 +106,7 @@ function typeLine(el, text, character, box = el.closest(".vn-box")) {   // box g
     step();
   });
 }
-function playDialogue(lines) {
+function playDialogue(lines, onLine) {           // onLine(line): called as each line appears (the tutorial tour)
   return new Promise((resolve) => {
     if (!lines.length) return resolve();
     const vn = $("#vn"); let i = -1;
@@ -115,6 +115,7 @@ function playDialogue(lines) {
       i += 1;
       if (i >= lines.length) { vn.classList.add("hidden"); vn.onclick = null; document.onkeydown = null; return resolve(); }
       const ln = lines[i];
+      if (onLine) onLine(ln);
       $("#vn-name").textContent = speaker(ln.character);
       typeLine($("#vn-text"), ln.text, ln.character);
       const left = $("#vn-left"), right = $("#vn-right"), sat = $("#vn-sat");
@@ -198,7 +199,7 @@ async function showScreen(id, prepare, force = false) {
 }
 
 /* ------------------------------------------------------------------ level flow */
-async function startLevel(levelId) {
+async function startLevel(levelId, tour = {}) {     // tour: the tutorial's { memo, ready } steps (playTutorial)
   const name = playerName();
   await api("/api/players", { method: "POST", body: { player_id: S.playerId, name } });
   const lv = await api(`/api/levels/${levelId}`);
@@ -235,11 +236,13 @@ async function startLevel(levelId) {
 
   $("#memo-text").textContent = lv.briefing_text;
   $("#memo").classList.remove("hidden");
+  if (tour.memo) await tour.memo();
   await new Promise((res) => { $("#memo-ok").onclick = () => { $("#memo").classList.add("hidden"); res(); }; });
   await playDialogue(lv.briefing);
   const st = await api(`/api/levels/${levelId}/start`, { method: "POST", body: { player_id: S.playerId } });
   S.attemptId = st.attempt_id;
   startTimer(st.time_limit_s);
+  if (tour.ready) await tour.ready();
   if (S.roof) roofHelp(); else setTool("rect");
 }
 
@@ -1242,12 +1245,59 @@ async function playIntro() {
   await playMorning(1);                                        // Day 1: office, then the Senior Inspector's greeting
   if (!store.get("sq_tutorial_seen")) await playTutorial();    // first visit to the desktop
 }
-async function playTutorial() {                                  // SAT walks through the desktop (dialogue.yaml: tutorial)
+/* The tutorial is a guided tour: SAT opens Assessments, takes the player into exercise 1 and points at each part
+   of the screen while it talks (dialogue.yaml: tutorial). TOUR says what each line highlights; a line whose
+   target is not on screen (no badges, no flood timeline) is skipped. Lines not listed in the desktop or memo
+   steps play on the exercise screen, after the Senior Inspector's briefing. */
+const TOUR = {
+  tut_2: "#home .desk-icon[data-open=win-exercises]",
+  tut_open: "#level-list li:first-child",
+  tut_3: "#memo .memo-sheet",
+  tut_4: "#game .tools",
+  tut_budget: "#game .budget",
+  tut_5: "#cards",
+  tut_switch: "#cards .switch",
+  tut_6: "#cards",
+  tut_7: "#cards .badge",
+  tut_8: "#timeline",
+  tut_9: "#game [data-tab=sv]",
+  tut_basemap: "#btn-basemap",
+  tut_10: "#sat-hud",
+  tut_submit: "#btn-submit",
+};
+const TOUR_DESK = ["tut_1", "tut_2"], TOUR_OPEN = ["tut_open"], TOUR_MEMO = ["tut_3"];
+const onScreen = (sel) => { const el = sel && document.querySelector(sel); return !!el && el.getClientRects().length > 0; };
+function spotlight(sel) {                                        // frame one element, dim the rest (null: off)
+  const el = sel && document.querySelector(sel);
+  S.spotEl = el && el.getClientRects().length ? el : null;
+  $("#spot").classList.toggle("hidden", !S.spotEl);
+  $("#vn").classList.toggle("spotlit", !!S.spotEl);
+  if (S.spotEl) { S.spotEl.scrollIntoView({ block: "nearest", inline: "nearest" }); placeSpot(); }
+  else $("#vn").classList.remove("top");
+}
+function placeSpot() {
+  const el = S.spotEl; if (!el) return;
+  const r = el.getBoundingClientRect(), p = 6, s = $("#spot").style;
+  s.left = `${r.left - p}px`; s.top = `${r.top - p}px`; s.width = `${r.width + 2 * p}px`; s.height = `${r.height + 2 * p}px`;
+  $("#vn").classList.toggle("top", r.bottom > innerHeight - 240 && r.top > 260);   // keep the dialogue off the target
+}
+addEventListener("resize", placeSpot);
+async function playTutorial() {
   const { lines } = await api("/api/story/tutorial");
   const ls = lines.map((l) => ({ ...l, text: fillName(l.text) }));
   await preload([...new Set(ls.map((l) => l.sprite))]);
-  await playDialogue(ls);
+  const step = async (keys) => {
+    await playDialogue(ls.filter((l) => keys.includes(l.line_id) && (!TOUR[l.line_id] || onScreen(TOUR[l.line_id]))),
+                       (l) => spotlight(TOUR[l.line_id]));
+    spotlight(null);
+  };
+  await step(TOUR_DESK);
+  openWin("win-exercises");
+  await wait(250);
+  await step(TOUR_OPEN);
   store.set("sq_tutorial_seen", "1");
+  const rest = ls.map((l) => l.line_id).filter((k) => ![...TOUR_DESK, ...TOUR_OPEN, ...TOUR_MEMO].includes(k));
+  await startLevel("L01", { memo: () => step(TOUR_MEMO), ready: () => step(rest) });
 }
 $("#btn-delete-me").onclick = async () => {
   if (!confirm(t("reset_confirm"))) return;
