@@ -127,7 +127,7 @@
 
 <script>
 "use strict";
-/* ------------------------------------------------------------------ text (Thai keeps technical terms and names English) */
+/* ------------------------------------------------------------------ text (Thai keeps technical terms English; province and district names are Thai) */
 const TEXT = {
   en: {},
   th: {
@@ -165,6 +165,8 @@ function applyText() {
 }
 const FACTOR_TH = { flood_score: "ความเสี่ยงน้ำท่วม", solar_score: "แสงแดด", landuse_score: "การใช้ที่ดิน", access_score: "ถนนและสายส่ง",
                     terrain_score: "ภูมิประเทศ", drought_score: "ภัยแล้ง", rooftop_score: "ขนาดหลังคา", demand_score: "ความต้องการไฟในอาคาร" };
+const DISTRICT_TH = { BANGBAN: "บางบาล", PHRANAKHON: "พระนครศรีอยุธยา", HATYAI: "หาดใหญ่", PATHUMWAN: "ปทุมวัน" };
+const dname = (d) => (lang === "th" && DISTRICT_TH[d.id]) || d.name;
 const label = (f) => (lang === "th" && FACTOR_TH[f.id]) || f.label;
 const FACTOR_DESC = {
   en: { flood_score: "Seasons flooded and Sentinel-1 flood frequency", solar_score: "Sep–Dec sunshine (GHI), after terrain shade",
@@ -436,7 +438,7 @@ async function selectDistrict(id) {
   redraw(); writeHash();
 }
 function buildDistricts() {
-  $("#districts").innerHTML = S.man.districts.map((d) => `<button data-id="${d.id}">${d.name}<small>${t(d.kind === "roofs" ? "roofs" : "ground")} · ${d.km2.toLocaleString("en-US", { maximumFractionDigits: 0 })} km²</small></button>`).join("");
+  $("#districts").innerHTML = S.man.districts.map((d) => `<button data-id="${d.id}">${dname(d)}<small>${t(d.kind === "roofs" ? "roofs" : "ground")} · ${d.km2.toLocaleString("en-US", { maximumFractionDigits: 0 })} km²</small></button>`).join("");
   document.querySelectorAll("#districts button").forEach((b) => (b.onclick = () => selectDistrict(b.dataset.id)));
 }
 
