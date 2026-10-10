@@ -17,9 +17,13 @@ const Snd = (() => {
     click: "sound/ui-click.mp3",            // every button
     dialog: "sound/dialog.mp3",             // typing chatter: loops while a dialogue line types out (own channel)
   };
-  const KEY = "sq_sound";
+  const KEY = "sq_sound", VOL_KEY = "sq_volume";
   let on = true, ctx = null, master = null, music = null, wanted = null;
   try { on = localStorage.getItem(KEY) !== "off"; } catch { /* private mode */ }
+  // Settings → volume: one level per bus, 0–1, kept on this device
+  const vol = { music: 0.8, sfx: 0.8, voice: 0.8 };   // the same for all three keeps the mix set in app.js
+  try { Object.assign(vol, JSON.parse(localStorage.getItem(VOL_KEY)) || {}); } catch { /* private mode or bad value */ }
+  const bus = {};
   const buffers = {};
 
   function init() {
@@ -30,6 +34,7 @@ const Snd = (() => {
     master = ctx.createGain();
     master.gain.value = on ? 1 : 0;
     master.connect(ctx.destination);
+    for (const b of Object.keys(vol)) { bus[b] = ctx.createGain(); bus[b].gain.value = vol[b]; bus[b].connect(master); }
     return ctx;
   }
   function load(name) {                                   // decoded once, kept (the service worker caches the file)
@@ -39,25 +44,25 @@ const Snd = (() => {
       .catch(() => null);
     return buffers[name];
   }
-  function source(buf, vol, loop) {
+  function source(buf, level, loop, to) {
     const s = ctx.createBufferSource(), g = ctx.createGain();
-    s.buffer = buf; s.loop = loop; g.gain.value = vol;
-    s.connect(g); g.connect(master);
+    s.buffer = buf; s.loop = loop; g.gain.value = level;
+    s.connect(g); g.connect(bus[to]);
     return { s, g };
   }
   /* a one-shot effect; resolves when it has finished (or at once if there is no sound) */
-  async function play(name, vol = 1) {
+  async function play(name, level = 1) {
     if (!init()) return;
     const buf = await load(name);
     if (!buf) return;
-    const { s } = source(buf, vol, false);
+    const { s } = source(buf, level, false, "sfx");
     s.start();
     return new Promise((r) => { s.onended = r; });
   }
   /* volumes are set where each sound is used (app.js), balanced from their measured loudness: the news jingle is
      much louder than the room sounds, so it plays at about a quarter */
   /* the one looping track (music or ambience): fades out whatever loops now, fades this in */
-  async function loop(name, vol = 0.6, fade = 1.2) {
+  async function loop(name, level = 0.6, fade = 1.2) {
     if (wanted === name) return;
     wanted = name;
     if (!init()) return;
@@ -65,9 +70,9 @@ const Snd = (() => {
     wanted = name;
     const buf = await load(name);
     if (!buf || wanted !== name) return;                  // replaced while it was loading
-    const m = source(buf, 0, true);
+    const m = source(buf, 0, true, "music");
     m.g.gain.setValueAtTime(0, ctx.currentTime);
-    m.g.gain.linearRampToValueAtTime(vol, ctx.currentTime + fade);
+    m.g.gain.linearRampToValueAtTime(level, ctx.currentTime + fade);
     m.s.start();
     music = { name, ...m };
   }
@@ -82,7 +87,7 @@ const Snd = (() => {
   }
   /* the dialogue chatter: its own loop beside the music, on while a line types out, cut short when it ends */
   let chat = null, chatWanted = false;
-  async function typing(v, vol = 0.8) {
+  async function typing(v, level = 0.8) {
     chatWanted = v;
     if (!v) {
       if (chat && ctx) {
@@ -97,8 +102,13 @@ const Snd = (() => {
     if (chat || !init()) return;
     const buf = await load("dialog");
     if (!buf || !chatWanted || chat) return;              // the line finished while the file was loading
-    chat = source(buf, vol, true);
+    chat = source(buf, level, true, "voice");
     chat.s.start(0, Math.random() * buf.duration);        // a random start, so lines do not all open the same way
+  }
+  function setVolume(b, v) {
+    vol[b] = Math.max(0, Math.min(1, v));
+    try { localStorage.setItem(VOL_KEY, JSON.stringify(vol)); } catch { /* private mode */ }
+    if (bus[b]) bus[b].gain.setTargetAtTime(vol[b], ctx.currentTime, 0.03);
   }
   function setOn(v) {
     on = v;
@@ -117,5 +127,5 @@ const Snd = (() => {
   // every button clicks (dialogue taps do not: they are not buttons)
   addEventListener("click", (e) => { if (e.target.closest && e.target.closest("button")) play("click", 1); }, true);
 
-  return { play, loop, stop, typing, setOn, get on() { return on; }, get playing() { return music ? music.name : null; } };
+  return { play, loop, stop, typing, setOn, setVolume, volume: (b) => vol[b], get on() { return on; }, get playing() { return music ? music.name : null; } };
 })();

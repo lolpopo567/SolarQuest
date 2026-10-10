@@ -296,6 +296,10 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
 .settings-card h2 { margin: 0 0 12px; color: var(--navy); }
 .lang-pick { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 0 0 16px; display: grid; gap: 8px; }
 .lang-pick label { display: flex; gap: 8px; align-items: center; font-size: 16px; cursor: pointer; }
+.lang-pick .vol { display: grid; grid-template-columns: 9.5em 1fr 3ch; gap: 10px; font-size: 15px; }
+.lang-pick .vol input { width: 100%; min-width: 0; accent-color: var(--blue); }
+.lang-pick .vol output { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted, #667); }
+.lang-pick.muted .vol { opacity: .45; }
 #settings { z-index: 3000; }
 .task-gear { border: 0; background: transparent; color: #c9cfdd; font-size: 20px; padding: 4px 8px; }
 .task-gear:hover { color: #fff; }

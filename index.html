@@ -214,6 +214,9 @@
       <fieldset class="lang-pick">
         <legend data-t="sound">Sound</legend>
         <label><input type="checkbox" id="sound-on" checked> <span data-t="sound_on">Music and sound effects</span></label>
+        <label class="vol"><span data-t="vol_music">Music and ambience</span><input type="range" id="vol-music" min="0" max="100" step="5"><output id="vol-music-v"></output></label>
+        <label class="vol"><span data-t="vol_sfx">Sound effects</span><input type="range" id="vol-sfx" min="0" max="100" step="5"><output id="vol-sfx-v"></output></label>
+        <label class="vol"><span data-t="vol_voice">Dialogue</span><input type="range" id="vol-voice" min="0" max="100" step="5"><output id="vol-voice-v"></output></label>
       </fieldset>
       <button id="settings-close" class="primary" data-t="close">Close</button>
     </div>

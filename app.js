@@ -1116,7 +1116,14 @@ function openSettings() { $("#settings").classList.remove("hidden"); }
 $("#settings-close").onclick = () => $("#settings").classList.add("hidden");
 $$("#settings input[name=lang]").forEach((r) => (r.onchange = () => setLang(r.value)));
 $("#sound-on").checked = Snd.on;
-$("#sound-on").onchange = (e) => Snd.setOn(e.target.checked);
+$("#sound-on").closest("fieldset").classList.toggle("muted", !Snd.on);
+$("#sound-on").onchange = (e) => { Snd.setOn(e.target.checked); e.target.closest("fieldset").classList.toggle("muted", !e.target.checked); };
+for (const b of ["music", "sfx", "voice"]) {                     // Settings → volume sliders (sound.js keeps them)
+  const r = $(`#vol-${b}`), out = $(`#vol-${b}-v`);
+  r.value = Math.round(100 * Snd.volume(b)); out.textContent = r.value;
+  r.oninput = () => { out.textContent = r.value; Snd.setVolume(b, r.value / 100); };
+  r.onchange = () => { if (b === "sfx") Snd.play("click", 1); };  // let the player hear the new effects level
+}
 $$("[data-settings]").forEach((b) => (b.onclick = openSettings));
 function saveName() {
   store.set("sq_name", $("#player-name").value.trim().slice(0, 24));
