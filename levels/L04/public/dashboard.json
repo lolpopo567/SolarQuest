@@ -114,39 +114,6 @@
    "gap_pct": 0.0,
    "hard_constraint": false,
    "scored": true
-  },
-  {
-   "id": "flood_years_hit",
-   "label": "Seasons flooded",
-   "unit": "of 5 seasons",
-   "description": "Flood seasons (of the last 5) seen at the building's location. Radar cannot see water between tall buildings, so city floods are under-recorded.",
-   "digits": 0,
-   "prop": "fl",
-   "png": null,
-   "legend": {
-    "type": "ramp",
-    "colors": [
-     "#cde2fb",
-     "#9ec5f4",
-     "#6da7ec",
-     "#3987e5",
-     "#256abf",
-     "#184f95",
-     "#0d366b"
-    ],
-    "min": 0,
-    "max": 5,
-    "zero_clear": true
-   },
-   "district": {
-    "min": 0.0,
-    "median": 0.0,
-    "max": 0.0
-   },
-   "has_gaps": false,
-   "gap_pct": 0.0,
-   "hard_constraint": false,
-   "scored": true
   }
  ],
  "flood_frames": [],

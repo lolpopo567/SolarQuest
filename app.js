@@ -216,7 +216,7 @@ async function startLevel(levelId) {
   const name = playerName();
   await api("/api/players", { method: "POST", body: { player_id: S.playerId, name } });
   const lv = await api(`/api/levels/${levelId}`);
-  S.level = lv; S.revealed = false; S.fp = null; S.sites = []; S.attemptId = null; S.floodSeen = false;
+  S.level = lv; S.revealed = false; S.fp = null; S.sites = []; S.boxMode = false; S.attemptId = null; S.floodSeen = false;
   S.roof = lv.mission_type === "rooftop"; S.mixed = lv.mission_type === "mixed";
   S.sel = new Map(); S.roofLayer = null; S.groundArea = 0; S.roofArea = 0; S.optFeats = [];
   proj4.defs("EPSG:32647", lv.proj4_scoring);
@@ -234,6 +234,10 @@ async function startLevel(levelId) {
     if (S.roof || S.mixed) await loadRoofs(lv);
     $$(".tool[data-tool]").forEach((b) => b.classList.toggle("hidden", S.roof));
     updateSiteButton();
+    $("#btn-box").classList.toggle("hidden", !(S.roof || S.mixed));
+    $("#btn-clear").dataset.t = S.roof ? "tool_clear_roofs" : "tool_clear";      // roof-only maps clear the roofs
+    $("#btn-clear").textContent = t($("#btn-clear").dataset.t);
+    $("#btn-box").classList.remove("active");
     $("#fp-summary").textContent = t(S.roof ? "fp_roofs" : S.mixed ? "fp_mixed" : "fp_place");
     buildCards(lv);
     buildStreetView(lv);
@@ -381,6 +385,7 @@ async function loadRoofs(lv) {
                  paint: { "line-color": ["case", ["boolean", ["feature-state", "sel"], false], "#e8b33a", "rgba(20,24,30,0.45)"],
                           "line-width": ["case", ["boolean", ["feature-state", "sel"], false], 2.5, 0.6] } }, FIRST_FP_LAYER);
   map.on("click", "roofs-fill", (e) => toggleRoof(e.features[0]));
+  wireBoxSelect(map);
   map.on("mouseenter", "roofs-fill", () => (map.getCanvas().style.cursor = S.revealed ? "" : "pointer"));
   map.on("mouseleave", "roofs-fill", () => (map.getCanvas().style.cursor = ""));
 }
@@ -426,6 +431,68 @@ function toggleRoof(f) {
   updateBudget([...S.sel.values()].reduce((a, b) => a + b, 0), "roofs");
   scheduleInspect();
 }
+/* Drag-select (owner request 10 Oct 2026: small roofs are hard to tap one by one). Roofs inside the box are added,
+   largest first, until the budget is full; if every free roof in the box is already picked, the box removes them. */
+function selectRoofsIn(feats) {
+  if (S.revealed || !S.attemptId) return;
+  const seen = new Set(), roofs = [];
+  for (const f of feats) if (!seen.has(f.properties.id) && !f.properties.x) { seen.add(f.properties.id); roofs.push(f); }
+  if (!roofs.length) return;
+  const budget = roofBudget();
+  let now = [...S.sel.values()].reduce((a, b) => a + b, 0), skipped = 0;
+  if (roofs.every((f) => S.sel.has(f.properties.id))) {
+    for (const f of roofs) { S.sel.delete(f.properties.id); S.map.setFeatureState({ source: "roofs", id: f.properties.id }, { sel: false }); }
+  } else {
+    for (const f of roofs.filter((f) => !S.sel.has(f.properties.id)).sort((a, b) => b.properties.u - a.properties.u)) {
+      if (now + f.properties.u > budget * 1.001) { skipped++; continue; }
+      S.sel.set(f.properties.id, f.properties.u); now += f.properties.u;
+      S.map.setFeatureState({ source: "roofs", id: f.properties.id }, { sel: true });
+    }
+    if (skipped) toast(eventLine("rules", t("box_full", { n: skipped })));
+  }
+  updateBudget([...S.sel.values()].reduce((a, b) => a + b, 0), "roofs");
+  scheduleInspect();
+}
+function setBoxMode(on) {
+  S.boxMode = on;
+  $("#btn-box").classList.toggle("active", on);
+  S.map.dragPan[on ? "disable" : "enable"]();
+  S.map.getCanvas().style.cursor = on ? "crosshair" : "";
+  const help = $("#draw-help");
+  help.textContent = t(on ? "help_box" : "help_roofs");
+  help.classList.remove("hidden");
+  clearTimeout(S.helpTimer);
+  S.helpTimer = setTimeout(() => help.classList.add("hidden"), 9000);
+}
+function wireBoxSelect(map) {
+  let start = null, last = null, el = null;
+  const at = (e) => e.point;                                     // touchend has no reliable point: use the last move
+  const down = (e) => {
+    if (!S.boxMode || S.revealed) return;
+    if (e.originalEvent.touches && e.originalEvent.touches.length > 1) return;   // two fingers: zoom as usual
+    start = last = at(e);
+    el = document.createElement("div"); el.className = "sel-box";
+    map.getContainer().appendChild(el);
+  };
+  const move = (e) => {
+    if (!start) return;
+    const p = last = at(e);
+    Object.assign(el.style, { left: Math.min(start.x, p.x) + "px", top: Math.min(start.y, p.y) + "px",
+                              width: Math.abs(p.x - start.x) + "px", height: Math.abs(p.y - start.y) + "px" });
+  };
+  const up = (e) => {
+    if (!start) return;
+    const p = last || start, a = start;
+    start = null; el.remove(); el = null;
+    if (Math.hypot(p.x - a.x, p.y - a.y) < 6) return;            // a tap: the normal click picks one roof
+    selectRoofsIn(map.queryRenderedFeatures([[Math.min(a.x, p.x), Math.min(a.y, p.y)], [Math.max(a.x, p.x), Math.max(a.y, p.y)]],
+                                            { layers: ["roofs-fill"] }));
+  };
+  map.on("mousedown", down); map.on("touchstart", down);
+  map.on("mousemove", move); map.on("touchmove", move);
+  map.on("mouseup", up); map.on("touchend", up);
+}
+$("#btn-box").onclick = () => setBoxMode(!S.boxMode);
 function setRoofLayer(card, on) {
   S.roofLayer = on ? card : null;
   $$("#cards input[data-roof]").forEach((x) => { if (x.dataset.layer !== card.id) x.checked = false; });
@@ -582,7 +649,7 @@ $("#btn-clear").onclick = () => {                         // removes the selecte
 
 function wireFootprint(map) {
   const startDrag = (e, kind, i) => {
-    if (S.revealed || !S.fp) return;
+    if (S.revealed || !S.fp || S.boxMode) return;
     e.preventDefault();
     map.dragPan.disable();
     S.drag = { kind, i, start: fwd(e.lngLat.toArray()), fp: JSON.parse(JSON.stringify(S.fp)) };

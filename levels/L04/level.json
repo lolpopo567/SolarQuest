@@ -280,8 +280,7 @@
  "unlocked_layers": [
   "roof_irr",
   "roof_usable_m2",
-  "n_floors",
-  "flood_years_hit"
+  "n_floors"
  ],
  "difficulty_tier": 2,
  "briefing_character": "inspector_m",
