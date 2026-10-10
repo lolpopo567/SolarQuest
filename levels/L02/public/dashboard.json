@@ -375,5 +375,14 @@
  ],
  "flood_season_ce": 2022,
  "flood_until": null,
- "taken_sites": null
+ "taken_sites": null,
+ "start_footprint": {
+  "center": [
+   100.576416,
+   14.345346
+  ],
+  "side_m": 387.3,
+  "score": 31.3,
+  "score_full_budget": 34.6
+ }
 }

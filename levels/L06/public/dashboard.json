@@ -405,5 +405,14 @@
    ]
   ],
   "attribution": "Contains modified Copernicus Sentinel data 2026 (Jan–Apr composite)"
+ },
+ "start_footprint": {
+  "center": [
+   100.498522,
+   6.947888
+  ],
+  "side_m": 500.0,
+  "score": 31.3,
+  "score_full_budget": 34.4
  }
 }

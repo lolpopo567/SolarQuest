@@ -583,5 +583,14 @@
    "scored": true
   }
  ],
- "n_roofs": 6094
+ "n_roofs": 6094,
+ "start_footprint": {
+  "center": [
+   100.476425,
+   6.971921
+  ],
+  "side_m": 387.3,
+  "score": 33.3,
+  "score_full_budget": 32.0
+ }
 }

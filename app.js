@@ -544,7 +544,8 @@ function setTool(tool) {
   };
   if (tool === "rect") {
     if (!S.fp || S.fp.mode !== "rect") {
-      const c = fwd(S.map.getCenter().toArray());
+      const st = !S.sites.length && S.level.dashboard.start_footprint;   // the first square starts on a poor spot
+      const c = st ? fwd(st.center) : fwd(S.map.getCenter().toArray());  // (startspot.py): it must be moved to pass
       const side = Math.sqrt(0.5 * S.level.budget_m2);
       put({ mode: "rect", cx: c[0], cy: c[1], w: side, h: side, angle: 0 });
       if (S.sites.length === 1) {
@@ -1081,6 +1082,17 @@ function narrate(cards) {               // black screen, one card per click / Sp
     scr.focus(); next();
   });
 }
+function confirmBox(title, text, yes) {                         // resolves true / false
+  return new Promise((resolve) => {
+    $("#confirm-title").textContent = title;
+    $("#confirm-text").textContent = text;
+    $("#confirm-yes").textContent = yes;
+    $("#confirm").classList.remove("hidden");
+    const done = (v) => { $("#confirm").classList.add("hidden"); resolve(v); };
+    $("#confirm-yes").onclick = () => done(true);
+    $("#confirm-no").onclick = () => done(false);
+  });
+}
 /* ------------------------------------------------------------------ the day loop
    One day = one new exercise passed (7 days). Morning: [Day N] -> office (outside) -> desk -> computer.
    Evening ("End the day"): house -> door closed -> door open -> TV off -> TV on (the news) -> next morning.
@@ -1228,7 +1240,11 @@ function initDesktop() {
       bar.onpointerup = () => { bar.onpointermove = null; };
     };
   });
-  $("#btn-replay").onclick = () => playIntro();
+  $("#btn-replay").onclick = async () => {                    // replays the start of the day the player is on
+    const n = Math.min(S.day || 1, S.days || 7);
+    if (!(await confirmBox(t("replay_title"), t("replay_warn", { n }), t("replay_ok", { n })))) return;
+    if (n <= 1) playIntro(); else playMorning(n);
+  };
   $("#btn-tutorial").onclick = () => playTutorial();
   $("#btn-end-day-home").onclick = () => endDay();
   $("#btn-signout").onclick = () => showTitle();

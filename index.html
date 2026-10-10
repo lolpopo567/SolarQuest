@@ -218,6 +218,16 @@
     </div>
   </div>
 
+  <!-- yes / no question (confirmBox in app.js) -->
+  <div id="confirm" class="overlay hidden">
+    <div class="settings-card" role="alertdialog" aria-labelledby="confirm-text">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-text"></p>
+      <div class="confirm-actions"><button id="confirm-no" data-t="cancel">Cancel</button>
+        <button id="confirm-yes" class="primary"></button></div>
+    </div>
+  </div>
+
   <!-- data & credits from the title screen (the desktop has its own window) -->
   <div id="title-credits" class="overlay hidden">
     <div class="credits-card" role="dialog" aria-labelledby="title-credits-h">
