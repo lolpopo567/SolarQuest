@@ -165,9 +165,9 @@ async function fillHome() {
     ol.appendChild(li);
   }
 }
-const gradeOf = (s) => s >= 90 ? "S" : s >= 75 ? "A" : s >= 60 ? "B" : s >= 40 ? "C" : "D";
+const gradeOf = (s) => s >= 90 ? "S" : s >= 75 ? "A" : s >= 60 ? "B" : s >= 40 ? "C" : "E";
 const areaName = (a) => tr("areas", a, a);
-function gradeBadge(g, cls = "") {                     // A–C have art; S and D keep the CSS stamp until art arrives
+function gradeBadge(g, cls = "") {                     // every grade (S, A, B, C, E) has art; the CSS stamp is the fallback
   const art = (S.art.ui || {})[`grade-${g.toLowerCase()}`];
   if (art) { const w = Object.keys(art).map(Number).sort((a, b) => a - b); return `<img class="grade-img ${cls}" alt="${g}" src="${art[String(cls === "chip" ? w[0] : w[w.length - 1])]}">`; }
   return `<span class="grade-chip ${cls}">${g}</span>`;
@@ -1155,7 +1155,7 @@ function confirmBox(title, text, yes) {                         // resolves true
    Evening ("End the day"): house -> door closed -> door open -> TV off -> TV on (the news) -> next morning.
    sq_evening holds the finished day and its grade until the player has gone home. Text: dialogue.yaml days/evening. */
 const EVENING_KEY = "sq_evening";
-const GRADE_RANK = { S: 4, A: 3, B: 2, C: 1, D: 0 };
+const GRADE_RANK = { S: 4, A: 3, B: 2, C: 1, E: 0, D: 0 };   // D: saved before it was renamed E
 function evening() { try { return JSON.parse(store.get(EVENING_KEY) || "null"); } catch { return null; } }
 async function refreshDay() {
   const list = await api(`/api/levels?player_id=${S.playerId}`);

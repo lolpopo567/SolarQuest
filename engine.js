@@ -311,7 +311,7 @@ const SQEngine = (() => {
     return [n, v];
   }
   const sizeFactor = (vp, vs, gamma) => { if (vs <= 0) throw new Error("level is not shippable"); return Math.max(0, Math.min(1, vp / vs)) ** gamma; };
-  const grade = (score) => { for (const [lo, g] of C.config.grades) if (score >= lo) return g; return "D"; };
+  const grade = (score) => { for (const [lo, g] of C.config.grades) if (score >= lo) return g; return "E"; };
 
   function selectionStats(G, rings, area) {
     const k = coverageSites(G, rings);
@@ -461,7 +461,7 @@ const SQEngine = (() => {
   }
 
   /* ------------------------------------------------------------------ progress (this device) */
-  const attempts = () => LS.get("sq_attempts", []);
+  const attempts = () => LS.get("sq_attempts", []).map((a) => (a.grade === "D" ? { ...a, grade: "E" } : a));   // D was renamed E (2026-10-10)
   const saveAttempts = (a) => LS.set("sq_attempts", a);
   function bestByLevel() {
     const out = {};
@@ -707,8 +707,8 @@ const SQEngine = (() => {
       out.push(react("below_threshold", "reveal"));
       const worst = explanation.factors[0];
       if (worst && worst.points < 0) out.push(react("poor_site", "reveal", { factor: worst.id === "outside" ? pick(C.ui.outside_label) || worst.label : worst.label, points: f1(Math.abs(worst.points)) }));
-      if (recent.length && ["C", "D"].includes(recent[0]) && ["C", "D"].includes(g)) out.push(react("repeated_mistake", "reveal"));
-      if (g === "D") out.push(react("grade_d", "reveal"));
+      if (recent.length && ["C", "E"].includes(recent[0]) && ["C", "E"].includes(g)) out.push(react("repeated_mistake", "reveal"));
+      if (g === "E") out.push(react("grade_e", "reveal"));
     }
     return out;
   }
@@ -726,7 +726,7 @@ const SQEngine = (() => {
     }
     const lv = L.lv;
     if (lv.time_limit_s && Date.now() / 1000 - a.started > lv.time_limit_s + C.config.time_grace_s) {
-      Object.assign(res, { score: 0, grade: "D", verdict: "D" }); res.flags.push("out_of_time");
+      Object.assign(res, { score: 0, grade: "E", verdict: "E" }); res.flags.push("out_of_time");
     }
     const recent = all.filter((x) => x.level_id === a.level_id && x.submitted).sort((x, y) => y.submitted - x.submitted).map((x) => x.grade);
     const lines = reactions(L, res, explanation, recent);
