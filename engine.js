@@ -572,8 +572,16 @@ const SQEngine = (() => {
     if (overBudget(area, budget)) warnings.push(react("warn_budget_ground", "warning", { area: f1(area / 1e4), budget: fg(budget / 1e4) }));
     const ex = Object.values(excl).reduce((a, b) => a + b, 0);
     if (Object.keys(excl).length) warnings.push(react("warn_excluded_ground", "warning", { pct: f0(ex) }));
-    let covered = 0; for (const c of k.cov) covered += c;
-    return { area_m2: round(area, 1), budget_m2: budget, over_budget: overBudget(area, budget), on_map_pct: round(100 * covered / area, 1),
+    // "on the map" = inside the study area: cells where every factor layer has data (server.inspect, explainGround)
+    const lys = L.explain.factors.map((f) => G.layers[f.id]);
+    let covered = 0;
+    for (let i = 0; i < k.h; i++) for (let j = 0; j < k.w; j++) {
+      const at = (k.r0 + i) * G.W + k.c0 + j;
+      if (lys.every((a) => Number.isFinite(a[at]))) covered += k.cov[i * k.w + j];
+    }
+    const onMap = 100 * covered / area;
+    if (onMap < 99.5) warnings.push(react("warn_outside_ground", "warning", { pct: f0(100 - onMap) }));
+    return { area_m2: round(area, 1), budget_m2: budget, over_budget: overBudget(area, budget), on_map_pct: round(onMap, 1),
              excluded_pct: excl, layers: layerSummary(G, k, L.lv.unlocked_layers), warnings };
   });
   function inspectRoofs(L, body) {
