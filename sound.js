@@ -15,6 +15,7 @@ const Snd = (() => {
     tv_off: "sound/tv-off.mp3",
     news: "sound/news.mp3",                 // the evening news theme (loops under the newscast)
     click: "sound/ui-click.mp3",            // every button
+    dialog: "sound/dialog.mp3",             // typing chatter: loops while a dialogue line types out (own channel)
   };
   const KEY = "sq_sound";
   let on = true, ctx = null, master = null, music = null, wanted = null;
@@ -79,6 +80,26 @@ const Snd = (() => {
     m.g.gain.linearRampToValueAtTime(0, ctx.currentTime + fade);
     setTimeout(() => { try { m.s.stop(); } catch { /* already stopped */ } }, fade * 1000 + 100);
   }
+  /* the dialogue chatter: its own loop beside the music, on while a line types out, cut short when it ends */
+  let chat = null, chatWanted = false;
+  async function typing(v, vol = 0.8) {
+    chatWanted = v;
+    if (!v) {
+      if (chat && ctx) {
+        const c = chat; chat = null;
+        c.g.gain.cancelScheduledValues(ctx.currentTime);
+        c.g.gain.setValueAtTime(c.g.gain.value, ctx.currentTime);
+        c.g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.06);
+        setTimeout(() => { try { c.s.stop(); } catch { /* already stopped */ } }, 120);
+      }
+      return;
+    }
+    if (chat || !init()) return;
+    const buf = await load("dialog");
+    if (!buf || !chatWanted || chat) return;              // the line finished while the file was loading
+    chat = source(buf, vol, true);
+    chat.s.start(0, Math.random() * buf.duration);        // a random start, so lines do not all open the same way
+  }
   function setOn(v) {
     on = v;
     try { localStorage.setItem(KEY, v ? "on" : "off"); } catch { /* private mode */ }
@@ -96,5 +117,5 @@ const Snd = (() => {
   // every button clicks (dialogue taps do not: they are not buttons)
   addEventListener("click", (e) => { if (e.target.closest && e.target.closest("button")) play("click", 1); }, true);
 
-  return { play, loop, stop, setOn, get on() { return on; }, get playing() { return music ? music.name : null; } };
+  return { play, loop, stop, typing, setOn, get on() { return on; }, get playing() { return music ? music.name : null; } };
 })();

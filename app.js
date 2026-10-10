@@ -79,20 +79,6 @@ function eventLine(event, text) {           // client-side events, sprite from t
    TYPE_MS is the time per letter: slow enough for a voice blip on each one. Sentence ends and commas pause. */
 const TYPE_MS = 45;
 const TYPE_PAUSE = { ".": 280, "!": 280, "?": 280, "…": 280, ":": 180, ";": 180, ",": 140, "。": 280 };
-const BLIP_EVERY = 2;                        // a voice blip on every 2nd letter (spaces skipped)
-/* Dialogue voice blips: none yet. When the sound files arrive, list one per speaker here, e.g.
-   inspector_m: "sound/voice-inspector_m.mp3" (files go in web/sound/); "narrator" is the prologue on black.
-   Missing speakers stay silent. */
-const VOICE_FILES = {};
-const voices = {};
-function voiceBlip(character) {
-  const src = VOICE_FILES[character];
-  if (!src) return;
-  try {
-    const a = (voices[character] ||= new Audio(src));
-    a.currentTime = 0; a.play().catch(() => {});
-  } catch { /* no audio on this device */ }
-}
 const graphemes = (s) => typeof Intl !== "undefined" && Intl.Segmenter      // Thai vowels and tone marks stay on their letter
   ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(s)].map((x) => x.segment)
   : (s.match(/\P{M}\p{M}*/gu) || []);
@@ -105,18 +91,18 @@ function typeLine(el, text, character, box = el.closest(".vn-box")) {   // box g
   rest.className = "vn-rest"; rest.textContent = text;
   el.append(shown, rest);
   const parts = graphemes(text);
-  let k = 0, typed = "", visible = 0, timer = null;
+  let k = 0, typed = "", timer = null;
   return new Promise((done) => {
-    const end = () => { clearTimeout(timer); shown.data = text; rest.textContent = ""; typing = null; box.classList.remove("typing"); done(); };
+    const end = () => { clearTimeout(timer); Snd.typing(false); shown.data = text; rest.textContent = ""; typing = null; box.classList.remove("typing"); done(); };
     const step = () => {
       if (k >= parts.length) return end();
       const ch = parts[k++];
       typed += ch; shown.data = typed; rest.textContent = text.slice(typed.length);
-      if (/\S/.test(ch) && visible++ % BLIP_EVERY === 0) voiceBlip(character);
       timer = setTimeout(step, TYPE_MS + (TYPE_PAUSE[ch] && k < parts.length ? TYPE_PAUSE[ch] : 0));
     };
     typing = { finish: end };
     box.classList.add("typing");
+    Snd.typing(true);                        // the dialogue sound (sound.js) runs while the line types out
     step();
   });
 }
