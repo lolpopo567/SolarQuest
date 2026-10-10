@@ -1,0 +1,124 @@
+{
+ "districts": [
+  {
+   "id": "BANGBAN",
+   "name": "Bang Ban",
+   "kind": "ground",
+   "grid": "levels/L01/grid.json",
+   "bbox": [
+    100.40836,
+    14.30593,
+    100.52342,
+    14.46029
+   ],
+   "km2": 137.0
+  },
+  {
+   "id": "PHRANAKHON",
+   "name": "Phra Nakhon Si Ayutthaya",
+   "kind": "ground",
+   "grid": "levels/L02/grid.json",
+   "bbox": [
+    100.4981,
+    14.27901,
+    100.6297,
+    14.40731
+   ],
+   "km2": 117.0
+  },
+  {
+   "id": "HATYAI",
+   "name": "Hat Yai",
+   "kind": "ground",
+   "grid": "levels/L09/grid.json",
+   "bbox": [
+    100.18996,
+    6.78612,
+    100.6093,
+    7.18798
+   ],
+   "km2": 852.796
+  },
+  {
+   "id": "PATHUMWAN",
+   "name": "Pathum Wan",
+   "kind": "roofs",
+   "bbox": [
+    100.51582,
+    13.72331,
+    100.55243,
+    13.75298
+   ],
+   "roofs": "levels/L04/public/roofs.geojson",
+   "subs": "explore/roofs_pathumwan.json",
+   "km2": 8.369
+  }
+ ],
+ "factors": {
+  "ground": [
+   {
+    "id": "flood_score",
+    "weight": 0.3,
+    "label": "Flood risk",
+    "layer": "flood_years_hit"
+   },
+   {
+    "id": "solar_score",
+    "weight": 0.3,
+    "label": "Solar irradiance",
+    "layer": "ghi_seasonal"
+   },
+   {
+    "id": "landuse_score",
+    "weight": 0.15,
+    "label": "Land use",
+    "layer": "lu_class_wc"
+   },
+   {
+    "id": "access_score",
+    "weight": 0.12,
+    "label": "Roads and grid",
+    "layer": "d_conn"
+   },
+   {
+    "id": "terrain_score",
+    "weight": 0.08,
+    "label": "Terrain",
+    "layer": "slope_deg"
+   },
+   {
+    "id": "drought_score",
+    "weight": 0.05,
+    "label": "Drought",
+    "layer": "drought_freq"
+   }
+  ],
+  "roofs": [
+   {
+    "id": "flood_score",
+    "weight": 0.3,
+    "label": "Flood risk",
+    "layer": "flood_years_hit"
+   },
+   {
+    "id": "solar_score",
+    "weight": 0.45,
+    "label": "Roof sunlight",
+    "layer": "roof_irr"
+   },
+   {
+    "id": "rooftop_score",
+    "weight": 0.1,
+    "label": "Roof size",
+    "layer": "roof_usable_m2"
+   },
+   {
+    "id": "demand_score",
+    "weight": 0.15,
+    "label": "On-site demand",
+    "layer": "n_floors"
+   }
+  ]
+ },
+ "model_version": "scoring_v1.4"
+}
