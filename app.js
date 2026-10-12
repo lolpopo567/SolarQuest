@@ -234,6 +234,7 @@ async function startLevel(levelId, tour = {}) {     // tour: the tutorial's { me
     $("#btn-hint").classList.toggle("hidden", !lv.hints_enabled);
     setSat(lv.sat_line.sprite, lv.sat_line.text);
     updateBudget(0);
+    if (S.coaching) applyGate();                                 // the practice: controls locked until SAT names them
   }, true);
 
   $("#memo-text").textContent = lv.briefing_text;
@@ -1318,8 +1319,45 @@ const PRACTICE_STEPS = {                                         // where each p
         "p_size", "p_tools", "p_hud", "p_submit"],
   result: ["p_res_score", "p_res_map", "p_res_why", "p_end"],
 };
+/* Practice lock (owner report 12 Oct 2026: Submit worked before SAT got to it): every control on the exercise
+   screen stays locked until SAT has talked about it, and stays unlocked after. Moving the map and the square is
+   always free (that is the lesson); "◂ Desktop" is always the way out. After Submit everything unlocks. */
+const UNLOCK_AT = {
+  p_flood_on: ["#cards [data-card=flood_years_hit] .switch"],
+  p_sun: ["#cards .switch"],
+  p_tools: ["#game .tools .tool"],
+  p_hud: ["#btn-hint"],
+  p_submit: ["#btn-submit"],
+};
+const GATED = "#game button, #game input, #game select, #game label";
+const ALWAYS = "#btn-home, .maplibregl-ctrl";                  // the way out, and the map's own zoom buttons
+function unlockFor(key) {
+  if (UNLOCK_AT[key]) { UNLOCK_AT[key].forEach((s) => S.allow.add(s)); applyGate(); }
+}
+function gateOpen(el) {
+  if (!S.coaching || S.allow.has("*") || el.closest(ALWAYS)) return true;
+  return [...S.allow].some((s) => el.closest(s));
+}
+function applyGate() {
+  $$(GATED).forEach((el) => el.classList.toggle("locked", !gateOpen(el)));
+}
+for (const type of ["click", "pointerdown", "mousedown", "touchstart", "keydown"]) {
+  addEventListener(type, (e) => {
+    if (!S.coaching) return;
+    const el = e.target.closest && e.target.closest(GATED);
+    if (!el || gateOpen(el)) return;
+    if (type === "keydown" && !["Enter", " ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    const c = $("#coach");                                       // point the player back at SAT's instruction
+    if (type === "click" && !c.classList.contains("hidden")) { c.classList.remove("nudge"); void c.offsetWidth; c.classList.add("nudge"); }
+  }, { capture: true, passive: false });
+}
 const bus = new Set();
-function emit(name, data) { if (name === "inspect") S.lastInspect = data; for (const f of [...bus]) f(name, data); }
+function emit(name, data) {
+  if (name === "inspect") S.lastInspect = data;
+  if (name === "submit" && S.coaching) { S.allow.add("*"); setTimeout(applyGate); }   // after Submit: all controls
+  for (const f of [...bus]) f(name, data);
+}
 const doneAlready = (test) =>                                    // the player may act before SAT asks
   !!(S.lastInspect && test("inspect", S.lastInspect)) ||
   $$("#cards input[data-layer]").some((i) => test("layer", { id: i.dataset.layer, on: i.checked }));
@@ -1327,7 +1365,7 @@ const waitFor = (test) => new Promise((ok) => {                 // "abort": the 
   const f = (n, d) => { if (n === "abort" || test(n, d)) { bus.delete(f); ok(d); } }; bus.add(f); });
 function stopCoaching() {                                        // leaving the practice mid-way (Desktop, another level)
   if (!S.coaching) return;
-  S.coaching = false;
+  S.coaching = false; applyGate();
   emit("abort");
   $("#coach").classList.add("hidden");
   spotlight(null);
@@ -1355,6 +1393,7 @@ async function coachUntil(ln) {
   const c = $("#coach");
   $("#coach-img").src = spriteUrl(ln.sprite, 128);
   $("#coach-text").textContent = ln.text; c.dataset.key = ln.line_id;
+  unlockFor(ln.line_id);
   c.classList.remove("hidden");
   setSat(ln.sprite);
   spotlight(TOUR[ln.line_id]);
@@ -1369,7 +1408,11 @@ async function coachUntil(ln) {
 async function playLines(ls, keys) {                             // tap-through lines, and the waiting ones in order
   const todo = ls.filter((l) => keys.includes(l.line_id) && (PRACTICE[l.line_id] || !TOUR[l.line_id] || onScreen(TOUR[l.line_id])));
   let run = [];
-  const flush = async () => { if (run.length) { await playDialogue(run, (l) => spotlight(TOUR[l.line_id])); spotlight(null); run = []; } };
+  const flush = async () => {
+    if (!run.length) return;
+    await playDialogue(run, (l) => { unlockFor(l.line_id); spotlight(TOUR[l.line_id]); });
+    spotlight(null); run = [];
+  };
   for (const l of todo) {
     if (!S.coaching && S.level && S.level.level_number === 0) return;   // the player left the practice
     if (PRACTICE[l.line_id]) { await flush(); await coachUntil(l); } else run.push(l);
@@ -1391,13 +1434,13 @@ async function playPractice() {                                  // the guided s
   const ls = lines.map((l) => ({ ...l, text: fillName(l.text) }));
   await preload([...new Set(ls.map((l) => l.sprite))]);
   bus.clear();
-  S.coaching = true;
+  S.coaching = true; S.allow = new Set();
   try {
     await startLevel("L00", { memo: () => playLines(ls, PRACTICE_STEPS.memo), ready: () => playLines(ls, PRACTICE_STEPS.map) });
     if (S.coaching && !S.lastResult) await waitFor((n) => n === "result");   // after the score dialogue
     await wait(400);
     if (S.coaching && S.revealed) await playLines(ls, PRACTICE_STEPS.result);
-  } finally { S.coaching = false; }
+  } finally { S.coaching = false; applyGate(); }
 }
 $("#btn-delete-me").onclick = async () => {
   if (!confirm(t("reset_confirm"))) return;

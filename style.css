@@ -354,6 +354,12 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
   border: 2px solid var(--gold); border-radius: 10px; padding: 10px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .4);
   animation: coach-in .35s ease-out; }
 .coach.top { bottom: auto; top: 70px; }
+.coach.nudge { animation: coach-nudge .45s ease; }
+@keyframes coach-nudge { 0%, 100% { transform: translateX(-50%); } 20% { transform: translateX(calc(-50% - 10px)); }
+  40% { transform: translateX(calc(-50% + 10px)); } 60% { transform: translateX(calc(-50% - 6px)); } 80% { transform: translateX(calc(-50% + 6px)); } }
+/* practice: controls SAT has not talked about yet */
+.locked { opacity: .38; filter: grayscale(1); cursor: not-allowed !important; }
+.locked * { cursor: not-allowed !important; }
 .coach img { width: 56px; height: 56px; flex: none; }
 #coach-text { font-size: 16px; line-height: 1.4; }
 @keyframes coach-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
