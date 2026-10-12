@@ -134,6 +134,7 @@ function playDialogue(lines, onLine) {           // onLine(line): called as each
 }
 let toastTimer = null;
 function toast(line) {
+  if (S.coaching) return;                                // the guided practice: SAT does the talking
   $("#toast-img").src = spriteUrl(line.sprite, 256);
   $("#toast-text").textContent = line.text;
   $("#toast").classList.remove("hidden");
@@ -146,7 +147,7 @@ function setSat(sprite, status) {
 }
 
 /* ------------------------------------------------------------------ home */
-const renderHome = () => { Snd.stop(); return showScreen("home", fillHome); };   // the computer is quiet
+const renderHome = () => { stopCoaching(); Snd.stop(); return showScreen("home", fillHome); };   // the computer is quiet
 async function fillHome() {
   $("#who").textContent = playerName();
   if (!S.desktopReady) initDesktop();
@@ -200,10 +201,11 @@ async function showScreen(id, prepare, force = false) {
 
 /* ------------------------------------------------------------------ level flow */
 async function startLevel(levelId, tour = {}) {     // tour: the tutorial's { memo, ready } steps (playTutorial)
+  if (!tour.ready) stopCoaching();
   const name = playerName();
   await api("/api/players", { method: "POST", body: { player_id: S.playerId, name } });
   const lv = await api(`/api/levels/${levelId}`);
-  S.level = lv; S.revealed = false; S.fp = null; S.sites = []; S.boxMode = false; S.attemptId = null; S.floodSeen = false;
+  S.level = lv; S.revealed = false; S.fp = null; S.lastInspect = null; S.lastResult = null; S.sites = []; S.boxMode = false; S.attemptId = null; S.floodSeen = false;
   S.roof = lv.mission_type === "rooftop"; S.mixed = lv.mission_type === "mixed";
   S.sel = new Map(); S.roofLayer = null; S.groundArea = 0; S.roofArea = 0; S.optFeats = [];
   proj4.defs("EPSG:32647", lv.proj4_scoring);
@@ -211,7 +213,7 @@ async function startLevel(levelId, tour = {}) {     // tour: the tutorial's { me
   await preload([...lv.preload, "inspector_f_default", "sat_taunt", "sat_smile"]);   // no pop-in mid-dialogue
 
   await showScreen("game", async () => {                       // set up under the black screen
-    $("#lv-num").textContent = t("exercise_n", { n: lv.level_number });
+    $("#lv-num").textContent = lv.level_number ? t("exercise_n", { n: lv.level_number }) : t("practice_label");
     $("#lv-title").textContent = levelTitle(lv.level_id, lv.title);
     $("#lv-season").textContent = lv.season_be ? `· BE ${lv.season_be}${lv.season_complete ? "" : " " + t("in_progress")}` : "";
     $("#tabbtn-reveal").classList.add("hidden");
@@ -242,8 +244,8 @@ async function startLevel(levelId, tour = {}) {     // tour: the tutorial's { me
   const st = await api(`/api/levels/${levelId}/start`, { method: "POST", body: { player_id: S.playerId } });
   S.attemptId = st.attempt_id;
   startTimer(st.time_limit_s);
-  if (tour.ready) await tour.ready();
   if (S.roof) roofHelp(); else setTool("rect");
+  if (tour.ready) await tour.ready();
 }
 
 function startTimer(limit) {
@@ -737,6 +739,7 @@ async function inspect() {
       if (excl > 0) setSat("sat_shocked");
     }
     $("#fp-summary").innerHTML = lines.join("<br>");
+    if (!S.roof && !S.mixed) emit("inspect", rs[0]);
     const key = warns.map((w) => w.text.split(" ")[0] + w.sprite).join("|");
     if (warns.length && key !== S.lastWarn) toast(warns[0]);
     S.lastWarn = key;
@@ -775,9 +778,12 @@ function buildCards(lv) {
       <div class="desc">${esc(tr("layer_desc", c.id, c.description))}</div>${legend}${district}
       <div class="row"><span>${t(c.prop ? "on_your_roofs" : "in_your_footprint")}</span><span class="here" id="here-${c.prop && S.mixed ? "r-" : ""}${c.id}">–</span></div>`;
     $("input", el).dataset.layer = c.id;
+    el.dataset.card = c.id;
     if (c.prop) $("input", el).dataset.roof = "1";
-    $("input", el).onchange = (e) => c.prop ? setRoofLayer(c, e.target.checked)
-                                            : setOverlay(c.id, `levels/${lv.level_id}/${c.png}`, e.target.checked);
+    $("input", el).onchange = (e) => {
+      if (c.prop) setRoofLayer(c, e.target.checked); else setOverlay(c.id, `levels/${lv.level_id}/${c.png}`, e.target.checked);
+      emit("layer", { id: c.id, on: e.target.checked });                // the practice waits on these
+    };
     box.appendChild(el);
   }
 }
@@ -896,12 +902,14 @@ async function submit(timedOut = false) {
   try { r = await api(`/api/attempts/${S.attemptId}/submit`, { method: "POST", body: { geometry: g } }); }
   catch (e) { toast(eventLine("excluded_zone", e.message)); $("#btn-submit").disabled = false; return; }
   S.revealed = true; clearInterval(S.timer); clearInterval(S.playTimer);
+  emit("submit", r);
   renderFootprint();
   $("#draw-help").classList.add("hidden");
   revealMap(r);
   renderReveal(r);
   selectTab("reveal");
   await playDialogue(r.dialogue);
+  S.lastResult = r; emit("result", r);
 }
 
 async function submitRoofs(timedOut) {
@@ -994,7 +1002,7 @@ function renderReveal(r) {
     const ev = evening(), keep = ev && GRADE_RANK[ev.grade] >= GRADE_RANK[res.grade];  // a retry can only raise it
     store.set(EVENING_KEY, JSON.stringify({ day: S.day, grade: keep ? ev.grade : res.grade }));
   }
-  const dayOver = !!evening();
+  const dayOver = !!evening(), practice = S.level.level_number === 0;   // the simulation: no day, no leaderboard
   $("#tabbtn-reveal").classList.remove("hidden");
   const factorText = (f) => {
     const tab = f.roof || f.part === "roofs" ? "roof_factor_text" : "factor_text";
@@ -1039,18 +1047,21 @@ function renderReveal(r) {
       ${t("flood_event_show", { date: esc(r.reveal.flood_event.date) })}</label>
       <div class="fine">${t("flood_event_note")}</div></div>` : ""}
     <h3>${t("why_best")}</h3>${factors}${notScored}
+    ${practice ? `<p class="small"><strong>${t("practice_note")}</strong></p>` : ""}
     <div class="reveal-actions">
       <button id="btn-retry">${t("try_again")}</button>
-      ${dayOver ? `<button class="primary" id="btn-end-day">${t("end_day")}</button>` : ""}
+      ${dayOver && !practice ? `<button class="primary" id="btn-end-day">${t("end_day")}</button>` : ""}
+      ${practice && S.day === 1 ? `<button class="primary" id="btn-ex1">${t("practice_go")}</button>` : ""}
       <button id="btn-levels" class="ghost">${t("all_exercises")}</button></div>
-    <h3>${t("leaderboard")}</h3><table class="lb" id="lb"></table>`;
+    ${practice ? "" : `<h3>${t("leaderboard")}</h3><table class="lb" id="lb"></table>`}`;
   countUp($("#score-num"), res.score, () => $("#stamp").classList.add("on"));
   if ($("#flood-ev")) $("#flood-ev").onchange = (e) =>
     S.map.setLayoutProperty("flood-event", "visibility", e.target.checked ? "visible" : "none");
-  $("#btn-retry").onclick = () => startLevel(S.level.level_id);
+  $("#btn-retry").onclick = () => startLevel(S.level.level_id);           // the practice again: free play this time
+  if ($("#btn-ex1")) $("#btn-ex1").onclick = () => startLevel("L01");
   $("#btn-levels").onclick = renderHome;
   if ($("#btn-end-day")) $("#btn-end-day").onclick = endDay;
-  api(`/api/leaderboard/${S.level.level_id}?name=${encodeURIComponent(playerName())}`).then((rows) => {
+  if (!practice) api(`/api/leaderboard/${S.level.level_id}?name=${encodeURIComponent(playerName())}`).then((rows) => {
     $("#lb").innerHTML = rows.map((x) => `<tr><td>${x.rank}</td><td>${esc(x.date)}</td><td>${x.grade}</td><td style="text-align:right">${x.score.toFixed(1)}</td></tr>`).join("");
   });
 }
@@ -1268,27 +1279,59 @@ async function playIntro() {
   await playMorning(1);                                        // Day 1: office, then the Senior Inspector's greeting
   if (!store.get("sq_tutorial_seen")) await playTutorial();    // first visit to the desktop
 }
-/* The tutorial is a guided tour: SAT opens Assessments, takes the player into exercise 1 and points at each part
-   of the screen while it talks (dialogue.yaml: tutorial). TOUR says what each line highlights; a line whose
-   target is not on screen (no badges, no flood timeline) is skipped. Lines not listed in the desktop or memo
-   steps play on the exercise screen, after the Senior Inspector's briefing. */
+/* The tutorial (owner decision 12 Oct 2026): SAT introduces the desktop, then plays the practice simulation (level
+   L00) with the player. It explains why the game exists, then gives one instruction at a time and waits until the
+   player has done it (switch on the flood layer, move the square to dry land, ...), then explains the result. It is
+   never a day and never on the exercise list. dialogue.yaml: tutorial + practice. TOUR says what each line
+   highlights, PRACTICE what SAT waits for; a highlighted line whose target is not on screen is skipped. */
 const TOUR = {
   tut_2: "#home .desk-icon[data-open=win-exercises]",
-  tut_open: "#level-list li:first-child",
-  tut_3: "#memo .memo-sheet",
-  tut_4: "#game .tools",
-  tut_budget: "#game .budget",
-  tut_5: "#cards",
-  tut_switch: "#cards .switch",
-  tut_6: "#cards",
-  tut_7: "#cards .badge",
-  tut_8: "#timeline",
-  tut_9: "#game [data-tab=sv]",
-  tut_basemap: "#btn-basemap",
-  tut_10: "#sat-hud",
-  tut_submit: "#btn-submit",
+  p_memo: "#memo .memo-sheet",
+  p_goal: "#game .map-wrap",
+  p_square: "#game .map-wrap",
+  p_flood_on: "#cards [data-card=flood_years_hit]",
+  p_flood_read: "#game .map-wrap",
+  p_move: "#game .map-wrap",
+  p_moved: "#cards [data-card=flood_years_hit] .here",
+  p_sun: "#cards [data-card=ghi_seasonal]",
+  p_land: "#cards [data-card=lu_class_wc]",
+  p_size: "#game .map-wrap",
+  p_tools: "#game .tools",
+  p_hud: "#sat-hud",
+  p_submit: "#btn-submit",
+  p_res_score: "#tab-reveal .score-block",
+  p_res_map: "#game .map-wrap",
+  p_res_why: "#tab-reveal .factor",
+  p_end: "#tab-reveal .reveal-actions",
 };
-const TOUR_DESK = ["tut_1", "tut_2"], TOUR_OPEN = ["tut_open"], TOUR_MEMO = ["tut_3"];
+const fpLayer = (r, id) => (r && r.layers && r.layers[id]) || null;
+const PRACTICE = {                                               // lines SAT keeps on screen until this happens
+  p_flood_on: (n, d) => n === "layer" && d.id === "flood_years_hit" && d.on,
+  p_move: (n, d) => n === "inspect" && d.on_map_pct > 90 && (fpLayer(d, "flood_years_hit") || {}).mean < 0.5,
+  p_sun: (n, d) => n === "layer" && d.id === "ghi_seasonal" && d.on,
+  p_size: (n, d) => n === "inspect" && !d.over_budget && d.area_m2 >= 0.8 * d.budget_m2,
+  p_submit: (n) => n === "submit",
+};
+const PRACTICE_STEPS = {                                         // where each part of the script plays
+  memo: ["p_why_1", "p_why_2", "p_memo"],
+  map: ["p_goal", "p_square", "p_flood_on", "p_flood_read", "p_move", "p_moved", "p_sun", "p_sun_read", "p_land",
+        "p_size", "p_tools", "p_hud", "p_submit"],
+  result: ["p_res_score", "p_res_map", "p_res_why", "p_end"],
+};
+const bus = new Set();
+function emit(name, data) { if (name === "inspect") S.lastInspect = data; for (const f of [...bus]) f(name, data); }
+const doneAlready = (test) =>                                    // the player may act before SAT asks
+  !!(S.lastInspect && test("inspect", S.lastInspect)) ||
+  $$("#cards input[data-layer]").some((i) => test("layer", { id: i.dataset.layer, on: i.checked }));
+const waitFor = (test) => new Promise((ok) => {                 // "abort": the player left the practice
+  const f = (n, d) => { if (n === "abort" || test(n, d)) { bus.delete(f); ok(d); } }; bus.add(f); });
+function stopCoaching() {                                        // leaving the practice mid-way (Desktop, another level)
+  if (!S.coaching) return;
+  S.coaching = false;
+  emit("abort");
+  $("#coach").classList.add("hidden");
+  spotlight(null);
+}
 const onScreen = (sel) => { const el = sel && document.querySelector(sel); return !!el && el.getClientRects().length > 0; };
 function spotlight(sel) {                                        // frame one element, dim the rest (null: off)
   const el = sel && document.querySelector(sel);
@@ -1296,31 +1339,65 @@ function spotlight(sel) {                                        // frame one el
   $("#spot").classList.toggle("hidden", !S.spotEl);
   $("#vn").classList.toggle("spotlit", !!S.spotEl);
   if (S.spotEl) { S.spotEl.scrollIntoView({ block: "nearest", inline: "nearest" }); placeSpot(); }
-  else $("#vn").classList.remove("top");
+  else { $("#vn").classList.remove("top"); $("#coach").classList.remove("top"); }
 }
 function placeSpot() {
   const el = S.spotEl; if (!el) return;
   const r = el.getBoundingClientRect(), p = 6, s = $("#spot").style;
   s.left = `${r.left - p}px`; s.top = `${r.top - p}px`; s.width = `${r.width + 2 * p}px`; s.height = `${r.height + 2 * p}px`;
-  $("#vn").classList.toggle("top", r.bottom > innerHeight - 240 && r.top > 260);   // keep the dialogue off the target
+  const low = r.bottom > innerHeight - 240 && r.top > 260;      // keep the dialogue off the target
+  $("#vn").classList.toggle("top", low);
+  $("#coach").classList.toggle("top", low || r.height > innerHeight * 0.6);   // the map: SAT's note sits on top
 }
 addEventListener("resize", placeSpot);
+/* one instruction that stays up (the player can use the game underneath) until PRACTICE[key] says it is done */
+async function coachUntil(ln) {
+  const c = $("#coach");
+  $("#coach-img").src = spriteUrl(ln.sprite, 128);
+  $("#coach-text").textContent = ln.text; c.dataset.key = ln.line_id;
+  c.classList.remove("hidden");
+  setSat(ln.sprite);
+  spotlight(TOUR[ln.line_id]);
+  const timer = setInterval(placeSpot, 400);                     // the target can move (the map, the panel scrolls)
+  if (!doneAlready(PRACTICE[ln.line_id])) await waitFor(PRACTICE[ln.line_id]);
+  else await wait(1200);
+  clearInterval(timer);
+  c.classList.add("hidden");
+  spotlight(null);
+  Snd.play("click", 0.6);
+}
+async function playLines(ls, keys) {                             // tap-through lines, and the waiting ones in order
+  const todo = ls.filter((l) => keys.includes(l.line_id) && (PRACTICE[l.line_id] || !TOUR[l.line_id] || onScreen(TOUR[l.line_id])));
+  let run = [];
+  const flush = async () => { if (run.length) { await playDialogue(run, (l) => spotlight(TOUR[l.line_id])); spotlight(null); run = []; } };
+  for (const l of todo) {
+    if (!S.coaching && S.level && S.level.level_number === 0) return;   // the player left the practice
+    if (PRACTICE[l.line_id]) { await flush(); await coachUntil(l); } else run.push(l);
+  }
+  await flush();
+}
 async function playTutorial() {
   const { lines } = await api("/api/story/tutorial");
   const ls = lines.map((l) => ({ ...l, text: fillName(l.text) }));
   await preload([...new Set(ls.map((l) => l.sprite))]);
-  const step = async (keys) => {
-    await playDialogue(ls.filter((l) => keys.includes(l.line_id) && (!TOUR[l.line_id] || onScreen(TOUR[l.line_id]))),
-                       (l) => spotlight(TOUR[l.line_id]));
-    spotlight(null);
-  };
-  await step(TOUR_DESK);
-  openWin("win-exercises");
-  await wait(250);
-  await step(TOUR_OPEN);
+  if (!$("#home").classList.contains("active")) await renderHome();
+  await playLines(ls, ["tut_1", "tut_2"]);
+  await playLines(ls, ["tut_sim"]);
   store.set("sq_tutorial_seen", "1");
-  const rest = ls.map((l) => l.line_id).filter((k) => ![...TOUR_DESK, ...TOUR_OPEN, ...TOUR_MEMO].includes(k));
-  await startLevel("L01", { memo: () => step(TOUR_MEMO), ready: () => step(rest) });
+  await playPractice();
+}
+async function playPractice() {                                  // the guided simulation
+  const { lines } = await api("/api/story/practice");
+  const ls = lines.map((l) => ({ ...l, text: fillName(l.text) }));
+  await preload([...new Set(ls.map((l) => l.sprite))]);
+  bus.clear();
+  S.coaching = true;
+  try {
+    await startLevel("L00", { memo: () => playLines(ls, PRACTICE_STEPS.memo), ready: () => playLines(ls, PRACTICE_STEPS.map) });
+    if (S.coaching && !S.lastResult) await waitFor((n) => n === "result");   // after the score dialogue
+    await wait(400);
+    if (S.coaching && S.revealed) await playLines(ls, PRACTICE_STEPS.result);
+  } finally { S.coaching = false; }
 }
 $("#btn-delete-me").onclick = async () => {
   if (!confirm(t("reset_confirm"))) return;

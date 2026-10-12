@@ -348,6 +348,15 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
 .spot { position: fixed; z-index: 1999; pointer-events: none; border: 3px solid var(--gold); border-radius: 10px;
   box-shadow: 0 0 0 200vmax rgba(8, 10, 16, .55), 0 0 22px rgba(232, 179, 58, .85); transition: left .35s, top .35s, width .35s, height .35s; }
 .vn.spotlit { background: transparent; }
+/* practice: SAT's instruction while the player acts; it never blocks the game underneath */
+.coach { position: fixed; z-index: 2001; left: 50%; bottom: 16px; transform: translateX(-50%); width: min(620px, calc(100% - 32px));
+  display: flex; gap: 12px; align-items: center; pointer-events: none; color: #f4f1e8; background: rgba(8, 10, 16, .82);
+  border: 2px solid var(--gold); border-radius: 10px; padding: 10px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .4);
+  animation: coach-in .35s ease-out; }
+.coach.top { bottom: auto; top: 70px; }
+.coach img { width: 56px; height: 56px; flex: none; }
+#coach-text { font-size: 16px; line-height: 1.4; }
+@keyframes coach-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .vn.top { place-items: start center; }
 .vn.top .vn-box { margin: 16px; }          /* above the desktop taskbar (1000) and windows */
 .toast { z-index: 2100; }

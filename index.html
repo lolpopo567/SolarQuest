@@ -193,6 +193,10 @@
 
   <!-- visual-novel dialogue -->
   <div id="spot" class="spot hidden" aria-hidden="true"></div>   <!-- tutorial: frames what SAT is talking about -->
+  <!-- practice: SAT's current instruction, which stays up while the player does it (app.js: coachUntil) -->
+  <div id="coach" class="coach hidden" role="status" aria-live="polite">
+    <img id="coach-img" alt="SAT"><div><div class="vn-name">SAT · orbital feed</div><div id="coach-text"></div></div>
+  </div>
   <div id="vn" class="overlay vn hidden" tabindex="-1">
     <img id="vn-left" class="bust left" alt="">
     <img id="vn-right" class="bust right" alt="">

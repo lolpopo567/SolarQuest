@@ -471,8 +471,10 @@ const SQEngine = (() => {
     }
     return out;
   }
+  // level 0 is the practice simulation: playable, but never on the exercise list or in the unlock chain
+  const exercises = async () => (await getJSON("levels/index.json")).filter((l) => !l.practice);
   async function unlocked() {
-    const index = await getJSON("levels/index.json"), best = bestByLevel(), out = {};
+    const index = await exercises(), best = bestByLevel(), out = {};
     let prev = true;
     for (const l of index) { out[l.level_id] = prev; prev = ((best[l.level_id] || {}).best_score || 0) >= C.config.pass_score; }
     return out;
@@ -507,12 +509,13 @@ const SQEngine = (() => {
              tv_off: group(ev.tv_off, "progression") };
   });
   on("GET", /^\/api\/story\/tutorial$/, () => ({ lines: group(C.dialogue.tutorial, "progression") }));
+  on("GET", /^\/api\/story\/practice$/, () => ({ lines: group(C.dialogue.practice, "progression") }));   // the simulation
   on("POST", /^\/api\/players$/, () => ({ ok: true }));                       // the name lives in localStorage (app.js)
   on("DELETE", /^\/api\/players\/[0-9a-f]{32}$/, () => {
     const n = attempts().length; saveAttempts([]); return { deleted_attempts: n };
   });
   on("GET", /^\/api\/levels$/, async () => {
-    const index = await getJSON("levels/index.json"), best = bestByLevel(), ul = await unlocked();
+    const index = await exercises(), best = bestByLevel(), ul = await unlocked();
     return index.map((l) => ({ ...l, unlocked: ul[l.level_id], ...(best[l.level_id] || { best_score: null, attempts: 0 }) }));
   });
   on("GET", /^\/api\/levels\/(\w+)$/, async ([, id]) => {
@@ -535,7 +538,8 @@ const SQEngine = (() => {
   });
   on("POST", /^\/api\/levels\/(\w+)\/start$/, async ([, id]) => {
     const L = await level(id);
-    if (!(await unlocked())[id]) throw new HttpError(403, "level locked: pass the previous exercise first");
+    if (L.lv.level_number && !(await unlocked())[id])                          // the practice (level 0) is always open
+      throw new HttpError(403, "level locked: pass the previous exercise first");
     const a = { id: [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, "0")).join(""),
                 level_id: id, started: Date.now() / 1000, submitted: null, score: null, grade: null };
     saveAttempts([...attempts(), a]);
@@ -743,7 +747,7 @@ const SQEngine = (() => {
     const prevBest = (bestByLevel()[L.id] || {}).best_score || 0, before = await unlocked();
     Object.assign(a, { submitted: Date.now() / 1000, score: res.score, grade: res.grade });
     saveAttempts(all);
-    const after = await unlocked(), index = await getJSON("levels/index.json"), order = index.map((x) => x.level_id);
+    const after = await unlocked(), index = await exercises(), order = index.map((x) => x.level_id);
     return { result: res, reveal, explanation, dialogue: lines, passed, new_best: res.score > prevBest, ending: !!(L.mixed && passed),
              unlocked: order.filter((id) => after[id] && !before[id]), next_level: order[order.indexOf(L.id) + 1] || null };
   });
