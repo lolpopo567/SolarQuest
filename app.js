@@ -148,7 +148,14 @@ function setSat(sprite, status) {
 }
 
 /* ------------------------------------------------------------------ home */
-const renderHome = () => { stopCoaching(); Snd.stop(); return showScreen("home", fillHome); };   // the computer is quiet
+/* A newer version of the game was installed while this page runs the old code (index.html): reload only where
+   nothing is lost, on the title screen or the desktop, never in an exercise or a dialogue. */
+function safeReload() {
+  if (!window.SQ_UPDATE) return;
+  const on = (id) => $(`#${id}`).classList.contains("active");
+  if ((on("title") || on("home")) && $("#vn").classList.contains("hidden")) location.reload();
+}
+const renderHome = () => { stopCoaching(); Snd.stop(); return showScreen("home", fillHome).then(() => safeReload()); };   // the computer is quiet
 async function fillHome() {
   $("#who").textContent = playerName();
   if (!S.desktopReady) initDesktop();
@@ -1118,7 +1125,7 @@ function showTitle() {
   $("#btn-play").setAttribute("aria-label", t(seen ? "continue" : "new_game"));
   $("#btn-new").classList.toggle("hidden", !seen);
   Snd.loop("theme", 0.45);                                      // starts on the player's first tap if the browser waits
-  return showScreen("title").then(() => $("#player-name").focus());
+  return showScreen("title").then(() => { $("#player-name").focus(); safeReload(); });
 }
 function artSrc(name) {
   const ws = (S.art.ui || {})[name] || {}, k = Object.keys(ws).map(Number).sort((a, b) => a - b);

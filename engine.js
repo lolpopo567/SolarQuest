@@ -483,8 +483,9 @@ const SQEngine = (() => {
   /* ------------------------------------------------------------------ the API app.js used to call */
   async function init() {
     if (C) return;
-    const [config, meta, dialogue, ui, art] = await Promise.all(
-      ["config.json", "meta.json", "content/dialogue.json", "content/ui.json", "art/manifest.json"].map(getJSON));
+    const [config, meta, dialogue, ui, art] = await Promise.all(      // the level list too, read with the code: a
+      ["config.json", "meta.json", "content/dialogue.json", "content/ui.json", "art/manifest.json", "levels/index.json"]   // later update can't swap it
+        .map(getJSON));
     C = { config, meta, dialogue, ui, art };
     proj4.defs("EPSG:32647", config.proj4_scoring);
     P = proj4("EPSG:4326", "EPSG:32647");

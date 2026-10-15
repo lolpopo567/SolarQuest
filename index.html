@@ -261,7 +261,12 @@
   <script src="sound.js"></script>
   <script src="app.js"></script>
   <script>
-    if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+    if ("serviceWorker" in navigator) addEventListener("load", () => {
+      const hadOne = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+      // a new version took over while this page runs older code: reload at the next safe moment (app.js: safeReload)
+      navigator.serviceWorker.addEventListener("controllerchange", () => { if (hadOne) { window.SQ_UPDATE = true; window.safeReload && safeReload(); } });
+    });
   </script>
 </body>
 </html>
