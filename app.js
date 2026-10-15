@@ -1545,6 +1545,24 @@ $("#btn-hint").onclick = async () => {
   catch (e) { toast(eventLine("rules", e.message)); }
 };
 
+/* Visit counter (stats.html): each device is counted once, the first time it opens the web game. GoatCounter gets
+   one "first-visit" event and nothing else: no name, no scores, no cookies. Offline apps (file://, localhost) and
+   devices already counted send nothing. The flag survives "Erase my progress", so a reset is not a new person. */
+function countFirstVisit() {
+  const code = S.config.goatcounter;
+  if (!code || store.get("sq_counted") || !/^https?:$/.test(location.protocol) || /^(localhost|127\.|\[::1\])/.test(location.hostname)) return;
+  window.goatcounter = { no_onload: true, no_events: true };
+  const s = document.createElement("script");
+  s.async = true; s.src = "https://gc.zgo.at/count.js";
+  s.dataset.goatcounter = `https://${code}.goatcounter.com/count`;
+  s.onload = () => {
+    try {
+      window.goatcounter.count({ path: "first-visit", title: "First visit (one per device)", event: true });
+      store.set("sq_counted", new Date().toISOString().slice(0, 10));
+    } catch { /* blocked or offline: try again next time */ }
+  };
+  document.head.appendChild(s);
+}
 (async function boot() {
   let pid = store.get("sq_player");
   if (!pid || !/^[0-9a-f]{32}$/.test(pid)) {
@@ -1563,6 +1581,7 @@ $("#btn-hint").onclick = async () => {
     addEventListener("online", () => location.reload(), { once: true });
     return;
   }
+  countFirstVisit();
   $("#logo").src = artSrc("logo"); $("#btn-play img").src = artSrc("button-play");
   $$(".settings-img").forEach((i) => { i.src = artSrc("button-setting"); });
   $$("#settings input[name=lang]").forEach((r) => { r.checked = r.value === SQEngine.lang; });

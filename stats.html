@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Solar Quest — players</title>
+  <link rel="icon" href="icons/icon-192.png">
+  <!-- Not linked from the game (owner decision 15 Oct 2026). Shows how many devices have opened the web game,
+       each counted once on its first visit (app.js: countFirstVisit), as stored by GoatCounter. -->
+  <style>
+    :root { --navy: #1d2a44; --gold: #e8b33a; --paper: #f7f5ef; --ink: #1b1f27; --muted: #6b7180; --line: #d9d6cc; }
+    body { margin: 0; min-height: 100vh; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui, sans-serif;
+           display: grid; place-items: center; }
+    main { width: min(560px, 100% - 32px); padding: 32px 0; text-align: center; }
+    h1 { color: var(--navy); font-size: 20px; margin: 0 0 4px; }
+    .sub { color: var(--muted); margin: 0 0 28px; }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 28px 20px; box-shadow: 0 6px 24px rgba(0,0,0,.06); }
+    .num { font-size: clamp(56px, 18vw, 96px); font-weight: 800; color: var(--navy); line-height: 1; font-variant-numeric: tabular-nums; }
+    .num.wait { color: var(--line); }
+    .label { margin-top: 10px; font-weight: 600; }
+    .label span { display: block; color: var(--muted); font-weight: 400; }
+    .note { color: var(--muted); font-size: 14px; margin-top: 22px; }
+    .note a { color: var(--navy); }
+    .msg { margin-top: 16px; color: #8a4b12; background: #fff6dd; border: 1px solid var(--gold); border-radius: 8px; padding: 10px 12px; font-size: 14px; text-align: left; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Solar Quest</h1>
+  <p class="sub">Players so far · ผู้เล่นจนถึงตอนนี้</p>
+  <div class="card">
+    <div class="num wait" id="num">–</div>
+    <div class="label">devices that have opened the web game<span>อุปกรณ์ที่เคยเปิดเกมบนเว็บ</span></div>
+    <div class="msg" id="msg" hidden></div>
+  </div>
+  <p class="note">Each phone, tablet or computer counts once, on its first visit. The installed apps are not counted.
+    <span id="when"></span><br><a id="dash" href="#" hidden>Open the GoatCounter dashboard</a></p>
+</main>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+function say(text) { $("#msg").textContent = text; $("#msg").hidden = false; }
+async function refresh(code) {
+  try {
+    const r = await fetch(`https://${code}.goatcounter.com/counter/${encodeURIComponent("first-visit")}.json`, { cache: "no-store" });
+    if (r.status === 404) {             // GoatCounter answers 404 until the first device is counted
+      $("#num").textContent = "0"; $("#num").classList.remove("wait");
+      say("No devices counted yet. If people have played, check that “Allow adding visitor counts on your website” is on in GoatCounter's settings.");
+    } else if (!r.ok) throw new Error(`GoatCounter answered ${r.status}`);
+    else {
+      const j = await r.json();
+      $("#num").textContent = j.count; $("#num").classList.remove("wait"); $("#msg").hidden = true;
+    }
+    $("#when").textContent = `Updated ${new Date().toLocaleTimeString()}; refreshes every minute.`;
+  } catch (e) {
+    say(`Could not read the count (${e.message}). Check the connection, and that “Allow adding visitor counts on your website” is on in GoatCounter's settings.`);
+  }
+}
+(async () => {
+  let code = null;
+  try { code = (await (await fetch("config.json", { cache: "no-store" })).json()).goatcounter; } catch { /* below */ }
+  if (!code) { say("The visit counter is not set up yet: the GoatCounter site code is missing from the game's build."); return; }
+  $("#dash").href = `https://${code}.goatcounter.com/`; $("#dash").hidden = false;
+  await refresh(code);
+  setInterval(() => refresh(code), 60_000);
+})();
+</script>
+</body>
+</html>
