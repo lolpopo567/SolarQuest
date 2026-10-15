@@ -128,6 +128,7 @@ function playDialogue(lines, onLine) {           // onLine(line): called as each
     $("#vn-left").classList.add("hidden"); $("#vn-right").classList.add("hidden");
     vn.classList.remove("hidden"); vn.focus();
     vn.onclick = show;
+    vn.onmousedown = (e) => { if (e.detail > 1) e.preventDefault(); };   // fast double clicks to skip: no word selection
     document.onkeydown = (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); show(); } };
     show();
   });
