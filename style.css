@@ -159,6 +159,7 @@ button.link { margin-top: 14px; border: 0; background: none; color: var(--navy);
 .panel { background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
 .tabs { display: flex; border-bottom: 1px solid var(--line); }
 .tabs button { flex: 1; border: 0; border-radius: 0; background: transparent; padding: 10px; color: var(--muted); }
+.panel-toggle { display: none; flex: 0 0 auto !important; padding: 6px 14px !important; font-size: 18px; color: var(--navy) !important; }
 .tabs button.active { color: var(--navy); box-shadow: inset 0 -3px 0 var(--gold); font-weight: 600; }
 .tab { display: none; overflow: auto; padding: 12px; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .tab.active { display: block; }
@@ -167,6 +168,10 @@ button.link { margin-top: 14px; border: 0; background: none; color: var(--navy);
   /* phones: the map on top, the panel fills the rest of the screen and scrolls inside itself */
   .game-body { grid-template-columns: 1fr; grid-template-rows: 52vh minmax(0, 1fr); overflow: hidden; }
   .panel { border-left: 0; border-top: 1px solid var(--line); max-height: none; min-height: 0; overflow: hidden; }
+  /* phones: the panel folds down to its tab bar (▾ / ▴), so the map gets the screen */
+  .panel-toggle { display: block; }
+  .game-body.folded { grid-template-rows: minmax(0, 1fr) auto; }
+  .game-body.folded .tab { display: none !important; }
   .topbar .title { order: -1; flex-basis: 100%; }
   /* phones: Desktop, budget and Submit share one row, so the map keeps its height */
   .topbar { gap: 8px; padding: 6px 10px; }

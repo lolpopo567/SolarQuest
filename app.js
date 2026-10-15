@@ -1330,7 +1330,7 @@ const UNLOCK_AT = {
   p_submit: ["#btn-submit"],
 };
 const GATED = "#game button, #game input, #game select, #game label";
-const ALWAYS = "#btn-home, .maplibregl-ctrl";                  // the way out, and the map's own zoom buttons
+const ALWAYS = "#btn-home, #btn-panel, .maplibregl-ctrl";      // the way out, the panel fold, the map's zoom buttons
 function unlockFor(key) {
   if (UNLOCK_AT[key]) { UNLOCK_AT[key].forEach((s) => S.allow.add(s)); applyGate(); }
 }
@@ -1370,9 +1370,13 @@ function stopCoaching() {                                        // leaving the 
   $("#coach").classList.add("hidden");
   spotlight(null);
 }
-const onScreen = (sel) => { const el = sel && document.querySelector(sel); return !!el && el.getClientRects().length > 0; };
+const onScreen = (sel) => {                                      // a folded panel counts: SAT unfolds it to point in
+  const el = sel && document.querySelector(sel);
+  return !!el && (el.getClientRects().length > 0 || (!!el.closest(".panel") && $(".game-body").classList.contains("folded")));
+};
 function spotlight(sel) {                                        // frame one element, dim the rest (null: off)
   const el = sel && document.querySelector(sel);
+  if (el && el.closest(".panel") && $(".game-body").classList.contains("folded")) foldPanel(false);   // SAT points into it
   S.spotEl = el && el.getClientRects().length ? el : null;
   $("#spot").classList.toggle("hidden", !S.spotEl);
   $("#vn").classList.toggle("spotlit", !!S.spotEl);
@@ -1520,11 +1524,20 @@ function initDesktop() {
 }
 
 /* ------------------------------------------------------------------ tabs, hint, boot */
+function foldPanel(fold) {                                       // phones: hide the panel down to its tab bar
+  $(".game-body").classList.toggle("folded", fold);
+  $("#btn-panel").textContent = fold ? "▴" : "▾";
+  $("#btn-panel").setAttribute("aria-expanded", String(!fold));
+  $("#btn-panel").title = t(fold ? "panel_show" : "panel_hide");
+  if (S.map) setTimeout(() => S.map.resize(), 50);             // the map grows into the space
+}
 function selectTab(name) {
-  $$(".tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+  foldPanel(false);                                              // choosing a tab opens the panel again
+  $$(".tabs button[data-tab]").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
   $$(".tab").forEach((t) => t.classList.toggle("active", t.id === "tab-" + name));
 }
-$$(".tabs button").forEach((b) => (b.onclick = () => selectTab(b.dataset.tab)));
+$$(".tabs button[data-tab]").forEach((b) => (b.onclick = () => selectTab(b.dataset.tab)));
+$("#btn-panel").onclick = () => foldPanel(!$(".game-body").classList.contains("folded"));
 $("#btn-submit").onclick = () => submit(false);
 $("#btn-home").onclick = () => { clearInterval(S.timer); renderHome(); };
 $("#btn-hint").onclick = async () => {
