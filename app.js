@@ -1296,6 +1296,12 @@ const TOUR = {
   p_moved: "#cards [data-card=flood_years_hit] .here",
   p_sun: "#cards [data-card=ghi_seasonal]",
   p_land: "#cards [data-card=lu_class_wc]",
+  p_calc_1: "#cards",
+  p_calc_flood: "#cards [data-card=flood_years_hit]",
+  p_calc_sun: "#cards [data-card=ghi_seasonal]",
+  p_calc_land: "#cards [data-card=lu_class_wc]",
+  p_calc_rest: "#cards [data-card=slope_deg]",
+  p_calc_site: "#game .map-wrap",
   p_size: "#game .map-wrap",
   p_tools: "#game .tools",
   p_hud: "#sat-hud",
@@ -1316,7 +1322,7 @@ const PRACTICE = {                                               // lines SAT ke
 const PRACTICE_STEPS = {                                         // where each part of the script plays
   memo: ["p_why_1", "p_why_2", "p_memo"],
   map: ["p_goal", "p_square", "p_flood_on", "p_flood_read", "p_move", "p_moved", "p_sun", "p_sun_read", "p_land",
-        "p_size", "p_tools", "p_hud", "p_submit"],
+        "p_calc_1", "p_calc_flood", "p_calc_sun", "p_calc_land", "p_calc_rest", "p_calc_site", "p_size", "p_tools", "p_hud", "p_submit"],
   result: ["p_res_score", "p_res_map", "p_res_why", "p_end"],
 };
 /* Practice lock (owner report 12 Oct 2026: Submit worked before SAT got to it): every control on the exercise
