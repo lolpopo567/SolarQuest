@@ -1,7 +1,7 @@
 {
  "schema_version": "1.0",
  "level_id": "L06",
- "level_number": 5,
+ "level_number": 4,
  "title": "Hat Yai, Dry Season",
  "area_id": "HATYAI",
  "season_be": 2568,
@@ -1713,8 +1713,8 @@
  "streetview_anchors": [
   {
    "anchor_id": "SV1",
-   "lon": 100.6220603,
-   "lat": 7.0871496,
+   "lon": 100.1337869,
+   "lat": 6.7897444,
    "heading_deg": 90.0,
    "pitch_deg": 0,
    "provider": "mapillary",
@@ -1723,9 +1723,19 @@
   },
   {
    "anchor_id": "SV2",
-   "lon": 100.5182582,
-   "lat": 7.268993,
+   "lon": 100.3915421,
+   "lat": 7.2489064,
    "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.5008268,
+   "lat": 7.0262607,
+   "heading_deg": 293.8,
    "pitch_deg": 0,
    "provider": "mapillary",
    "pano_id": null,
@@ -1744,7 +1754,7 @@
  ],
  "difficulty_tier": 3,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/005. Exercise 5 of 7. Site: Hat Yai district, Songkhla, peri-urban zone. Season of record: BE 2568, data to mid-November. Area budget: 50 ha. Grid distance is assessed from this exercise on.",
+ "briefing_text": "MEMO SSIA/TRN/004. Exercise 4 of 7. Site: Hat Yai district, Songkhla, peri-urban zone. Season of record: BE 2568, data to mid-November. Area budget: 50 ha. Grid distance is assessed from this exercise on.",
  "briefing_script": "L06.briefing",
  "hints_enabled": true,
  "time_limit_s": 900,
