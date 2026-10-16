@@ -399,7 +399,10 @@ button.link.danger { color: var(--bad); margin: 0; padding: 0; font: inherit; }
 .sel-box { position: absolute; z-index: 3; border: 2px dashed #e8b33a; background: rgba(232, 179, 58, .15); pointer-events: none; }
 
 /* dialogue and story screens are tapped through, never selected (owner report 15 Oct 2026: on PC, clicking to skip
-   kept highlighting the text); images are not draggable there either */
-#vn, #prologue, #daycard, #stage, #office, #coach, #toast, #memo .memo-sheet {
-  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+   kept highlighting the text); images are not draggable anywhere in the game */
+/* (owner, 16 Oct 2026) the whole game: nothing is selected when clicking or double-clicking on PC; only the boxes
+   you type in stay selectable */
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input, textarea, select, [contenteditable="true"] { -webkit-user-select: text; user-select: text; }
 #vn img, #coach img, #toast img { -webkit-user-drag: none; pointer-events: none; }
+img { -webkit-user-drag: none; }

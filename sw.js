@@ -4,7 +4,7 @@
    One version never mixes with another (owner report 15 Oct 2026: an old engine.js with the new level list said
    exercise 1 was locked): the shell is fetched past the browser's HTTP cache, files are served from this version's
    cache without background refreshes, and a page still running older code reloads at a safe moment (app.js). */
-const VERSION = "sq-2026-10-15-6";
+const VERSION = "sq-2026-10-16-1";
 const SHELL = ["./", "index.html", "app.js", "engine.js", "sound.js", "style.css", "credits.js", "manifest.webmanifest",
                "config.json", "meta.json", "content/dialogue.json", "content/ui.json", "art/manifest.json",
                "levels/index.json", "icons/icon-192.png", "icons/icon-512.png",
