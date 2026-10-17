@@ -1,7 +1,7 @@
 {
  "schema_version": "1.0",
  "level_id": "L04",
- "level_number": 6,
+ "level_number": 5,
  "title": "Rooftops of Pathum Wan",
  "area_id": "PATHUMWAN",
  "season_be": null,
@@ -228,36 +228,6 @@
  "streetview_anchors": [
   {
    "anchor_id": "SV1",
-   "lon": 100.534448,
-   "lat": 13.7369079,
-   "heading_deg": 272.7,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV2",
-   "lon": 100.4858834,
-   "lat": 13.769176,
-   "heading_deg": 90.0,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV3",
-   "lon": 100.5515405,
-   "lat": 13.7295057,
-   "heading_deg": 193.9,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV4",
    "lon": 100.5218238,
    "lat": 13.7496657,
    "heading_deg": 123.8,
@@ -267,10 +237,40 @@
    "captured": null
   },
   {
-   "anchor_id": "SV5",
-   "lon": 100.510266,
-   "lat": 13.8198003,
+   "anchor_id": "SV2",
+   "lon": 100.4949338,
+   "lat": 13.7314159,
    "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.534448,
+   "lat": 13.7369079,
+   "heading_deg": 272.7,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV4",
+   "lon": 100.5305903,
+   "lat": 13.6773563,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV5",
+   "lon": 100.5515405,
+   "lat": 13.7295057,
+   "heading_deg": 193.9,
    "pitch_deg": 0,
    "provider": "mapillary",
    "pano_id": null,
@@ -284,7 +284,7 @@
  ],
  "difficulty_tier": 2,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/006. Exercise 6 of 8. Site: Pathum Wan district, Bangkok. Rooftop mission: no ground-mount on this district. Panel budget: 1 ha of roof. Roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
+ "briefing_text": "MEMO SSIA/TRN/005. Exercise 5 of 7. Site: Pathum Wan district, Bangkok. Rooftop mission: no ground-mount on this district. Panel budget: 1 ha of roof. Roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
  "briefing_script": "L04.briefing",
  "hints_enabled": true,
  "time_limit_s": null,

@@ -1187,7 +1187,7 @@ function confirmBox(title, text, yes) {                         // resolves true
   });
 }
 /* ------------------------------------------------------------------ the day loop
-   One day = one new exercise passed (8 days). Morning: [Day N] -> office (outside) -> desk -> computer.
+   One day = one new exercise passed (7 days). Morning: [Day N] -> office (outside) -> desk -> computer.
    Evening ("End the day"): house -> door closed -> door open -> TV off -> TV on (the news) -> next morning.
    sq_evening holds the finished day and its grade until the player has gone home. Text: dialogue.yaml days/evening. */
 const EVENING_KEY = "sq_evening";
@@ -1524,7 +1524,7 @@ function initDesktop() {
     };
   });
   $("#btn-replay").onclick = async () => {                    // replays the start of the day the player is on
-    const n = Math.min(S.day || 1, S.days || 8);
+    const n = Math.min(S.day || 1, S.days || 7);
     if (!(await confirmBox(t("replay_title"), t("replay_warn", { n }), t("replay_ok", { n })))) return;
     if (n <= 1) playIntro(); else playMorning(n);
   };

@@ -1,7 +1,7 @@
 {
  "schema_version": "1.0",
  "level_id": "L09",
- "level_number": 8,
+ "level_number": 7,
  "title": "Final Assessment",
  "area_id": "HATYAI",
  "season_be": 2568,
@@ -1073,6 +1073,26 @@
  "streetview_anchors": [
   {
    "anchor_id": "SV1",
+   "lon": 100.1383782,
+   "lat": 6.7797157,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV2",
+   "lon": 100.533815,
+   "lat": 7.1199813,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
    "lon": 100.4744993,
    "lat": 6.9588671,
    "heading_deg": 101.8,
@@ -1082,30 +1102,10 @@
    "captured": null
   },
   {
-   "anchor_id": "SV2",
-   "lon": 100.5834162,
-   "lat": 6.9983704,
-   "heading_deg": 90.0,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV3",
-   "lon": 100.5706093,
-   "lat": 7.1400989,
-   "heading_deg": 90.0,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
    "anchor_id": "SV4",
-   "lon": 100.4753768,
-   "lat": 7.0160834,
-   "heading_deg": 348.1,
+   "lon": 100.1383782,
+   "lat": 6.7797157,
+   "heading_deg": 90.0,
    "pitch_deg": 0,
    "provider": "mapillary",
    "pano_id": null,
@@ -1113,8 +1113,8 @@
   },
   {
    "anchor_id": "SV5",
-   "lon": 100.5834162,
-   "lat": 6.9983704,
+   "lon": 100.533815,
+   "lat": 7.1199813,
    "heading_deg": 90.0,
    "pitch_deg": 0,
    "provider": "mapillary",
@@ -1123,9 +1123,9 @@
   },
   {
    "anchor_id": "SV6",
-   "lon": 100.5706093,
-   "lat": 7.1400989,
-   "heading_deg": 90.0,
+   "lon": 100.4753768,
+   "lat": 7.0160834,
+   "heading_deg": 348.1,
    "pitch_deg": 0,
    "provider": "mapillary",
    "pano_id": null,
@@ -1144,7 +1144,7 @@
  ],
  "difficulty_tier": 5,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/ASSESS/008. Final assessment. Site: Hat Yai district, Songkhla, the whole district. Two installations: one ground-mount footprint of up to 30 ha outside the city core, and up to 20,000 m² of rooftop panels in the city. Both are graded; the final mark is their average. No hints.",
+ "briefing_text": "MEMO SSIA/ASSESS/007. Final assessment. Site: Hat Yai district, Songkhla, the whole district. Two installations: one ground-mount footprint of up to 30 ha outside the city core, and up to 20,000 m² of rooftop panels in the city. Both are graded; the final mark is their average. No hints.",
  "briefing_script": "L09.briefing",
  "hints_enabled": false,
  "time_limit_s": 1200,

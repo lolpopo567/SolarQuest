@@ -1113,7 +1113,7 @@
  ],
  "difficulty_tier": 1,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/001. Applicant assessment, exercise 1 of 8. Site: Bang Ban district, Ayutthaya. Season of record: BE 2566. All data layers released. Area budget: 30 ha. Submit one array footprint.",
+ "briefing_text": "MEMO SSIA/TRN/001. Applicant assessment, exercise 1 of 7. Site: Bang Ban district, Ayutthaya. Season of record: BE 2566. All data layers released. Area budget: 30 ha. Submit one array footprint.",
  "briefing_script": "L01.briefing",
  "hints_enabled": true,
  "time_limit_s": null,

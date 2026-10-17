@@ -1,7 +1,7 @@
 {
  "schema_version": "1.0",
  "level_id": "L05",
- "level_number": 7,
+ "level_number": 6,
  "title": "Port of Khlong Toei",
  "area_id": "KHLONGTOEI",
  "season_be": null,
@@ -256,36 +256,6 @@
  "streetview_anchors": [
   {
    "anchor_id": "SV1",
-   "lon": 100.60133,
-   "lat": 13.7048103,
-   "heading_deg": 248.5,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV2",
-   "lon": 100.5841146,
-   "lat": 13.7130258,
-   "heading_deg": 343.4,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV3",
-   "lon": 100.5679826,
-   "lat": 13.7770191,
-   "heading_deg": 90.0,
-   "pitch_deg": 0,
-   "provider": "mapillary",
-   "pano_id": null,
-   "captured": null
-  },
-  {
-   "anchor_id": "SV4",
    "lon": 100.555507,
    "lat": 13.71729,
    "heading_deg": 16.7,
@@ -295,9 +265,39 @@
    "captured": null
   },
   {
+   "anchor_id": "SV2",
+   "lon": 100.4961985,
+   "lat": 13.7354607,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.60133,
+   "lat": 13.7048103,
+   "heading_deg": 248.5,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV4",
+   "lon": 100.5841146,
+   "lat": 13.7130258,
+   "heading_deg": 343.4,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
    "anchor_id": "SV5",
-   "lon": 100.4829092,
-   "lat": 13.6886928,
+   "lon": 100.5052887,
+   "lat": 13.8036543,
    "heading_deg": 90.0,
    "pitch_deg": 0,
    "provider": "mapillary",
@@ -312,7 +312,7 @@
  ],
  "difficulty_tier": 3,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/007. Exercise 7 of 8. Site: Khlong Toei district, Bangkok, around the Port of Bangkok. Rooftop mission. Panel budget: 2 ha of roof. The port warehouses and other roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
+ "briefing_text": "MEMO SSIA/TRN/006. Exercise 6 of 7. Site: Khlong Toei district, Bangkok, around the Port of Bangkok. Rooftop mission. Panel budget: 2 ha of roof. The port warehouses and other roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
  "briefing_script": "L05.briefing",
  "hints_enabled": true,
  "time_limit_s": null,
