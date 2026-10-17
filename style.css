@@ -406,3 +406,10 @@ body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none
 input, textarea, select, [contenteditable="true"] { -webkit-user-select: text; user-select: text; }
 #vn img, #coach img, #toast img { -webkit-user-drag: none; pointer-events: none; }
 img { -webkit-user-drag: none; }
+
+/* developer mode (index.html?dev): every level and scene one click away */
+.dev-panel { margin-top: 14px; padding: 10px 12px; border: 2px dashed #c4521f; border-radius: 8px; background: #fff8f3; }
+.dev-panel h3 { margin: 0 0 4px; color: #c4521f; font-size: 15px; }
+.dev-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0; }
+.dev-row span { min-width: 64px; font-weight: 600; font-size: 13px; }
+.dev-row button { font-size: 12px; padding: 4px 8px; }

@@ -465,7 +465,7 @@ const SQEngine = (() => {
   const saveAttempts = (a) => LS.set("sq_attempts", a);
   function bestByLevel() {
     const out = {};
-    for (const a of attempts()) if (a.submitted) {
+    for (const a of attempts()) if (a.submitted && !a.dev) {
       const o = out[a.level_id] ||= { best_score: null, attempts: 0 };
       o.attempts += 1; o.best_score = o.best_score == null ? a.score : Math.max(o.best_score, a.score);
     }
@@ -510,6 +510,7 @@ const SQEngine = (() => {
              tv_off: group(ev.tv_off, "progression") };
   });
   on("GET", /^\/api\/story\/tutorial$/, () => ({ lines: group(C.dialogue.tutorial, "progression") }));
+  on("GET", /^\/api\/story\/ending$/, () => ({ lines: group(C.dialogue.ending, "ending") }));          // developer mode replay
   on("GET", /^\/api\/story\/practice$/, () => ({ lines: group(C.dialogue.practice, "progression") }));   // the simulation
   on("POST", /^\/api\/players$/, () => ({ ok: true }));                       // the name lives in localStorage (app.js)
   on("DELETE", /^\/api\/players\/[0-9a-f]{32}$/, () => {
@@ -537,12 +538,13 @@ const SQEngine = (() => {
              sat_line: react(alarm ? "sat_alarm" : "sat_nominal", "inspection"),
              proj4_scoring: C.config.proj4_scoring, pixel_size_m: lv.scoring.pixel_size_m };
   });
-  on("POST", /^\/api\/levels\/(\w+)\/start$/, async ([, id]) => {
+  on("POST", /^\/api\/levels\/(\w+)\/start$/, async ([, id], body) => {
     const L = await level(id);
-    if (L.lv.level_number && !(await unlocked())[id])                          // the practice (level 0) is always open
+    if (L.lv.level_number && !(body && body.dev) && !(await unlocked())[id])  // practice (level 0) and developer mode: open
       throw new HttpError(403, "level locked: pass the previous exercise first");
     const a = { id: [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, "0")).join(""),
-                level_id: id, started: Date.now() / 1000, submitted: null, score: null, grade: null };
+                level_id: id, started: Date.now() / 1000, submitted: null, score: null, grade: null,
+                ...(body && body.dev ? { dev: true } : {}) };                  // developer attempts never count
     saveAttempts([...attempts(), a]);
     grid(L).catch(() => {});                                                   // start downloading the grid now
     return { attempt_id: a.id, started: a.started, time_limit_s: L.lv.time_limit_s };
@@ -754,7 +756,7 @@ const SQEngine = (() => {
   });
   on("GET", /^\/api\/leaderboard\/(\w+)$/, ([, id], _b, q) => {
     const name = q.name || "Applicant";
-    return attempts().filter((a) => a.level_id === id && a.submitted).sort((a, b) => b.score - a.score).slice(0, 10)
+    return attempts().filter((a) => a.level_id === id && a.submitted && !a.dev).sort((a, b) => b.score - a.score).slice(0, 10)
       .map((a, i) => ({ rank: i + 1, name, score: a.score, grade: a.grade, date: new Date(a.submitted * 1000).toISOString().slice(0, 10) }));
   });
 

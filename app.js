@@ -22,6 +22,11 @@ const S = {
 };
 const HEAT = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"];
 
+/* Developer mode (owner request 17 Oct 2026): open the game with ?dev in the address (index.html?dev). It skips the
+   title, opens every exercise and the practice whatever the day, and lists every day's morning and evening scenes.
+   Attempts made in it are kept apart: they never count for progress, the day, grades or the leaderboard. */
+const DEV = (() => { try { return new URLSearchParams(location.search).has("dev"); } catch { return false; } })();
+
 async function api(path, opts = {}) {                 // the same calls the server used to answer
   try { return await SQEngine.handle(opts.method || "GET", path, opts.body); }
   catch (e) { throw Object.assign(new Error(e.message), { status: e.status || 500 }); }
@@ -164,7 +169,7 @@ async function fillHome() {
   const ol = $("#level-list"); ol.innerHTML = "";
   for (const l of list) {
     const li = document.createElement("li");
-    const today = l.unlocked && l.level_number <= S.day;              // one new exercise per day
+    const today = DEV || (l.unlocked && l.level_number <= S.day);     // one new exercise per day
     li.className = "level-card" + (today ? "" : " locked");
     const grade = l.best_score == null ? "" : gradeBadge(gradeOf(l.best_score), "chip");
     li.innerHTML = `<div class="num">${l.level_number}</div>
@@ -174,6 +179,7 @@ async function fillHome() {
     if (today) $("button", li).onclick = () => startLevel(l.level_id);
     ol.appendChild(li);
   }
+  if (DEV) fillDev(list);
 }
 const gradeOf = (s) => s >= 90 ? "S" : s >= 75 ? "A" : s >= 60 ? "B" : s >= 40 ? "C" : "E";
 const areaName = (a) => tr("areas", a, a);
@@ -250,7 +256,7 @@ async function startLevel(levelId, tour = {}) {     // tour: the tutorial's { me
   if (tour.memo) await tour.memo();
   await new Promise((res) => { $("#memo-ok").onclick = () => { $("#memo").classList.add("hidden"); res(); }; });
   await playDialogue(lv.briefing);
-  const st = await api(`/api/levels/${levelId}/start`, { method: "POST", body: { player_id: S.playerId } });
+  const st = await api(`/api/levels/${levelId}/start`, { method: "POST", body: { player_id: S.playerId, dev: DEV } });
   S.attemptId = st.attempt_id;
   startTimer(st.time_limit_s);
   if (S.roof) roofHelp(); else setTool("rect");
@@ -1007,7 +1013,7 @@ function revealMap(r, fit = true) {
 
 function renderReveal(r) {
   const res = r.result, ex = r.explanation, tab = $("#tab-reveal");
-  if (r.passed && S.level.level_number === S.day && S.day <= S.days) {       // today's exercise passed: the day is over
+  if (!DEV && r.passed && S.level.level_number === S.day && S.day <= S.days) {   // today's exercise passed: the day is over
     const ev = evening(), keep = ev && GRADE_RANK[ev.grade] >= GRADE_RANK[res.grade];  // a retry can only raise it
     store.set(EVENING_KEY, JSON.stringify({ day: S.day, grade: keep ? ev.grade : res.grade }));
   }
@@ -1257,7 +1263,32 @@ async function playMorning(n) {
   await renderHome();
   office.classList.remove("zoom");
 }
-async function endDay() {
+/* Developer panel on the desktop: every exercise (above, all open), the practice, and each day's scenes. */
+function fillDev(list) {
+  let box = $("#dev-panel");
+  if (!box) {
+    box = document.createElement("div"); box.id = "dev-panel"; box.className = "dev-panel";
+    $("#level-list").after(box);
+  }
+  const days = list.length;
+  box.innerHTML = `<h3>Developer mode</h3><p class="fine">Attempts here never count for progress or grades.</p>
+    <div class="dev-row"><span>Practice</span><button data-dev="practice">SAT-guided</button><button data-dev="practice-free">Free play</button></div>
+    ${Array.from({ length: days }, (_, i) => `<div class="dev-row"><span>Day ${i + 1}</span>
+      <button data-dev="morning" data-n="${i + 1}">Morning</button><button data-dev="evening" data-n="${i + 1}">Evening news</button></div>`).join("")}
+    <div class="dev-row"><span>Story</span><button data-dev="intro">Prologue</button><button data-dev="tutorial">Tutorial</button>
+      <button data-dev="ending">Ending</button></div>`;
+  $$("button", box).forEach((b) => { b.onclick = () => devRun(b.dataset.dev, Number(b.dataset.n)); });
+}
+async function devRun(what, n) {
+  if (what === "practice") return playPractice();
+  if (what === "practice-free") return startLevel("L00");
+  if (what === "morning") return playMorning(n);
+  if (what === "evening") { store.set(EVENING_KEY, JSON.stringify({ day: n, grade: "A" })); return endDay(true); }
+  if (what === "intro") return playIntro();
+  if (what === "tutorial") return playTutorial();
+  if (what === "ending") { await say((await api("/api/story/ending")).lines); return renderHome(); }
+}
+async function endDay(dev = false) {
   const ev = evening();
   if (!ev) return renderHome();
   clearInterval(S.timer);
@@ -1275,6 +1306,7 @@ async function endDay() {
   Snd.stop(0.8);
   await Snd.play("tv_off");
   store.set(EVENING_KEY, "");
+  if (dev) return renderHome();                                  // developer mode: one evening, back to the desk
   await refreshDay();
   if (S.day <= S.days) return playMorning(S.day);
   await dayCard(t("the_end"), t("the_end_sub"));                // after the last day: the story is over
@@ -1597,10 +1629,14 @@ function countFirstVisit() {
     addEventListener("online", () => location.reload(), { once: true });
     return;
   }
-  countFirstVisit();
+  if (!DEV) countFirstVisit();                                  // developer visits are not counted
   $("#logo").src = artSrc("logo"); $("#btn-play img").src = artSrc("button-play");
   $$(".settings-img").forEach((i) => { i.src = artSrc("button-setting"); });
   $$("#settings input[name=lang]").forEach((r) => { r.checked = r.value === SQEngine.lang; });
   applyI18n();
-  showTitle();
+  if (!DEV) return showTitle();
+  if (!store.get("sq_name")) store.set("sq_name", "Developer");
+  document.body.classList.add("dev");
+  paintScenes();
+  renderHome();
 })();
