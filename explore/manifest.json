@@ -14,19 +14,6 @@
    "km2": 137.0
   },
   {
-   "id": "PHRANAKHON",
-   "name": "Phra Nakhon Si Ayutthaya",
-   "kind": "ground",
-   "grid": "levels/L02/grid.json",
-   "bbox": [
-    100.4981,
-    14.27901,
-    100.6297,
-    14.40731
-   ],
-   "km2": 117.0
-  },
-  {
    "id": "HATYAI",
    "name": "Hat Yai",
    "kind": "ground",
