@@ -1187,7 +1187,7 @@ function confirmBox(title, text, yes) {                         // resolves true
   });
 }
 /* ------------------------------------------------------------------ the day loop
-   One day = one new exercise passed (7 days). Morning: [Day N] -> office (outside) -> desk -> computer.
+   One day = one new exercise passed (8 days). Morning: [Day N] -> office (outside) -> desk -> computer.
    Evening ("End the day"): house -> door closed -> door open -> TV off -> TV on (the news) -> next morning.
    sq_evening holds the finished day and its grade until the player has gone home. Text: dialogue.yaml days/evening. */
 const EVENING_KEY = "sq_evening";
@@ -1195,10 +1195,12 @@ const GRADE_RANK = { S: 4, A: 3, B: 2, C: 1, E: 0, D: 0 };   // D: saved before 
 function evening() { try { return JSON.parse(store.get(EVENING_KEY) || "null"); } catch { return null; } }
 async function refreshDay() {
   const list = await api(`/api/levels?player_id=${S.playerId}`);
-  const passed = list.filter((l) => l.best_score != null && l.best_score >= S.config.pass_score).length;
+  const open = list.filter((l) => !(l.best_score != null && l.best_score >= S.config.pass_score)).map((l) => l.level_number);
   const ev = evening();
   S.days = list.length;
-  S.day = ev ? ev.day : Math.min(passed + 1, S.days + 1);       // days + 1: the story is finished
+  // today = the first exercise not yet passed (days + 1: the story is finished). A day added later (Khlong Toei,
+  // day 7) is picked up by players who had already passed the days after it.
+  S.day = ev ? ev.day : open.length ? Math.min(...open) : S.days + 1;
   if (S.clockTick) S.clockTick();                                // the taskbar shows "Day N"
   return list;
 }
@@ -1275,7 +1277,7 @@ async function endDay() {
   store.set(EVENING_KEY, "");
   await refreshDay();
   if (S.day <= S.days) return playMorning(S.day);
-  await dayCard(t("the_end"), t("the_end_sub"));                // after day 7: the story is over
+  await dayCard(t("the_end"), t("the_end_sub"));                // after the last day: the story is over
   await wait(1500);
   return showTitle();
 }
@@ -1522,7 +1524,7 @@ function initDesktop() {
     };
   });
   $("#btn-replay").onclick = async () => {                    // replays the start of the day the player is on
-    const n = Math.min(S.day || 1, S.days || 7);
+    const n = Math.min(S.day || 1, S.days || 8);
     if (!(await confirmBox(t("replay_title"), t("replay_warn", { n }), t("replay_ok", { n })))) return;
     if (n <= 1) playIntro(); else playMorning(n);
   };

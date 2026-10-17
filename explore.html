@@ -165,7 +165,7 @@ function applyText() {
 }
 const FACTOR_TH = { flood_score: "ความเสี่ยงน้ำท่วม", solar_score: "แสงแดด", landuse_score: "การใช้ที่ดิน", access_score: "ถนนและสายส่ง",
                     terrain_score: "ภูมิประเทศ", drought_score: "ภัยแล้ง", rooftop_score: "ขนาดหลังคา", demand_score: "ความต้องการไฟในอาคาร" };
-const DISTRICT_TH = { BANGBAN: "บางบาล", PHRANAKHON: "พระนครศรีอยุธยา", HATYAI: "หาดใหญ่", PATHUMWAN: "ปทุมวัน" };
+const DISTRICT_TH = { BANGBAN: "บางบาล", PHRANAKHON: "พระนครศรีอยุธยา", HATYAI: "หาดใหญ่", PATHUMWAN: "ปทุมวัน", KHLONGTOEI: "คลองเตย" };
 const dname = (d) => (lang === "th" && DISTRICT_TH[d.id]) || d.name;
 const label = (f) => (lang === "th" && FACTOR_TH[f.id]) || f.label;
 const FACTOR_DESC = {

@@ -284,7 +284,7 @@
  ],
  "difficulty_tier": 2,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/006. Exercise 6 of 7. Site: Pathum Wan district, Bangkok. Rooftop mission: no ground-mount on this district. Panel budget: 1 ha of roof. Roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
+ "briefing_text": "MEMO SSIA/TRN/006. Exercise 6 of 8. Site: Pathum Wan district, Bangkok. Rooftop mission: no ground-mount on this district. Panel budget: 1 ha of roof. Roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
  "briefing_script": "L04.briefing",
  "hints_enabled": true,
  "time_limit_s": null,

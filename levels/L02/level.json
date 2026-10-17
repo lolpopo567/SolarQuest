@@ -1123,7 +1123,7 @@
  ],
  "difficulty_tier": 2,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/002. Exercise 2 of 7. Site: Phra Nakhon Si Ayutthaya district, around the old city. Season of record: BE 2565. Area budget: 30 ha. Irradiance data is complete for this district.",
+ "briefing_text": "MEMO SSIA/TRN/002. Exercise 2 of 8. Site: Phra Nakhon Si Ayutthaya district, around the old city. Season of record: BE 2565. Area budget: 30 ha. Irradiance data is complete for this district.",
  "briefing_script": "L02.briefing",
  "hints_enabled": true,
  "time_limit_s": null,

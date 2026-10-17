@@ -52,6 +52,20 @@
    "roofs": "levels/L04/public/roofs.geojson",
    "subs": "explore/roofs_pathumwan.json",
    "km2": 8.369
+  },
+  {
+   "id": "KHLONGTOEI",
+   "name": "Khlong Toei",
+   "kind": "roofs",
+   "bbox": [
+    100.55074,
+    13.69766,
+    100.60146,
+    13.7424
+   ],
+   "roofs": "levels/L05/public/roofs.geojson",
+   "subs": "explore/roofs_khlongtoei.json",
+   "km2": 12.994
   }
  ],
  "factors": {

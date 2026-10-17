@@ -429,6 +429,7 @@
  ],
  "flood_season_ce": 2025,
  "flood_until": null,
+ "taken_sites": null,
  "basemap_s2": {
   "file": "public/basemap_s2.jpg",
   "corners": [

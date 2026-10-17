@@ -1754,7 +1754,7 @@
  ],
  "difficulty_tier": 4,
  "briefing_character": "inspector_m",
- "briefing_text": "MEMO SSIA/TRN/005. Exercise 5 of 7. Site: Hat Yai district, Songkhla. Season of record: BE 2568, complete to 31 December. Area budget: 50 ha. Grid distance is assessed. The site approved in exercise 4 is under construction and not available.",
+ "briefing_text": "MEMO SSIA/TRN/005. Exercise 5 of 8. Site: Hat Yai district, Songkhla. Season of record: BE 2568, complete to 31 December. Area budget: 50 ha. Grid distance is assessed. The site approved in exercise 4 is under construction and not available.",
  "briefing_script": "L07.briefing",
  "hints_enabled": true,
  "time_limit_s": 900,

@@ -1,0 +1,39 @@
+{
+ "factors": [
+  {
+   "id": "flood_score",
+   "label": "Flood risk",
+   "weight": 0.3,
+   "layer": "flood_years_hit",
+   "good": "Dry ground around the building: equipment and access stay safe.",
+   "bad": "Flood-prone location: inverters and access are at risk."
+  },
+  {
+   "id": "solar_score",
+   "label": "Roof sunlight",
+   "weight": 0.45,
+   "layer": "roof_irr",
+   "good": "Well-lit roof: little shade and a good orientation.",
+   "bad": "Shaded or poorly oriented roof: much less sunlight on the panels."
+  },
+  {
+   "id": "rooftop_score",
+   "label": "Roof size",
+   "weight": 0.1,
+   "layer": "roof_usable_m2",
+   "good": "A large usable roof: one installation, lower cost per kW.",
+   "bad": "Little usable space: small, costly installations."
+  },
+  {
+   "id": "demand_score",
+   "label": "On-site demand",
+   "weight": 0.15,
+   "layer": "n_floors",
+   "good": "A tall building uses what its roof produces.",
+   "bad": "A low building exports most of what it produces."
+  }
+ ],
+ "excl_names": [
+  "on roofs without enough clear, sunlit space"
+ ]
+}

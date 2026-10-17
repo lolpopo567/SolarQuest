@@ -1,0 +1,327 @@
+{
+ "schema_version": "1.0",
+ "level_id": "L05",
+ "level_number": 7,
+ "title": "Port of Khlong Toei",
+ "area_id": "KHLONGTOEI",
+ "season_be": null,
+ "season_complete": true,
+ "mission_type": "rooftop",
+ "bbox": [
+  100.55074,
+  13.69766,
+  100.60146,
+  13.7424
+ ],
+ "zoom_min": 13,
+ "zoom_max": 19,
+ "budget_m2": 20000,
+ "par_score": 70,
+ "optimal_selection": {
+  "buildings": [
+   {
+    "building_id": "22746",
+    "area_m2": 550.8
+   },
+   {
+    "building_id": "22741",
+    "area_m2": 408.7
+   },
+   {
+    "building_id": "22510",
+    "area_m2": 513.0
+   },
+   {
+    "building_id": "19592",
+    "area_m2": 785.4
+   },
+   {
+    "building_id": "20819",
+    "area_m2": 321.4
+   },
+   {
+    "building_id": "20813",
+    "area_m2": 333.5
+   },
+   {
+    "building_id": "20762",
+    "area_m2": 706.0
+   },
+   {
+    "building_id": "19412",
+    "area_m2": 516.9
+   },
+   {
+    "building_id": "19599",
+    "area_m2": 327.2
+   },
+   {
+    "building_id": "20928",
+    "area_m2": 897.2
+   },
+   {
+    "building_id": "20022",
+    "area_m2": 820.0
+   },
+   {
+    "building_id": "20820",
+    "area_m2": 321.2
+   },
+   {
+    "building_id": "20023",
+    "area_m2": 844.5
+   },
+   {
+    "building_id": "19981",
+    "area_m2": 802.6
+   },
+   {
+    "building_id": "19976",
+    "area_m2": 474.3
+   },
+   {
+    "building_id": "20508",
+    "area_m2": 648.9
+   },
+   {
+    "building_id": "20607",
+    "area_m2": 851.1
+   },
+   {
+    "building_id": "22606",
+    "area_m2": 425.7
+   },
+   {
+    "building_id": "20718",
+    "area_m2": 316.0
+   },
+   {
+    "building_id": "21600",
+    "area_m2": 898.4
+   },
+   {
+    "building_id": "20679",
+    "area_m2": 606.8
+   },
+   {
+    "building_id": "20133",
+    "area_m2": 609.4
+   },
+   {
+    "building_id": "22249",
+    "area_m2": 683.1
+   },
+   {
+    "building_id": "21705",
+    "area_m2": 587.6
+   },
+   {
+    "building_id": "22588",
+    "area_m2": 465.2
+   },
+   {
+    "building_id": "19342",
+    "area_m2": 813.5
+   },
+   {
+    "building_id": "22071",
+    "area_m2": 790.2
+   },
+   {
+    "building_id": "20694",
+    "area_m2": 540.0
+   },
+   {
+    "building_id": "19691",
+    "area_m2": 408.2
+   },
+   {
+    "building_id": "21597",
+    "area_m2": 811.4
+   },
+   {
+    "building_id": "20603",
+    "area_m2": 581.1
+   },
+   {
+    "building_id": "20421",
+    "area_m2": 523.0
+   },
+   {
+    "building_id": "16813",
+    "area_m2": 414.4
+   },
+   {
+    "building_id": "13425",
+    "area_m2": 403.3
+   }
+  ],
+  "area_m2": 20000.0,
+  "mean_weight": 76.0282,
+  "family": "roofs",
+  "geometry": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      100.587684,
+      13.698225
+     ],
+     [
+      100.587539,
+      13.698329
+     ],
+     [
+      100.588997,
+      13.704363
+     ],
+     [
+      100.593619,
+      13.712609
+     ],
+     [
+      100.593889,
+      13.712965
+     ],
+     [
+      100.594019,
+      13.712871
+     ],
+     [
+      100.5986,
+      13.70908
+     ],
+     [
+      100.599966,
+      13.707005
+     ],
+     [
+      100.600037,
+      13.706863
+     ],
+     [
+      100.599718,
+      13.704203
+     ],
+     [
+      100.59967,
+      13.703989
+     ],
+     [
+      100.596413,
+      13.702073
+     ],
+     [
+      100.595972,
+      13.701849
+     ],
+     [
+      100.594347,
+      13.701043
+     ],
+     [
+      100.587684,
+      13.698225
+     ]
+    ]
+   ]
+  }
+ },
+ "size_reward": {
+  "breakeven_weight": 66.082,
+  "breakeven_pct": 50.0,
+  "gamma": 0.5,
+  "optimal_area_m2": 20000.0,
+  "optimal_net_value": 19.892
+ },
+ "scoring": {
+  "crs": "EPSG:32647",
+  "pixel_size_m": 1.0,
+  "weights_file": "roofs.json",
+  "mask_file": null,
+  "weights_sha256": "a20ab5e530c268fb2641abed5a34066c03d722a0c646cbc53e1bbf48331449b2",
+  "aspects": [
+   1.0,
+   1.3333,
+   1.5,
+   2.0,
+   3.0,
+   4.0
+  ],
+  "angles": [],
+  "model_version": "scoring_v1.4",
+  "access_scored": false,
+  "weights_season_be": null
+ },
+ "streetview_anchors": [
+  {
+   "anchor_id": "SV1",
+   "lon": 100.60133,
+   "lat": 13.7048103,
+   "heading_deg": 248.5,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV2",
+   "lon": 100.5841146,
+   "lat": 13.7130258,
+   "heading_deg": 343.4,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV3",
+   "lon": 100.5679826,
+   "lat": 13.7770191,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV4",
+   "lon": 100.555507,
+   "lat": 13.71729,
+   "heading_deg": 16.7,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  },
+  {
+   "anchor_id": "SV5",
+   "lon": 100.4829092,
+   "lat": 13.6886928,
+   "heading_deg": 90.0,
+   "pitch_deg": 0,
+   "provider": "mapillary",
+   "pano_id": null,
+   "captured": null
+  }
+ ],
+ "unlocked_layers": [
+  "roof_irr",
+  "roof_usable_m2",
+  "n_floors"
+ ],
+ "difficulty_tier": 3,
+ "briefing_character": "inspector_m",
+ "briefing_text": "MEMO SSIA/TRN/007. Exercise 7 of 8. Site: Khlong Toei district, Bangkok, around the Port of Bangkok. Rooftop mission. Panel budget: 2 ha of roof. The port warehouses and other roofs with more than 1,000 m² of usable space already carry solar panels and are not available. Pick whole roofs; each carries panels on its usable area.",
+ "briefing_script": "L05.briefing",
+ "hints_enabled": true,
+ "time_limit_s": null,
+ "assets": {
+  "dashboard": "public/dashboard.json",
+  "explain": "explain.json",
+  "roofs": "public/roofs.geojson",
+  "roof_weights": "reveal/roof_weights.json",
+  "flood_anim": null,
+  "reveal_overlay": null
+ }
+}
