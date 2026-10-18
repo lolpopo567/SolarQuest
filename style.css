@@ -413,3 +413,43 @@ img { -webkit-user-drag: none; }
 .dev-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0; }
 .dev-row span { min-width: 64px; font-weight: 600; font-size: 13px; }
 .dev-row button { font-size: 12px; padding: 4px 8px; }
+
+/* phones (owner report 18 Oct 2026: the play screen was too big on a phone): smaller text and controls, so the map
+   tools fit on one or two rows and the map shows more land */
+@media (max-width: 600px) {
+  body { font-size: 14px; }
+  button { padding: 5px 9px; }
+  .topbar { gap: 6px; padding: 5px 8px; }
+  .topbar .title { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar #btn-home { padding: 4px 6px; font-size: 13px; }
+  .budget-label { font-size: 11px; }
+  .meter { height: 6px; margin-top: 3px; }
+  #btn-submit { font-size: 13px; padding: 6px 10px; }
+  .tools { top: 6px; left: 6px; gap: 4px; max-width: calc(100% - 48px); }
+  .tool { font-size: 12px; padding: 4px 7px; border-radius: 5px; }
+  .draw-help { font-size: 12px; padding: 4px 8px; }
+  .timeline { left: 6px; right: 6px; bottom: 60px; padding: 3px 8px; font-size: 12px; gap: 6px; }
+  .timeline button { padding: 2px 6px; }
+  .sat-hud { left: 6px; bottom: 6px; gap: 6px; padding: 3px 8px 3px 3px; max-width: calc(100% - 60px); border-radius: 8px; }
+  .sat-hud img { width: 38px; height: 38px; }
+  .sat-name, .sat-status { font-size: 11px; }
+  .sat-hud > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 6px; min-width: 0; }
+  .sat-status { grid-column: 1 / -1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sat-hud #btn-hint { grid-row: 1; grid-column: 2; font-size: 11px; padding: 1px 6px; }
+  .toast { font-size: 12.5px; padding: 6px 10px 6px 6px; gap: 8px; bottom: 10px; }
+  .toast img { width: 40px; height: 40px; }
+  .maplibregl-ctrl-group button { width: 26px; height: 26px; }
+  .tabs button { padding: 6px; font-size: 13px; }
+  .tab { padding: 8px; }
+  .fp-summary { font-size: 12px; padding: 6px; margin-bottom: 8px; }
+  .card { padding: 8px; margin-bottom: 8px; }
+  .card-head h3 { font-size: 13px; }
+  .card .desc { font-size: 11px; }
+  .card .row { font-size: 12px; }
+  .vn-text { font-size: 15px; }
+  .vn-box { padding: 10px 12px 22px; min-height: 96px; }
+  .vn-sat { width: 64px; height: 64px; margin-top: -36px; }
+  #memo-text { font-size: 12.5px; }
+  .memo-sheet { padding: 14px; }
+  .score-num { font-size: 40px; }
+}
